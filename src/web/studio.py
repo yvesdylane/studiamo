@@ -72,7 +72,12 @@ def _next_url(default: str) -> str:
 def index():
     all_courses = deps.courses().list(limit=100)
     mine = [c for c in all_courses if deps.can_edit_course(c)]
-    return render_template("studio/index.html", courses=mine, errors={}, values={})
+    return render_template("studio/index.html", courses=mine, errors={}, values={}, standalone=_standalone())
+
+
+def _standalone():
+    """Exams without a course: the lecturer's own (all of them for an admin)."""
+    return deps.exams().list_standalone(None if deps.is_admin() else g.user.id)
 
 
 @bp.post("/courses")
@@ -92,7 +97,7 @@ def create_course():
             flash(f"Course {course.code} created. Add its first topic below.")
             return redirect(url_for("studio.course", course_id=course.id))
     mine = [c for c in deps.courses().list(limit=100) if deps.can_edit_course(c)]
-    return render_template("studio/index.html", courses=mine, errors=errors, values=values), 400
+    return render_template("studio/index.html", courses=mine, errors=errors, values=values, standalone=_standalone()), 400
 
 
 @bp.route("/courses/<int:course_id>", methods=["GET", "POST"])

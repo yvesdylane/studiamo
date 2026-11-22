@@ -5,6 +5,7 @@
 <link href="https://fonts.googleapis.com/css2?{% for k, f in fonts.items() if f[3] %}{{ f[3] }}{{ '&' if not loop.last }}{% endfor %}&display=swap" rel="stylesheet">
 {% endblock %}
 {% block content %}
+{% from "partials/avatar.html" import avatar %}
 {% set student = 'student' in me.roles|map(attribute='value')|list %}
 {% set lecturer = 'lecturer' in me.roles|map(attribute='value')|list %}
 {% set tabs = [('profile', 'Profile'), ('appearance', 'Appearance'), ('notifications', 'Notifications'), ('ranking', 'On the ranking'), ('ai', 'AI assistant'), ('security', 'Account and security')]
@@ -21,7 +22,19 @@
 <div style="max-width:780px">
 
 {# ------------------------------------------------------------- profile #}
-<section class="panel-tab" data-panel="profile"{% if tab != 'profile' %} hidden{% endif %}>
+<section class="panel-tab form" data-panel="profile"{% if tab != 'profile' %} hidden{% endif %} style="gap:24px">
+<div class="card" id="photo">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0 0 12px">PHOTO</h2>
+<div class="row" style="gap:20px;align-items:center">
+{{ avatar(me, 96) }}
+<div class="form" style="flex:1;min-width:240px">
+<form method="post" enctype="multipart/form-data" class="row" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="photo">
+<label class="sr-only" for="photo-file">Profile photo</label><input type="file" id="photo-file" name="photo" accept="image/png,image/jpeg,image/gif,image/webp" class="input">
+<button class="btn xs" type="submit">UPLOAD</button></form>
+{% if errors.get('photo') %}<p class="err" role="alert">{{ errors.photo }}</p>{% endif %}
+<p class="muted" style="font-size:0.95rem">PNG, JPEG, GIF or WebP, up to 2 MB. Without a photo, your initials are shown.</p>
+{% if me.avatar_path %}<form method="post">{{ csrf_field() }}<input type="hidden" name="section" value="photo_remove"><button class="btn xs ghost" type="submit">REMOVE PHOTO</button></form>{% endif %}
+</div></div></div>
 <form class="card form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="profile">
 <h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">PROFILE</h2>
 {% set v = {'name': request.form.get('name', me.name), 'player_name': request.form.get('player_name', me.player_name or '')} %}

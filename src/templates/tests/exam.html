@@ -2,7 +2,7 @@
 {% block title %}{{ exam.title }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / EXAMS</p>
+<p class="crumbs">{% if course %}<a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / EXAMS{% else %}<a href="{{ url_for('join.join') }}">JOIN AN EXAM</a> / EXAM{% endif %}</p>
 <h1 class="pagetitle">{{ exam.title|upper }}</h1>
 {% if not exam.published %}<p class="notice" style="margin-bottom:14px">Draft: students cannot see this exam yet.</p>{% endif %}
 </section>

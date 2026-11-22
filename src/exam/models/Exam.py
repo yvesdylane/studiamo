@@ -41,7 +41,7 @@ class Exam(Base):
     )
 
     id: Mapped[IntPK]
-    course_id: Mapped[int] = mapped_column(sa.ForeignKey("courses.id", ondelete="CASCADE"))
+    course_id: Mapped[int | None] = mapped_column(sa.ForeignKey("courses.id", ondelete="CASCADE"))   # null: an exam on its own (0018)
     created_by: Mapped[int | None] = mapped_column(sa.ForeignKey("users.id"))  # null = system
     title: Mapped[str] = mapped_column(sa.String(200))
     kind: Mapped[ExamKind] = mapped_column(pg_enum(ExamKind, "exam_kind"))
@@ -54,6 +54,11 @@ class Exam(Base):
     max_attempts: Mapped[int | None]  # null = unlimited
     max_exp: Mapped[int] = mapped_column(server_default="0")
     published: Mapped[bool] = mapped_column(server_default=sa.false())
+    # joining with a code (migration 0018, src/web/join.py)
+    join_code: Mapped[str | None] = mapped_column(sa.String(12), unique=True)
+    join_enabled: Mapped[bool] = mapped_column(server_default=sa.false())
+    join_mode: Mapped[str] = mapped_column(sa.String(10), server_default="anyone")        # anyone | list
+    guest_results: Mapped[str] = mapped_column(sa.String(10), server_default="graded")    # graded | manual
     # admin review (migration 0008, src/review/ReviewService.py)
     review_status: Mapped[str] = mapped_column(sa.String(10), server_default="draft")
     review_comment: Mapped[str | None] = mapped_column(sa.Text)

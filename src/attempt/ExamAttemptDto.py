@@ -14,7 +14,8 @@ class ExamAttemptCreate(DTO):
 
 class ExamAttemptRead(DTO):
     id: int
-    student_id: int
+    student_id: int | None = None   # None: a guest's attempt (guest_id)
+    guest_id: int | None = None
     exam_id: int
     attempt_no: int
     status: AttemptStatus

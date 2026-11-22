@@ -38,7 +38,8 @@ class ExamAttempt(Base):
     )
 
     id: Mapped[IntPK]
-    student_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id", ondelete="CASCADE"))
+    student_id: Mapped[int | None] = mapped_column(sa.ForeignKey("users.id", ondelete="CASCADE"))     # null for a guest
+    guest_id: Mapped[int | None] = mapped_column(sa.ForeignKey("exam_guests.id", ondelete="CASCADE"))  # migration 0018
     exam_id: Mapped[int] = mapped_column(sa.ForeignKey("exams.id", ondelete="CASCADE"))
     attempt_no: Mapped[int]
     status: Mapped[AttemptStatus] = mapped_column(

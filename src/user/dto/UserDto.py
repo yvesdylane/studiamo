@@ -63,6 +63,15 @@ class UserRead(UserBase):  # never exposes password_hash
     text_size: str = "normal"
     toast_enabled: bool = True
     toast_seconds: int = 10
+    avatar_path: str | None = None
+
+    @property
+    def avatar_url(self) -> str | None:
+        return f"/media/{self.avatar_path}" if self.avatar_path else None
+
+    @property
+    def initials(self) -> str:
+        return "".join(w[0] for w in self.name.split()[:2]).upper() or "?"
 
     @property
     def email_verified(self) -> bool:

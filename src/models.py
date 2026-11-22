@@ -13,6 +13,7 @@ from src.course.modles.Course import Course
 from src.course.modles.Note import Note
 from src.course.modles.Topic import Topic
 from src.exam.models.Exam import Exam
+from src.exam.models.ExamGuest import ExamAllowedEmail, ExamGuest
 from src.exam.models.ExamQuestion import ExamQuestion
 from src.exam.models.ExamTopic import ExamTopic
 from src.exercise.models.Exercise import Exercise
@@ -42,6 +43,8 @@ __all__ = [
     "Note",
     "Topic",
     "Exam",
+    "ExamAllowedEmail",
+    "ExamGuest",
     "ExamQuestion",
     "ExamTopic",
     "Exercise",

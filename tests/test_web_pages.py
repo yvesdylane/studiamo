@@ -506,7 +506,11 @@ def main() -> int:
         t.check("admin: strip link opens the note", r.status_code == 302 and adm.get(r.headers["Location"]).status_code == 200)
         t.check("exam list page", "Midterm" in text(guest, "/exams"))
         t.check("admin session cannot take exercises (403)", adm.get(f"/exercises/{ex_id}/take").status_code == 403)
-        t.check("admin dashboard -> admin page", adm.get("/dashboard").headers.get("Location", "").endswith("/admin/"))
+        adm_home = text(adm, "/dashboard")
+        t.check("admins get their own lobby too: player card, skill graph, then the admin section",
+                "player-card" in adm_home and "SKILL GRAPH" in adm_home and "AS AN ADMIN" in adm_home
+                and adm_home.index("player-card") < adm_home.index("AS AN ADMIN"))
+        t.check("admin shown as main role + star", 'STUDENT <span aria-hidden="true">★' in adm_home)
         r = adm.post(f"/admin/users/{other_lec.id}/roles", data={"csrf_token": token(adm, "/admin/"), "lecturer": ""})
         t.check("admin removes the lecturer role", users.get(other_lec.id).roles == [UserRole.STUDENT])
 

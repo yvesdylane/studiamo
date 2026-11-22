@@ -145,24 +145,32 @@ def _clean(f: dict) -> dict:
 def _after_save_target(question_id: int, course_id: int) -> str:
     """Return to the exercise/exam that asked for the question, adding it there."""
     add_to = request.form.get("add_to") or ""
+    if add_to == "new-exam":
+        return url_for("studio_tests.new_standalone_exam")
     kind, _, ident = add_to.partition(":")
     if kind == "exercise" and ident.isdigit():
-        ex = deps.exercises().get(int(ident))
+        ex, _, _ = _exercise_and_course(int(ident))   # 404 unless the user may edit it
         if question_id not in [q.question_id for q in ex.questions]:
             deps.exercises().add_question(ex.id, question_id)
         return url_for("studio_tests.edit_exercise", exercise_id=ex.id) + "#questions"
     if kind == "exam" and ident.isdigit():
-        exam = deps.exams().get(int(ident))
+        exam, _ = _exam_and_course(int(ident))   # 404 unless the user may edit it
         if exam.kind == ExamKind.SCHEDULED and question_id not in [q.question_id for q in exam.questions]:
             deps.exams().set_questions(exam.id, [ExamQuestionBase(question_id=q.question_id, points=q.points) for q in exam.questions]
                                        + [ExamQuestionBase(question_id=question_id)])
         return url_for("studio_tests.edit_exam", exam_id=exam.id) + "#questions"
-    return url_for("studio_tests.bank", course_id=course_id)
+    return url_for("studio_tests.bank", course_id=course_id) if course_id else url_for("studio.index") + "#my-exams"
+
+
+@bp.route("/questions/new", methods=["GET", "POST"])
+def new_free_question():
+    """A question without a course (for exams on their own)."""
+    return new_question(None)
 
 
 @bp.route("/courses/<int:course_id>/questions/new", methods=["GET", "POST"])
-def new_question(course_id: int):
-    course = deps.require_course_editor(course_id)
+def new_question(course_id: int | None):
+    course = deps.require_course_editor(course_id) if course_id is not None else None
     error = None
     form = {"type": request.args.get("type", "mcq"), "body_md": "", "points": 1, "topic_id": _int_arg("topic_id"),
             "options": [{"label": "", "is_correct": True}, {"label": "", "is_correct": False}], "test_cases": [],
@@ -170,8 +178,8 @@ def new_question(course_id: int):
     if request.method == "POST":
         form = _clean(_question_form())
         try:
-            q = deps.questions().create(QuestionCreate(**form), author_id=g.user.id)
-        except (ValidationError, QuestionInvalidError, ServiceError) as exc:
+            q = deps.questions().create(QuestionCreate(**_topic_in(course, form)), author_id=g.user.id)
+        except (ValidationError, QuestionInvalidError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         else:
             flash("Question saved." + _reopened_note(q.id, q.topic_id))
@@ -190,9 +198,12 @@ def edit_question(question_id: int):
         q = deps.questions().get(question_id)
     except QuestionNotFoundError:
         abort(404)
-    if q.topic_id is None:
-        abort(404)   # questions without a topic belong to no course here
-    course = deps.require_course_editor(deps.topics().get(q.topic_id).course_id)
+    if q.topic_id is None:   # a question of an exam on its own: its author (or an admin)
+        if not (deps.is_admin() or q.author_id == g.user.id):
+            abort(404)
+        course = None
+    else:
+        course = deps.require_course_editor(deps.topics().get(q.topic_id).course_id)
     error = None
     form = q.model_dump(mode="json")
     if request.method == "POST":
@@ -200,6 +211,7 @@ def edit_question(question_id: int):
         form["type"] = q.type.value   # the type cannot change
         form = _clean(form)
         try:
+            _topic_in(course, form)
             deps.questions().update(question_id, QuestionUpdate(**{k: form[k] for k in (
                 "body_md", "explanation_md", "points", "difficulty", "topic_id", "code_language", "starter_code",
                 "is_active", "allow_multiple")}))
@@ -208,12 +220,21 @@ def edit_question(question_id: int):
                 [QuestionOptionCreate(**o) for o in form["options"]],
                 [QuestionTestCaseCreate(**t) for t in form["test_cases"]],
             )
-        except (ValidationError, QuestionInvalidError, ServiceError) as exc:
+        except (ValidationError, QuestionInvalidError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         else:
             flash("Question saved." + _reopened_note(question_id, form["topic_id"]))
-            return redirect(_after_save_target(question_id, course.id))
+            return redirect(_after_save_target(question_id, course.id if course else None))
     return _question_page(course, form, q, error)
+
+
+def _topic_in(course, form: dict) -> dict:
+    """A question of a course needs one of that course's topics; one without a course has none."""
+    if course is None:
+        form["topic_id"] = None
+    elif form.get("topic_id") not in {t.id for t in _course_topics(course.id)}:
+        raise ValueError("Pick one of this course's topics.")
+    return form
 
 
 def _reopened_note(question_id: int, topic_id: int | None) -> str:
@@ -226,7 +247,7 @@ def _reopened_note(question_id: int, topic_id: int | None) -> str:
 def _question_page(course, form, question, error):
     return render_template(
         "studio/question_edit.html", course=course, form=form, question=question, error=error,
-        topics=_course_topics(course.id), types=list(QuestionType), languages=list(CodeLanguage), runnable=RUNNABLE,
+        topics=_course_topics(course.id) if course else [], types=list(QuestionType), languages=list(CodeLanguage), runnable=RUNNABLE,
         add_to=request.values.get("add_to", ""), preview=render(form.get("body_md") or ""),
     ), (400 if error else 200)
 
@@ -234,14 +255,19 @@ def _question_page(course, form, question, error):
 @bp.post("/questions/<int:question_id>/delete")
 def delete_question(question_id: int):
     q = deps.questions().get(question_id)
-    course = deps.require_course_editor(deps.topics().get(q.topic_id).course_id)
+    if q.topic_id is None:
+        if not (deps.is_admin() or q.author_id == g.user.id):
+            abort(404)
+        course = None
+    else:
+        course = deps.require_course_editor(deps.topics().get(q.topic_id).course_id)
     try:
         deps.questions().delete(question_id)
         flash("Question deleted.")
     except QuestionInUseError:
         deps.questions().deactivate(question_id)
         flash("This question is used in exercises or exams, so it was hidden instead of deleted.")
-    return redirect(url_for("studio_tests.bank", course_id=course.id))
+    return redirect(url_for("studio_tests.bank", course_id=course.id) if course else url_for("studio.index") + "#my-exams")
 
 
 # ================================================================ exercises
@@ -326,10 +352,15 @@ def edit_exercise(exercise_id: int):
 
 # ==================================================================== exams
 def _exam_and_course(exam_id: int):
+    """The exam and its course (None for an exam on its own: only its lecturer or an admin)."""
     try:
         exam = deps.exams().get(exam_id)
     except ServiceError:
         abort(404)
+    if exam.course_id is None:
+        if not (deps.is_admin() or exam.created_by == g.user.id):
+            abort(404)
+        return exam, None
     return exam, deps.require_course_editor(exam.course_id)
 
 
@@ -359,11 +390,19 @@ def _picked_questions() -> list[ExamQuestionBase]:
     return picked
 
 
+@bp.route("/exams/new", methods=["GET", "POST"])
+def new_standalone_exam():
+    """An exam for the lecturer's own students, without a course: they join with its code."""
+    return new_exam(None)
+
+
 @bp.route("/courses/<int:course_id>/exams/new", methods=["GET", "POST"])
-def new_exam(course_id: int):
-    course = deps.require_course_editor(course_id)
+def new_exam(course_id: int | None):
+    course = deps.require_course_editor(course_id) if course_id is not None else None
     error = None
     kind = ExamKind(request.values.get("kind", "scheduled")) if request.values.get("kind") in ("scheduled", "system") else ExamKind.SCHEDULED
+    if course is None:
+        kind = ExamKind.SCHEDULED
     if request.method == "POST":
         try:
             data = _exam_form(kind)
@@ -415,10 +454,19 @@ def edit_exam(exam_id: int):
                         flash("Back to draft.")
                 else:
                     review_action(deps.review(), "exam", exam_id, exam.title, exam.published, exam.review_status)
+            elif action == "join":
+                emails = [e for e in request.form.get("allowed_emails", "").replace(",", "\n").replace(";", "\n").split("\n")]
+                deps.exams().set_join(exam_id, enabled=request.form.get("join_enabled") == "on",
+                                      mode=request.form.get("join_mode", "anyone"),
+                                      guest_results=request.form.get("guest_results", "graded"), emails=emails)
+                flash("Join settings saved.")
+            elif action == "new_code":
+                deps.exams().new_code(exam_id)
+                flash("New code made: the old one no longer works.")
             elif action == "delete":
                 deps.exams().delete(exam_id)
                 flash("Exam deleted.")
-                return redirect(url_for("studio.course", course_id=course.id) + "#exams")
+                return redirect(url_for("studio.course", course_id=course.id) + "#exams" if course else url_for("studio.index") + "#my-exams")
         except (ValidationError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         if not error:
@@ -428,13 +476,20 @@ def edit_exam(exam_id: int):
 
 
 def _exam_page(course, exam, kind, error):
-    bank = deps.questions().list(course_id=course.id, active_only=True, limit=100)
+    if course is not None:
+        bank = deps.questions().list(course_id=course.id, active_only=True, limit=100)
+    else:   # an exam on its own: the lecturer's own questions
+        bank = deps.questions().list(author_id=g.user.id if not (exam and deps.is_admin()) else exam.created_by,
+                                     active_only=True, limit=100)
     chosen = {q.question_id: q.points for q in exam.questions} if exam else {}
     return render_template(
         "studio/exam_edit.html", course=course, exam=exam, kind=kind, error=error, bank=bank, chosen=chosen,
-        topics=_course_topics(course.id), chosen_topics={t.topic_id for t in exam.topics} if exam else set(),
+        topics=_course_topics(course.id) if course else [], chosen_topics={t.topic_id for t in exam.topics} if exam else set(),
         to_local=to_local, tzname=os.getenv("APP_TIMEZONE", "UTC"),
         pool=deps.exams().pool_size(exam.id) if exam else None,
+        allowed_emails=deps.exams().allowed_emails(exam.id) if exam else [],
+        join_code=deps.exams().display_code(exam.join_code) if exam else "",
+        join_url=url_for("join.join", code=deps.exams().display_code(exam.join_code), _external=True) if exam and exam.join_code else "",
     ), (400 if error else 200)
 
 
@@ -442,16 +497,35 @@ def _exam_page(course, exam, kind, error):
 @bp.get("/exams/<int:exam_id>/results")
 def exam_results(exam_id: int):
     exam, course = _exam_and_course(exam_id)
+    from src.exam.service.GuestService import GuestService
+
     attempts = deps.attempts().list_attempts_for_exam(exam_id)
-    names = {}
+    names, guests = {}, {}
     for a in attempts:
-        if a.student_id not in names:
+        if a.guest_id is not None and a.guest_id not in guests:
+            guests[a.guest_id] = GuestService(deps.db()).get(a.guest_id)
+        elif a.student_id is not None and a.student_id not in names:
             try:
                 names[a.student_id] = deps.users().get_public(a.student_id)
             except ServiceError:
                 names[a.student_id] = None
+    unsent = sum(1 for a in attempts if a.guest_id and a.status.value == "graded" and not guests[a.guest_id].results_sent_at)
     return render_template("studio/exam_results.html", exam=exam, course=course, attempts=attempts, names=names,
-                           marks=deps.progress().exam_results(exam_id))
+                           guests=guests, unsent=unsent, marks=deps.progress().exam_results(exam_id))
+
+
+@bp.post("/exams/<int:exam_id>/email-results")
+def email_guest_results(exam_id: int):
+    """Send every graded guest their result (those not sent yet)."""
+    from src.web.join import send_guest_result
+
+    exam, course = _exam_and_course(exam_id)
+    sent = 0
+    for a in deps.attempts().list_attempts_for_exam(exam_id):
+        if a.guest_id and a.status.value == "graded" and send_guest_result(a.id, only_if_unsent=True):
+            sent += 1
+    flash(f"Results emailed to {sent} guest{'s' if sent != 1 else ''}." if sent else "No guest result was waiting to be sent.")
+    return redirect(url_for("studio_tests.exam_results", exam_id=exam_id))
 
 
 @bp.get("/courses/<int:course_id>/grading")
@@ -477,7 +551,7 @@ def grade(kind: str, attempt_id: int):
         topic = deps.topics().get(deps.exercises().get(attempt.exercise_id).topic_id)
         course = deps.require_course_editor(topic.course_id)
     else:
-        course = deps.require_course_editor(deps.exams().get(attempt.exam_id).course_id)
+        exam_obj, course = _exam_and_course(attempt.exam_id)
     record = svc.read_record(kind, attempt_id)
     pending = Grading.pending_ids(record)
     error = None
@@ -492,7 +566,15 @@ def grade(kind: str, attempt_id: int):
         except (ValueError, ValidationError, ManualGradeInvalidError, AttemptNotAwaitingGradingError) as exc:
             error = "Enter points for every question: " + _error_text(exc)
         else:
-            flash("Graded. The student's mark, exp and rank are updated.")
+            if kind == "exam" and attempt.guest_id and exam_obj.guest_results == "graded":
+                from src.web.join import send_guest_result
+
+                send_guest_result(attempt_id)
+                flash("Graded. The result was emailed to the guest.")
+            else:
+                flash("Graded. The student's mark, exp and rank are updated.")
+            if course is None:
+                return redirect(url_for("studio_tests.exam_results", exam_id=attempt.exam_id))
             return redirect(url_for("studio_tests.grading", course_id=course.id))
     return render_template("studio/grade.html", kind=kind, attempt=attempt, course=course, pending=pending,
                            record=render(strip_marker(record)), error=error)

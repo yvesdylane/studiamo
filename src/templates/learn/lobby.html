@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% from "partials/skill_graph.html" import skill_graph %}
+{% from "partials/avatar.html" import avatar %}
+{% from "partials/role.html" import role_tag %}
+{% block title %}{{ me.player_name or me.name }}{% endblock %}
+{% block content %}
+{% set lvl_pct = ((100 * level.exp_in_level / level.exp_to_next_level)|round(1)) if level and level.exp_to_next_level else 0 %}
+{% set rank_pct = ((100 * level.xexp_in_rank / level.xexp_to_next_rank)|round(1)) if level and level.xexp_to_next_rank else 100 %}
+
+{# ----------------------------------------------------------- player card #}
+<section class="grid lobby-hero">
+<div class="card player-card">
+<div class="row" style="gap:20px;align-items:center;flex-wrap:nowrap">
+{{ avatar(me, 120) }}
+<div style="min-width:0">
+<p class="crumbs" style="margin:0">PLAYER</p>
+<h1 class="pagetitle" style="margin:0;font-size:2.6rem;overflow-wrap:anywhere">{{ (me.player_name or me.name)|upper }}</h1>
+<p class="muted" style="font-size:1rem;margin-top:4px">{% if me.player_name %}{{ me.name }} · {% endif %}{% if me.class_name %}{{ me.class_name }} · {% endif %}here since {{ me.created_at.strftime('%B %Y') }}</p>
+<p class="row" style="gap:6px;margin-top:6px">{{ role_tag(me, is_admin_account) }}</p>
+</div>
+</div>
+
+<div class="player-stats">
+<div class="pstat"><span class="lab">LEVEL</span><span class="pbig">{{ level.level if level else 0 }}</span>
+<div class="meter" role="img" aria-label="{{ lvl_pct }}% of the way to level {{ (level.level if level else 0) + 1 }}"><i style="width:{{ lvl_pct }}%"></i></div>
+<span class="muted psmall">{% if level %}{{ level.exp_in_level }} / {{ level.exp_to_next_level }} exp · {{ level.total_exp }} in total{% else %}0 exp{% endif %}</span></div>
+
+<div class="pstat"><span class="lab">RANK</span><span class="row" style="gap:10px;align-items:center"><span class="hex" style="width:52px;height:52px;font-size:1.3rem">{{ level.rank_label if level else 'F1' }}</span><span class="psmall">{{ '%g' % level.total_xexp if level else 0 }} Xexp</span></span>
+<div class="meter" role="img" aria-label="{{ rank_pct }}% of the way to the next rank"><i style="width:{{ rank_pct }}%;background:var(--badge)"></i></div>
+<span class="muted psmall">{% if level and level.xexp_to_next_rank %}{{ '%g' % level.xexp_in_rank }} / {{ '%g' % level.xexp_to_next_rank }} Xexp to the next rank{% else %}Top rank{% endif %}</span></div>
+
+<div class="pstat"><span class="lab">STREAK</span><span class="pbig">{{ eng.streak }}<small> day{{ 's' if eng.streak != 1 }}</small></span>
+<span class="muted psmall">{% if eng.tasks|selectattr('done')|list %}Today counts. Come back tomorrow.{% else %}Do a daily task today to keep it.{% endif %}</span></div>
+
+<div class="pstat"><span class="lab">LEADERBOARD</span>
+{% if position %}<span class="pbig">#{{ position }}</span><span class="muted psmall"><a href="{{ url_for('learn.leaderboard') }}" style="text-decoration:underline">See the ranking</a>{% if me.ranking_visibility == 'anonymous' %} · shown anonymously{% endif %}</span>
+{% else %}<span class="pbig">–</span><span class="muted psmall">Hidden{% if hidden_position %} (you would be #{{ hidden_position }}){% endif %} · <a href="{{ url_for('account.settings', tab='ranking') }}" style="text-decoration:underline">change</a></span>{% endif %}</div>
+</div>
+
+<div class="row" style="margin-top:18px">
+{% if resume %}<a class="btn s" href="{{ url_for('learn.note', note_id=resume.note.id) }}">{{ 'CONTINUE' if resume.started else 'START HERE' }} »</a>{% endif %}
+<a class="btn s o" href="{{ url_for('account.profile', user_id=me.id) }}">PROFILE</a>
+<a class="btn s o" href="{{ url_for('account.settings') }}">SETTINGS</a>
+{% if is_lecturer %}<a class="btn s ghost" href="{{ url_for('studio.index') }}">STUDIO</a>{% endif %}
+{% if is_admin_account %}<a class="btn s ghost" href="{{ url_for('admin.index') }}">ADMIN</a>{% endif %}
+</div>
+</div>
+
+<div class="card" style="padding:22px">
+<div class="row" style="justify-content:space-between"><h2 style="font-size:1.6rem;color:var(--accent-text);margin:0">SKILL GRAPH</h2><a href="#about-skills" class="muted" style="font-size:0.9rem;text-decoration:underline">What is measured?</a></div>
+{{ skill_graph(skills, level.rank_label if level else 'F1') }}
+</div>
+</section>
+
+<section class="section" style="padding-top:28px">
+<h2 class="role-heading">AS A STUDENT</h2>
+{# ------------------------------------------------- continue + daily tasks #}
+<div class="lobby-two">
+<div class="card" id="continue">
+<h2 style="font-size:1.6rem;color:var(--accent-text);margin:0 0 10px">{{ 'CONTINUE WHERE YOU LEFT OFF' if resume and resume.started else 'START LEARNING' }}</h2>
+{% if resume %}
+<p class="crumbs">{{ resume.course.title|upper }} / {{ resume.topic.title|upper }}</p>
+<h3 style="font-size:1.6rem;margin:4px 0 8px">{{ resume.note.title }}</h3>
+{% if resume.started %}<div class="meter" style="margin:6px 0"><i style="width:{{ resume.pct }}%"></i></div><p class="muted psmall">{{ resume.pct|round|int }}% of {{ resume.course.title }} done</p>{% endif %}
+<p class="muted psmall">About {{ ((resume.note.reading_seconds or 300) / 60)|round|int }} min · +{{ resume.note.max_exp }} exp when you finish it</p>
+<a class="btn s" href="{{ url_for('learn.note', note_id=resume.note.id) }}" style="margin-top:12px">{{ 'CONTINUE' if resume.started else 'START' }} »</a>
+{% else %}<p>You have read everything that is open. Try an <a href="{{ url_for('learn.exercises') }}" style="text-decoration:underline">exercise</a> or an <a href="{{ url_for('learn.exams') }}" style="text-decoration:underline">exam</a>.</p>{% endif %}
+</div>
+
+<div class="card" id="tasks">
+<div class="row" style="justify-content:space-between"><h2 style="font-size:1.6rem;color:var(--accent-text);margin:0">TODAY'S TASKS</h2><span class="tag" style="background:var(--badge)">{{ eng.tasks|selectattr('done')|list|length }}/{{ eng.tasks|length }} DONE</span></div>
+<p class="muted psmall" style="margin:4px 0 8px">Each: +{{ eng.task_reward[0] }} exp, +{{ '%g' % eng.task_reward[1] }} Xexp · all of them: +{{ eng.bonus[0] }} exp, +{{ '%g' % eng.bonus[1] }} Xexp more</p>
+<ul class="list">{% for t in eng.tasks %}<li><span style="flex:1;min-width:200px">{% if t.done %}<span aria-hidden="true">✓ </span><s>{{ t.title }}</s><span class="sr-only"> (done)</span>{% else %}{{ t.title }}{% endif %}</span>
+<span style="min-width:130px">{% set pct = (100 * t.progress / t.target)|round|int %}<div class="meter" role="img" aria-label="{{ pct }}% done"><i style="width:{{ pct }}%"></i></div>
+<span class="muted" style="font-size:0.8rem">{% if t.unit == 's' %}{{ (t.progress / 60)|round|int }} / {{ (t.target / 60)|int }} min{% else %}{{ t.progress }} / {{ t.target }}{% endif %}</span></span></li>{% endfor %}</ul>
+</div>
+</div>
+
+{# ------------------------------------------------------------ achievements #}
+<h2 id="achievements" style="margin-top:34px">ACHIEVEMENTS <span class="muted" style="font-size:1.2rem">{{ eng.badges_earned }}/{{ eng.badges|length }}</span></h2>
+<ul class="achievements">
+{% for b in eng.badges|sort(attribute='earned', reverse=true) %}
+<li class="{{ 'got' if b.earned else 'locked' }}"><span class="hex badge-hex" aria-hidden="true">{{ b.name[0] }}</span>
+<span><strong>{{ b.name }}</strong><br><span class="muted">{{ b.description }}</span><br>
+<span class="psmall {{ '' if b.earned else 'muted' }}">{% if b.earned %}Earned {{ b.earned_at.strftime('%d %b %Y') }}{% else %}Locked · +25 exp, +5 Xexp{% endif %}</span></span></li>
+{% endfor %}
+</ul>
+
+{# ----------------------------------------------------------------- courses #}
+<h2 style="margin-top:34px">YOUR COURSES</h2>
+{% if courses %}
+<div class="cols-3">
+{% for c in courses %}{% set cp = progress[c.id] %}
+<article class="card{% if c.id not in my_course_ids %} dim{% endif %}" style="padding:18px;position:relative">
+<p class="row" style="gap:6px;margin-bottom:6px">{% if c.id in my_course_ids %}<span class="tag">STARTED</span>{% else %}<span class="tag g">NOT STARTED</span>{% endif %}{% if cp.completion_pct >= 100 %}<span class="tag ok">DONE</span>{% endif %}</p>
+<h3 style="font-size:1.35rem"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h3>
+<div class="meter" style="margin:10px 0 6px"><i style="width:{{ cp.completion_pct }}%"></i></div>
+<p class="muted psmall">{{ cp.completion_pct|round|int }}% · {{ cp.notes_completed }}/{{ cp.notes_total }} notes · {{ cp.exercises_done }}/{{ cp.exercises_total }} exercises · {{ cp.exp_earned }} exp</p>
+</article>
+{% endfor %}
+</div>
+{% else %}<p class="empty">No course has material yet.</p>{% endif %}
+
+{# ------------------------------------------------------- recent + skills #}
+<div class="lobby-two" style="margin-top:34px">
+<div class="card"><h2 style="font-size:1.5rem;color:var(--accent-text);margin:0 0 8px">RECENT EXP</h2>
+{% if ledger %}<ul class="list">{% for x in ledger %}<li><span>{{ {'note': 'Note read', 'exercise': 'Exercise', 'exam': 'Exam', 'daily_task': 'Daily task', 'badge': 'Badge'}.get(x.source, x.source) }}</span><span class="muted psmall">{{ x.created_at.strftime('%d %b %H:%M') }}</span><span><strong>+{{ x.amount }}</strong> exp{% if x.xexp %} · +{{ '%g' % x.xexp }} Xexp{% endif %}</span></li>{% endfor %}</ul>
+{% else %}<p class="muted">Nothing yet: read a note or do a daily task to earn your first exp.</p>{% endif %}</div>
+<div class="card" id="about-skills"><h2 style="font-size:1.5rem;color:var(--accent-text);margin:0 0 8px">WHAT THE SKILL GRAPH MEASURES</h2>
+<ul style="font-size:0.95rem;line-height:1.55;padding-left:18px;margin:0">
+<li><strong>Reading</strong> · full when you spent 3× each note's reading time on it ({{ skills.counts.minutes }} min so far)</li>
+<li><strong>Practice</strong> · your best score on each exercise ({{ skills.counts.exercises }} taken)</li>
+<li><strong>Exams</strong> · your best score on each exam ({{ skills.counts.exams }} taken)</li>
+<li><strong>Subjects</strong> · how far you are in each course you started ({{ skills.counts.courses }})</li>
+<li><strong>Streak</strong> · full at 45 days in a row with a daily task done ({{ skills.counts.streak }})</li>
+<li><strong>Time</strong> · full at 100 hours on notes, exercises and exams ({{ skills.counts.hours }} h)</li>
+<li><strong>Badges</strong> · badges collected ({{ skills.counts.badges }}/{{ skills.counts.badges_total }})</li></ul></div>
+</div>
+
+{# ------------------------------------------------------------- lecturer #}
+{% if is_lecturer %}
+<h2 class="role-heading" id="as-lecturer">AS A LECTURER</h2>
+<div class="lobby-two">
+<div class="card"><div class="row" style="justify-content:space-between"><h3 style="font-size:1.4rem;color:var(--accent-text)">YOUR COURSES</h3><a class="btn xs" href="{{ url_for('studio.index') }}">STUDIO »</a></div>
+{% if teaching %}<ul class="list">{% for c in teaching %}{% set st = teach_stats.get(c.id, {}) %}<li><a href="{{ url_for('studio.course', course_id=c.id) }}" style="text-decoration:underline">{{ c.title }}</a><span class="muted psmall">{{ st.notes or 0 }} notes · {{ st.exercises or 0 }} exercises · {{ st.exams or 0 }} exams · {{ st.students or 0 }} students</span></li>{% endfor %}</ul>
+{% else %}<p class="muted">No course yet. <a href="{{ url_for('studio.index') }}" style="text-decoration:underline">Create one in the Studio</a>.</p>{% endif %}
+<p class="muted psmall" style="margin-top:10px">{{ standalone|length }} exam{{ 's' if standalone|length != 1 }} without a course{% for x in standalone if x.join_enabled and x.join_code %}{% if loop.first %} · codes on: {% endif %}<a href="{{ url_for('studio_tests.edit_exam', exam_id=x.id) }}#join" style="font-family:ui-monospace,Menlo,monospace;text-decoration:underline">{{ x.join_code[:3] }}-{{ x.join_code[3:] }}</a>{{ ', ' if not loop.last }}{% endfor %} · <a href="{{ url_for('studio_tests.new_standalone_exam') }}" style="text-decoration:underline">new exam</a></p></div>
+<div class="card"><h3 style="font-size:1.4rem;color:var(--accent-text);margin-bottom:8px">TO DO</h3>
+<p style="font-size:1.05rem"><strong class="pbig" style="font-size:1.8rem">{{ to_grade }}</strong> answer{{ 's' if to_grade != 1 }} waiting for you to grade{% if to_grade %} · <a href="{{ url_for('studio_tests.grading', course_id=teaching[0].id) if teaching|length == 1 else url_for('studio.index') }}" style="text-decoration:underline">grade them</a>{% endif %}</p>
+{% if my_reviews %}<p class="lab" style="margin-top:12px">IN REVIEW OR SENT BACK</p><ul class="list">{% for r in my_reviews %}<li><span>{{ r.title }} <span class="muted psmall">({{ r.kind }})</span></span>{% if r.review_status == 'rejected' %}<span class="tag" style="background:var(--danger)" title="{{ r.review_comment or '' }}">SENT BACK</span>{% else %}<span class="tag" style="background:#1d4ed8">IN REVIEW</span>{% endif %}</li>{% endfor %}</ul>
+{% else %}<p class="muted psmall" style="margin-top:10px">Nothing waiting for an admin.</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{# ---------------------------------------------------------------- admin #}
+{% if admin %}
+<h2 class="role-heading" id="as-admin">AS AN ADMIN <span aria-hidden="true">★</span></h2>
+<div class="lobby-two">
+<div class="card"><p style="font-size:1.05rem"><strong class="pbig" style="font-size:1.8rem">{{ admin.queue }}</strong> note{{ 's' if admin.queue != 1 }}, exercise{{ 's' if admin.queue != 1 }} or exam{{ 's' if admin.queue != 1 }} waiting for review</p>
+<p style="font-size:1.05rem;margin-top:8px"><strong class="pbig" style="font-size:1.8rem">{{ admin.requests }}</strong> lecturer request{{ 's' if admin.requests != 1 }}</p></div>
+<div class="card">{% if admin.acting %}<p style="font-size:1.05rem">You are acting as an admin in this session.</p><a class="btn s" href="{{ url_for('admin.index') }}" style="margin-top:12px">OPEN ADMIN »</a>
+{% else %}<p style="font-size:1.05rem">To act as an admin, log out and log in with <strong>Continue with Google</strong> using your admin email.</p>{% endif %}
+<p class="muted psmall" style="margin-top:10px">An admin session cannot take exams or earn exp; log in with your password to study.</p></div>
+</div>
+{% endif %}
+</section>
+{% endblock %}

@@ -8,13 +8,14 @@
 {{ item('learn.exercises', 'EXERCISES', ep in ('learn.exercises', 'tests.exercise', 'tests.take_exercise')) }}
 {{ item('learn.exams', 'EXAMS', ep in ('learn.exams', 'tests.exam', 'tests.take_exam')) }}
 {{ item('learn.leaderboard', 'RANKS', ep == 'learn.leaderboard') }}
+{{ item('join.join', 'JOIN AN EXAM', ep.startswith('join.')) }}
 </nav>
 <div class="acct">
 <button type="button" class="themebtn" id="theme-toggle" aria-label="Dark mode"{% if g.user %} data-csrf="{{ csrf_token() }}"{% endif %}><span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span></button>
 {% if g.user %}
 {% if acting_as('admin') %}<span class="tag" style="background:var(--warn)">ADMIN</span>{% endif %}
 <details class="menu">
-<summary class="avatar" aria-label="Account menu for {{ g.user.name }}">{{ (g.user.name.split()|map('first')|join(''))[:2]|upper }} <span aria-hidden="true">▾</span></summary>
+<summary class="avatar" aria-label="Account menu for {{ g.user.name }}">{% if g.user.avatar_url %}<img src="{{ g.user.avatar_url }}" alt="" width="30" height="30" class="nav-photo">{% else %}{{ (g.user.name.split()|map('first')|join(''))[:2]|upper }}{% endif %} <span aria-hidden="true">▾</span></summary>
 <div class="menu-list">
 <p class="menu-who"><strong>{{ g.user.player_name or g.user.name }}</strong><br><span>{{ g.user.email }}</span></p>
 {% if not acting_as('admin') %}<a href="{{ url_for('learn.dashboard') }}">Dashboard</a>{% endif %}

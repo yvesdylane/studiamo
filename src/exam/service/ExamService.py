@@ -71,7 +71,7 @@ class ExamService:
             raise ExamInvalidError("scheduled exams need the lecturer who creates them")
         try:
             with self._db.session() as session:
-                if session.get(Course, data.course_id) is None:
+                if data.course_id is not None and session.get(Course, data.course_id) is None:
                     raise CourseNotFoundError(data.course_id)
                 exam = Exam(
                     **data.model_dump(exclude={"question_ids", "topic_ids"}),
@@ -131,6 +131,8 @@ class ExamService:
         )
         if course_id is not None:
             query = query.where(Exam.course_id == course_id)
+        else:   # exams on their own are only reached with their code
+            query = query.where(Exam.course_id.is_not(None))
         with self._db.session() as session:
             exams = session.scalars(query.order_by(Exam.closes_at.nulls_last(), Exam.id)).all()
             return [ExamPublic.model_validate(e) for e in exams]
@@ -141,6 +143,8 @@ class ExamService:
         query = sa.select(Exam).where(Exam.published, Exam.kind == ExamKind.SCHEDULED, Exam.opens_at > at)
         if course_id is not None:
             query = query.where(Exam.course_id == course_id)
+        else:
+            query = query.where(Exam.course_id.is_not(None))
         with self._db.session() as session:
             exams = session.scalars(query.order_by(Exam.opens_at, Exam.id)).all()
             return [ExamPublic.model_validate(e) for e in exams]
@@ -228,6 +232,87 @@ class ExamService:
             deleted = session.execute(sa.delete(Exam).where(Exam.id == exam_id)).rowcount
             if not deleted:
                 raise ExamNotFoundError(exam_id)
+
+    # ----------------------------------------------------- join with a code
+    CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"   # no 0/O or 1/I, easy to read aloud
+    CODE_LENGTH = 6
+
+    @staticmethod
+    def normalize_code(code: str) -> str:
+        return "".join(ch for ch in (code or "").upper() if ch.isalnum())
+
+    @staticmethod
+    def display_code(code: str | None) -> str:
+        return f"{code[:3]}-{code[3:]}" if code and len(code) == 6 else (code or "")
+
+    def new_code(self, exam_id: int) -> str:
+        """Give the exam a fresh join code (the old one stops working)."""
+        import secrets
+
+        with self._db.session() as session:
+            exam = self._find(session, exam_id)
+            for _ in range(20):
+                code = "".join(secrets.choice(self.CODE_ALPHABET) for _ in range(self.CODE_LENGTH))
+                if not session.scalar(sa.select(sa.func.count()).select_from(Exam).where(Exam.join_code == code)):
+                    exam.join_code = code
+                    return code
+            raise ExamInvalidError("could not make a unique code, try again")
+
+    def set_join(self, exam_id: int, *, enabled: bool, mode: str, guest_results: str,
+                 emails: list[str] | None = None) -> ExamRead:
+        """Join settings. mode: 'anyone' with the code, or 'list' (only the emails given).
+        guest_results: 'graded' (email guests their result when graded) or 'manual'."""
+        from src.exam.models.ExamGuest import ExamAllowedEmail
+
+        if mode not in ("anyone", "list") or guest_results not in ("graded", "manual"):
+            raise ExamInvalidError("unknown join setting")
+        with self._db.session() as session:
+            exam = self._find(session, exam_id)
+            if enabled and exam.kind != ExamKind.SCHEDULED:
+                raise ExamInvalidError("only scheduled exams can be joined with a code")
+            exam.join_enabled, exam.join_mode, exam.guest_results = enabled, mode, guest_results
+            if enabled and not exam.join_code:
+                session.flush()
+            if emails is not None:
+                session.execute(sa.delete(ExamAllowedEmail).where(ExamAllowedEmail.exam_id == exam_id))
+                for email in sorted({e.strip().lower() for e in emails if "@" in e}):
+                    session.add(ExamAllowedEmail(exam_id=exam_id, email=email[:255]))
+            session.flush()
+            result = ExamRead.model_validate(exam)
+        if enabled and not result.join_code:
+            self.new_code(exam_id)
+            result = self.get(exam_id)
+        return result
+
+    def allowed_emails(self, exam_id: int) -> list[str]:
+        from src.exam.models.ExamGuest import ExamAllowedEmail
+
+        with self._db.session() as session:
+            return list(session.scalars(sa.select(ExamAllowedEmail.email).where(ExamAllowedEmail.exam_id == exam_id)
+                                        .order_by(ExamAllowedEmail.email)))
+
+    def may_join(self, exam: ExamRead, email: str) -> bool:
+        """Can this email join (class list), when the code is right?"""
+        if exam.join_mode != "list":
+            return True
+        return (email or "").strip().lower() in set(self.allowed_emails(exam.id))
+
+    def find_by_code(self, code: str) -> ExamRead | None:
+        """The published exam whose code is switched on, or None."""
+        code = self.normalize_code(code)
+        if len(code) != self.CODE_LENGTH:
+            return None
+        with self._db.session() as session:
+            exam = session.scalars(sa.select(Exam).where(Exam.join_code == code, Exam.join_enabled, Exam.published)).first()
+            return ExamRead.model_validate(exam) if exam else None
+
+    def list_standalone(self, created_by: int | None = None) -> list[ExamRead]:
+        """Exams without a course (all of them for created_by=None, i.e. an admin)."""
+        query = sa.select(Exam).where(Exam.course_id.is_(None))
+        if created_by is not None:
+            query = query.where(Exam.created_by == created_by)
+        with self._db.session() as session:
+            return [ExamRead.model_validate(e) for e in session.scalars(query.order_by(Exam.id.desc()))]
 
     # ------------------------------------------------- used by attempts
     @staticmethod

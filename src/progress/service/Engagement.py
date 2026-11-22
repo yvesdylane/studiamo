@@ -182,7 +182,12 @@ def study_seconds(session: Session, student_id: int) -> int:
 
 
 def _earned(session: Session, student_id: int) -> set[str]:
-    return {r[0] for r in session.execute(sa.text("select badge_key from student_badges where student_id = :s"), {"s": student_id})}
+    return set(_earned_dates(session, student_id))
+
+
+def _earned_dates(session: Session, student_id: int) -> dict:
+    return {r[0]: r[1] for r in session.execute(sa.text("select badge_key, earned_at from student_badges where student_id = :s"),
+                                                 {"s": student_id})}
 
 
 def check_badges(session: Session, student_id: int) -> None:
@@ -242,14 +247,15 @@ def summary(session: Session, student_id: int) -> dict:
     by_key = {t.key: t for t in TASKS}
     tasks = [{"title": by_key[r.task_key].title, "target": r.target, "progress": r.progress, "done": r.completed_at is not None,
               "unit": by_key[r.task_key].unit} for r in rows if r.task_key in by_key]
-    have = _earned(session, student_id)
+    have = _earned_dates(session, student_id)
     return {
         "tasks": tasks,
         "task_reward": TASK_REWARD, "bonus": ALL_TASKS_BONUS,
         "streak": current_streak(session, student_id),
         "seconds": study_seconds(session, student_id),
-        "badges": [{"key": b.key, "name": b.name, "description": b.description, "earned": b.key in have} for b in BADGES],
-        "badges_earned": len(have & {b.key for b in BADGES}),
+        "badges": [{"key": b.key, "name": b.name, "description": b.description, "earned": b.key in have,
+                    "earned_at": have.get(b.key)} for b in BADGES],
+        "badges_earned": len(set(have) & {b.key for b in BADGES}),
     }
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, g, render_template
+from flask import Blueprint, g, redirect, render_template, url_for
 
 from src.course.dto.CourseDto import CourseCatalogItem
 from src.course.service.CourseService import CourseService
@@ -23,14 +23,9 @@ def catalog() -> list[CourseCatalogItem]:
 
 @bp.get("/")
 def home():
-    """Guests see an example skill graph; logged-in students see their own."""
-    skills = level = None
-    if g.get("user") is not None and "student" in g.roles:
-        from src.web import deps
+    """Logged in (any role, admins too): the player's own lobby. Guests: the welcome page."""
+    if g.get("user") is not None:
+        from src.web.learn import lobby_context
 
-        skills = deps.progress().skill_graph(g.user.id)
-        try:
-            level = deps.players().get_level(g.user.id)
-        except Exception:
-            level = None
-    return render_template("home.html", courses=catalog(), skills=skills, level=level)
+        return render_template("learn/lobby.html", **lobby_context(g.user.id))
+    return render_template("home.html", courses=catalog(), skills=None, level=None)

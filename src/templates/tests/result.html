@@ -3,7 +3,7 @@
 {% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / <a href="{{ back }}">{{ thing.title|upper }}</a> / RESULT</p>
+<p class="crumbs">{% if course %}<a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / {% endif %}<a href="{{ back }}">{{ thing.title|upper }}</a> / RESULT</p>
 <h1 class="pagetitle">{% if attempt.score_pct is none %}SUBMITTED{% elif attempt.score_pct >= 75 %}WELL DONE{% else %}RESULT{% endif %}</h1>
 </section>
 <section class="section" style="padding-top:10px">

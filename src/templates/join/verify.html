@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Check your email{% endblock %}
+{% block content %}
+<section class="grid" style="padding:48px 20px 64px">
+<div class="card formcard" style="max-width:620px;margin:0 auto">
+<p class="d" style="font-size:1.1rem;color:var(--accent-text)">ONE STEP LEFT</p>
+<h1 style="font-size:2.6rem;line-height:1.05;color:var(--accent-text);margin:6px 0 12px">ENTER THE CODE WE EMAILED</h1>
+<p style="font-size:1.15rem">We sent a 6-digit code to <strong>{{ email }}</strong>. It works for 15 minutes.</p>
+<form class="form" method="post" style="margin-top:18px" novalidate>{{ csrf_field() }}
+{% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+<div class="field"><label for="f-code" class="lab">6-DIGIT CODE</label><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required placeholder="123456" style="font:2rem ui-monospace,Menlo,monospace;letter-spacing:.3em;max-width:260px"></div>
+<button class="btn" type="submit" style="align-self:flex-start">CHECK »</button>
+</form>
+<form method="post" action="{{ url_for('join.resend') }}" style="margin-top:16px">{{ csrf_field() }}<button class="linkbtn" type="submit" style="font-size:1rem">Send me a new code</button></form>
+<p class="alt"><a href="{{ url_for('join.join') }}" class="d">Wrong email? Start again</a></p>
+</div>
+</section>
+{% endblock %}

@@ -185,8 +185,10 @@ class AttemptService:
             return self._grade_manually(session, "exercise", attempt, possible, grade, grader_id)
 
     # ==================================================================== exams
-    def start_exam(self, student_id: int, exam_id: int) -> ExamAttemptStarted:
-        """Open a new attempt (drawing its questions), or resume the unfinished one."""
+    def start_exam(self, student_id: int | None, exam_id: int, *, guest_id: int | None = None) -> ExamAttemptStarted:
+        """Open a new attempt (drawing its questions), or resume the unfinished one.
+        guest_id: a guest who joined with the exam's code (student_id is then ignored)."""
+        owner = (ExamAttempt.guest_id == guest_id) if guest_id is not None else (ExamAttempt.student_id == student_id)
         with self._db.session() as session:
             exam = ExamService.find(session, exam_id, for_update=True)  # serialises starts
             if not exam.published:
@@ -195,7 +197,7 @@ class AttemptService:
 
             attempt = session.scalars(
                 sa.select(ExamAttempt).where(
-                    ExamAttempt.student_id == student_id,
+                    owner,
                     ExamAttempt.exam_id == exam_id,
                     ExamAttempt.status == AttemptStatus.IN_PROGRESS,
                 )
@@ -211,7 +213,7 @@ class AttemptService:
             used = session.scalar(
                 sa.select(sa.func.count())
                 .select_from(ExamAttempt)
-                .where(ExamAttempt.student_id == student_id, ExamAttempt.exam_id == exam_id)
+                .where(owner, ExamAttempt.exam_id == exam_id)
             )
             pool = ExamService.pool_question_ids(session, exam)
             if not is_open(exam, now):
@@ -221,11 +223,13 @@ class AttemptService:
             elif not pool:
                 refusal = NoQuestionsError(f"Exam {exam_id}")
             else:
-                return self._open_exam_attempt(session, exam, student_id, used + 1, pool)
+                return self._open_exam_attempt(session, exam, None if guest_id is not None else student_id,
+                                               used + 1, pool, guest_id=guest_id)
         raise refusal
 
     def _open_exam_attempt(
-        self, session: Session, exam: Exam, student_id: int, attempt_no: int, pool: list[int]
+        self, session: Session, exam: Exam, student_id: int | None, attempt_no: int, pool: list[int],
+        *, guest_id: int | None = None,
     ) -> ExamAttemptStarted:
         """Draw the attempt's questions and store them in exam_attempt_questions."""
         rng = random.SystemRandom()
@@ -234,7 +238,7 @@ class AttemptService:
         if exam.shuffle_questions:
             rng.shuffle(chosen)
 
-        attempt = ExamAttempt(student_id=student_id, exam_id=exam.id, attempt_no=attempt_no)
+        attempt = ExamAttempt(student_id=student_id, guest_id=guest_id, exam_id=exam.id, attempt_no=attempt_no)
         session.add(attempt)
         session.flush()
         session.add_all(
@@ -244,9 +248,10 @@ class AttemptService:
         session.refresh(attempt)
         return self._exam_started(session, exam, attempt, resumed=False)
 
-    def submit_exam(self, attempt_id: int, student_id: int, data: AttemptSubmit) -> AttemptResult:
+    def submit_exam(self, attempt_id: int, student_id: int | None, data: AttemptSubmit, *,
+                    guest_id: int | None = None) -> AttemptResult:
         with self._db.session() as session:
-            attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id)
+            attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id, guest_id=guest_id)
             exam = session.get(Exam, attempt.exam_id)
             late = self._is_late(exam, attempt, self._now())
             questions = self._exam_questions(session, attempt)
@@ -258,10 +263,10 @@ class AttemptService:
         with self._db.session() as session:
             return ExamAttemptRead.model_validate(self._find(session, ExamAttempt, attempt_id))
 
-    def resume_exam(self, attempt_id: int, student_id: int) -> ExamAttemptStarted:
+    def resume_exam(self, attempt_id: int, student_id: int | None, *, guest_id: int | None = None) -> ExamAttemptStarted:
         """The questions of an unfinished attempt again (page reload)."""
         with self._db.session() as session:
-            attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id)
+            attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id, guest_id=guest_id)
             return self._exam_started(session, session.get(Exam, attempt.exam_id), attempt, resumed=True)
 
     def list_exam_attempts(
@@ -324,9 +329,13 @@ class AttemptService:
             raise AttemptNotFoundError("exercise" if model is ExerciseAttempt else "exam", attempt_id)
         return attempt
 
-    def _own_open_attempt(self, session: Session, model: type[AnyAttempt], attempt_id: int, student_id: int) -> AnyAttempt:
+    def _own_open_attempt(self, session: Session, model: type[AnyAttempt], attempt_id: int, student_id: int | None,
+                          *, guest_id: int | None = None) -> AnyAttempt:
         attempt = self._find(session, model, attempt_id, for_update=True)
-        if attempt.student_id != student_id:
+        if guest_id is not None:
+            if getattr(attempt, "guest_id", None) != guest_id:
+                raise AttemptNotYoursError(attempt_id)
+        elif student_id is None or attempt.student_id != student_id:
             raise AttemptNotYoursError(attempt_id)
         if attempt.status != AttemptStatus.IN_PROGRESS:
             raise AttemptAlreadySubmittedError(attempt_id)
@@ -443,6 +452,7 @@ class AttemptService:
         record = Grading.render_record(
             title=title,
             student_id=attempt.student_id,
+            guest=self._guest_label(session, attempt),
             attempt_id=attempt.id,
             attempt_no=attempt.attempt_no,
             started_at=attempt.started_at,
@@ -472,6 +482,8 @@ class AttemptService:
         if kind == "exercise":
             exercise = session.get(Exercise, attempt.exercise_id)
             return record_exercise_result(session, attempt.student_id, exercise, attempt.attempt_no, attempt.score_pct)
+        if attempt.student_id is None:      # a guest: no mark, exp or rank
+            return 0
         return record_exam_result(session, attempt.student_id, exam, attempt.score_pct)
 
     def _grade_manually(
@@ -512,7 +524,18 @@ class AttemptService:
     @staticmethod
     def _record_key(kind: Kind, attempt: AnyAttempt) -> str:
         parent = attempt.exercise_id if kind == "exercise" else attempt.exam_id
-        return f"attempts/{kind}/{parent}/{attempt.student_id}/{attempt.id}.md"
+        owner = attempt.student_id if attempt.student_id is not None else f"guest-{attempt.guest_id}"
+        return f"attempts/{kind}/{parent}/{owner}/{attempt.id}.md"
+
+    @staticmethod
+    def _guest_label(session: Session, attempt: AnyAttempt) -> str | None:
+        guest_id = getattr(attempt, "guest_id", None)
+        if guest_id is None:
+            return None
+        from src.exam.models.ExamGuest import ExamGuest
+
+        g = session.get(ExamGuest, guest_id)
+        return f"{g.name} <{g.email}>" if g else f"guest {guest_id}"
 
     @staticmethod
     def _result(

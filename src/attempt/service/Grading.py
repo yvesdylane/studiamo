@@ -116,13 +116,14 @@ def _quote(text: str) -> str:
 def render_record(
     *,
     title: str,
-    student_id: int,
+    student_id: int | None,
     attempt_id: int,
     attempt_no: int,
     started_at: datetime,
     submitted_at: datetime,
     graded: list[GradedAnswer],
     late: bool = False,
+    guest: str | None = None,
 ) -> str:
     """The md "attempt record": a snapshot of every question as the student saw
     it, their answer, the correct answer / test results and the points."""
@@ -135,7 +136,7 @@ def render_record(
         f"# {title} — attempt {attempt_no}",
         "",
         f"- Attempt id: {attempt_id}",
-        f"- Student id: {student_id}",
+        f"- Guest: {guest}" if guest else f"- Student id: {student_id}",
         f"- Started: {started_at.isoformat()}",
         f"- Submitted: {submitted_at.isoformat()}",
         f"- Points: {money(earned)} / {money(possible)}" + (" (waiting for manual grading)" if pending else ""),

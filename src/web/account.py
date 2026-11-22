@@ -46,15 +46,18 @@ def profile(user_id: int):
     me = user_id == g.user.id
     # players who are anonymous or hidden on the ranking keep their stats private
     private = user.ranking_visibility != "public" and not me and not g.is_admin
+    from src.web.security import admin_emails
+
     return render_template("account/profile.html", user=user, level=level, position=position, teaching=teaching,
-                           me=me, private=private, done_notes=len(deps.progress().completed_notes(user_id)),
+                           me=me, private=private, is_admin_account=user.email in admin_emails(), done_notes=len(deps.progress().completed_notes(user_id)),
                            good_marks=sum(1 for m in marks if m.best_score_pct >= 75), marks=len(marks))
 
 
 TABS = ["profile", "appearance", "notifications", "ranking", "ai", "security", "lecturer", "delete"]
 SECTION_TAB = {"profile": "profile", "appearance": "appearance", "ranking": "ranking", "password": "security",
                "unlink": "security", "lecturer": "lecturer", "delete": "delete", "ai_create": "ai", "ai_revoke": "ai",
-               "ai_key_save": "ai", "ai_key_model": "ai", "ai_key_delete": "ai", "notifications": "notifications"}
+               "ai_key_save": "ai", "ai_key_model": "ai", "ai_key_delete": "ai", "notifications": "notifications",
+               "photo": "profile", "photo_remove": "profile"}
 
 
 @bp.post("/settings/theme")
@@ -156,6 +159,31 @@ def settings():
             except (ApiTokenNotFoundError, ValueError):
                 flash("That key does not exist.")
             return redirect(url_for("account.settings", tab="ai"))
+        elif section in ("photo", "photo_remove"):
+            import secrets
+
+            from src.web.media import media_dir, sniff
+
+            new_name = None
+            if section == "photo":
+                f = request.files.get("photo")
+                data = f.read(2 * 1024 * 1024 + 1) if f else b""
+                ext = sniff(data[:16]) if data else None
+                if not data:
+                    errors["photo"] = "Choose a picture."
+                elif len(data) > 2 * 1024 * 1024:
+                    errors["photo"] = "The picture can be at most 2 MB."
+                elif ext is None:
+                    errors["photo"] = "Use a PNG, JPEG, GIF or WebP picture."
+                if errors:
+                    return _settings_page(deps.users().get(me.id), errors, section, "profile")
+                new_name = f"av_{secrets.token_urlsafe(12)}.{ext}"
+                (media_dir() / new_name).write_bytes(data)
+            previous = deps.users().set_avatar(me.id, new_name)
+            if previous and previous.startswith("av_"):
+                (media_dir() / previous).unlink(missing_ok=True)
+            flash("Profile photo updated." if new_name else "Profile photo removed.")
+            return redirect(url_for("account.settings", tab="profile"))
         elif section == "notifications":
             try:
                 secs = int(request.form.get("toast_seconds") or 10)

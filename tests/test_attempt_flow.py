@@ -79,6 +79,11 @@ def pick(question, correct: bool) -> AnswerSubmit:
     return AnswerSubmit(question_id=question.id, selected_option_ids=[next(o.id for o in question.options if o.label == label)])
 
 
+def study_exp(progress, student: int) -> int:
+    """Exp from notes, exercises and exams only (daily tasks and badges are tested in test_skill_graph)."""
+    return sum(x.amount for x in progress.ledger(student, limit=100) if x.source in ("note", "exercise", "exam"))
+
+
 def main() -> int:
     load_dotenv()
     db = Db.from_env()
@@ -114,7 +119,7 @@ def main() -> int:
         done = progress.complete_note(student, note.id)
         again = progress.complete_note(student, note.id)
         t.check("note exp awarded once", done.exp_awarded == 10 and again.completed_at == done.completed_at)
-        t.check("total_exp 10", players.get_stats(student).total_exp == 10)
+        t.check("exp from studying: 10 (daily tasks / badges come on top)", study_exp(progress, student) == 10)
 
         t.section("exercise: auto + manual grading")
         ex = ExerciseService(db).create(ExerciseCreate(
@@ -133,7 +138,7 @@ def main() -> int:
         result = attempts.submit_exercise(started.attempt.id, student, AttemptSubmit(answers=[
             pick(mq, True), AnswerSubmit(question_id=q_short.id, answer_text="Because | reasons")]))
         t.check("short answer waits for a lecturer", result.pending_manual and result.attempt.status == AttemptStatus.SUBMITTED)
-        t.check("no exp yet", result.exp_awarded == 0 and players.get_stats(student).total_exp == 10)
+        t.check("no exp yet", result.exp_awarded == 0 and study_exp(progress, student) == 10)
         t.check("duration computed by the database", result.attempt.duration_seconds is not None)
         t.expect_error("submit twice", AttemptAlreadySubmittedError,
                        lambda: attempts.submit_exercise(started.attempt.id, student, AttemptSubmit()))
@@ -217,25 +222,35 @@ def main() -> int:
 
         t.section("player and progress")
         stats = players.get_stats(student)
-        t.check("total exp = 10 + 33 + 8 + 100 + 40", stats.total_exp == 191, stats.total_exp)
         ledger = progress.ledger(student, limit=100)
-        t.check("ledger sums to total_exp", sum(x.amount for x in ledger) == 191 and ledger[-1].source == "note")
+        study = [x for x in ledger if x.source in ("note", "exercise", "exam")]
+        extra = [x for x in ledger if x.source in ("daily_task", "badge")]   # daily tasks and badges (Engagement.py)
+        t.check("exp from studying = 10 + 33 + 8 + 100 + 40", sum(x.amount for x in study) == 191, sum(x.amount for x in study))
         # Xexp: note 10 * 2.5% = 0.25; exercise best 66.67% < 75% -> 0;
         # midterm 100 * 0.85 = 85; practice 40 * 0.85 = 34; speed 0  -> 119.25
-        t.check("Xexp = 0.25 + 0 + 85 + 34", stats.total_xexp == 119.25, stats.total_xexp)
-        t.check("ledger Xexp sums to total_xexp", round(sum(x.xexp for x in ledger), 2) == 119.25)
+        t.check("Xexp from studying = 0.25 + 0 + 85 + 34", round(sum(x.xexp for x in study), 2) == 119.25)
+        extra_exp, extra_xexp = sum(x.amount for x in extra), round(sum(x.xexp for x in extra), 2)
+        t.check("totals = studying + daily tasks + badges", stats.total_exp == 191 + extra_exp
+                and round(stats.total_xexp, 2) == round(119.25 + extra_xexp, 2), (stats.total_exp, stats.total_xexp, extra_exp, extra_xexp))
+        badges = {r["badge_key"] for r in db.fetch_all("select badge_key from student_badges where student_id = :s", {"s": student})}
+        t.check("badges: first steps (a note) and exam ace (100% on the midterm)", {"first_steps", "exam_ace"} <= badges, badges)
+        t.check("each badge paid once", sum(1 for x in extra if x.source == "badge") == len(badges))
+        tasks = db.fetch_all("select task_key, completed_at from student_daily_tasks where student_id = :s", {"s": student})
+        t.check("3 daily tasks today", len(tasks) == 3, tasks)
+        t.check("each task done paid once", sum(1 for x in extra if x.source == "daily_task" and x.source_id != 0)
+                == sum(1 for r in tasks if r["completed_at"] is not None))
         t.check("exercise below 75% gives no Xexp", progress.exercise_mark(student, ex.id).xexp_earned == 0)
-        # rank totals (growth 1.18): 0, 10, 20.9, 32.86, 46.08, 60.77, 77.21, 95.71, 116.63, 140.42
-        #   -> 119.25 is rank level 8 = E4
-        t.check("rank E4 (level 8, letter E)", (stats.rank_level, stats.rank_label, stats.rank) == (8, "E4", PlayerRank.E)
+        from src.progress.service import ExpRules
+        expect_rank = ExpRules.rank_level_from_xexp(stats.total_xexp)
+        t.check("rank follows total Xexp", (stats.rank_level, stats.rank_label) == (expect_rank, ExpRules.rank_label(expect_rank))
                 and stats.rank_updated_at is not None, stats)
         level = players.get_level(student)
-        # level totals 0, 20, 45, 78, 122, 182, 268 -> 191 is level 5, 9 into a level of 86
-        t.check("level from exp (191 -> level 5)", (level.level, level.exp_in_level, level.exp_to_next_level) == (5, 9, 86), level)
-        t.check("rank progress in the view", (level.rank_label, level.xexp_in_rank, level.xexp_to_next_rank) == ("E4", 2.62, 23.79), level)
+        expect_level = ExpRules.level_from_exp(stats.total_exp)
+        t.check("level follows total exp", level.level == expect_level
+                and level.exp_in_level == stats.total_exp - ExpRules.level_exp_total(expect_level), level)
         t.check("ahead of the rival", players.position_of(student) < players.position_of(rival))
         board = players.leaderboard(limit=100)
-        t.check("leaderboard has public user info", any(e.user.id == student and e.total_exp == 191 for e in board))
+        t.check("leaderboard has public user info", any(e.user and e.user.id == student and e.total_exp == stats.total_exp for e in board))
         cp = progress.course_progress(student, course.id)
         t.check("course progress", (cp.notes_completed, cp.notes_total, cp.exercises_done, cp.exams_done, cp.exp_earned)
                 == (1, 1, 1, 3, 191), cp)

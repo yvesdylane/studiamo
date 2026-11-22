@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, g, redirect, render_template, request, session, url_for
 from pydantic import ValidationError
 
 from src.attempt.AttemptStatus import AttemptStatus
@@ -120,17 +120,19 @@ def exam(exam_id: int):
         exam = deps.exams().get_public(exam_id)
     except ServiceError:
         abort(404)
-    course = deps.course_or_404(exam.course_id)
-    editor = deps.can_edit_course(course)
+    full = deps.exams().get(exam_id)
+    course = deps.course_or_404(exam.course_id) if exam.course_id is not None else None
+    editor = deps.can_edit_course(course) if course else bool(g.user and (g.is_admin or full.created_by == g.user.id))
     if not exam.published and not editor:
         abort(404)
+    if not editor and not _may_take(full):
+        abort(404)      # an exam on its own is only reached with its code
     attempts, mark, open_attempt = [], None, None
     if g.user and "student" in g.roles:
         attempts = deps.attempts().list_exam_attempts(g.user.id, exam_id=exam_id)
         mark = deps.progress().exam_mark(g.user.id, exam_id)
         open_attempt = next((a for a in attempts if a.status == AttemptStatus.IN_PROGRESS), None)
     now = datetime.now(UTC)
-    full = deps.exams().get(exam_id)
     left = None if exam.max_attempts is None else max(0, exam.max_attempts - len(attempts))
     return render_template("tests/exam.html", exam=exam, course=course, editor=editor, attempts=attempts, mark=mark,
                            open_attempt=open_attempt, left=left, is_open=is_open(full, now), now=now,
@@ -140,6 +142,9 @@ def exam(exam_id: int):
 @bp.post("/exams/<int:exam_id>/start")
 @roles_required("student")
 def start_exam(exam_id: int):
+    if not _may_take(deps.exams().get(exam_id)):
+        flash("This exam needs its code: use Join an exam.")
+        return redirect(url_for("join.join"))
     try:
         started = deps.attempts().start_exam(g.user.id, exam_id)
     except (ExamNotOpenError, ExamNotPublishedError, ExamAttemptsExhaustedError, NoQuestionsError) as exc:
@@ -173,6 +178,18 @@ def take_exam(attempt_id: int):
                            deadline=started.deadline, back=url_for("tests.exam", exam_id=started.exam.id))
 
 
+def _may_take(exam) -> bool:
+    """Exams of a course: anyone logged in (class list permitting). An exam on its
+    own: only after joining with its code in this browser (and the code is on)."""
+    if g.get("user") is None:
+        return exam.course_id is not None
+    if exam.join_mode == "list" and exam.join_code and not deps.exams().may_join(exam, g.user.email):
+        return False
+    if exam.course_id is None:
+        return exam.join_enabled and exam.id in session.get("joined_exams", [])
+    return True
+
+
 # ================================================================== results
 @bp.get("/results/<kind>/<int:attempt_id>")
 @login_required
@@ -191,12 +208,13 @@ def result(kind: str, attempt_id: int):
         show_review = True
     else:
         thing = deps.exams().get(attempt.exam_id)
-        course = deps.course_or_404(thing.course_id)
+        course = deps.course_or_404(thing.course_id) if thing.course_id is not None else None
         back = url_for("tests.exam", exam_id=thing.id)
         closed = thing.kind == ExamKind.SYSTEM or (thing.closes_at is not None and thing.closes_at <= datetime.now(UTC))
         show_review = closed
     mine = g.user.id == attempt.student_id
-    if not mine and not deps.can_edit_course(course):
+    may_edit = deps.can_edit_course(course) if course else bool(g.is_admin or (kind == "exam" and thing.created_by == g.user.id))
+    if not mine and not may_edit:
         abort(404)
     if attempt.status == AttemptStatus.IN_PROGRESS:
         return redirect(url_for("tests.take_exam", attempt_id=attempt_id) if kind == "exam"

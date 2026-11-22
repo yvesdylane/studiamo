@@ -4,7 +4,7 @@
 {% block content %}
 {% set qtype = form.type if form.type is string else form.type.value %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / <a href="{{ url_for('studio_tests.bank', course_id=course.id) }}">QUESTIONS</a> / {{ 'EDIT' if question else 'NEW' }}</p>
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / {% if course %}<a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / <a href="{{ url_for('studio_tests.bank', course_id=course.id) }}">QUESTIONS</a>{% else %}<a href="{{ url_for('studio.index') }}#my-exams">EXAMS WITHOUT A COURSE</a> / QUESTION{% endif %} / {{ 'EDIT' if question else 'NEW' }}</p>
 <h1 class="pagetitle">{{ {'mcq': 'MULTIPLE CHOICE', 'short_answer': 'SHORT ANSWER', 'code': 'CODE'}[qtype] }} QUESTION</h1>
 </section>
 <form id="qform" method="post" class="section" style="padding-top:8px" novalidate>
@@ -38,12 +38,12 @@
 <div class="row">
 <label class="lab" for="points">POINTS</label><input class="input" id="points" name="points" value="{{ '%g' % (form.points or 1) }}" style="width:90px">
 <label class="lab" for="difficulty">DIFFICULTY</label><select class="input" id="difficulty" name="difficulty"><option value="">–</option>{% for d in range(1, 6) %}<option{% if form.difficulty == d %} selected{% endif %}>{{ d }}</option>{% endfor %}</select>
-<label class="lab" for="topic">TOPIC</label><select class="input" id="topic" name="topic_id" required>{% for t in topics %}<option value="{{ t.id }}"{% if form.topic_id == t.id %} selected{% endif %}>{{ t.title }}</option>{% endfor %}</select>
+{% if course %}<label class="lab" for="topic">TOPIC</label><select class="input" id="topic" name="topic_id" required>{% for t in topics %}<option value="{{ t.id }}"{% if form.topic_id == t.id %} selected{% endif %}>{{ t.title }}</option>{% endfor %}</select>{% endif %}
 </div>
 <div class="field"><label class="lab" for="expl">EXPLANATION, SHOWN AFTER ANSWERING (OPTIONAL)</label><textarea id="expl" name="explanation_md" class="src" style="min-height:100px">{{ form.explanation_md or '' }}</textarea></div>
 <label class="check" style="font-size:1.125rem"><input type="checkbox" name="is_active"{% if form.is_active is not defined or form.is_active %} checked{% endif %}>Active (can be used in new exercises and exams)</label>
 <input type="hidden" name="is_active_sent" value="1">
-<div class="row"><button class="btn" type="submit">SAVE QUESTION »</button><a href="{{ url_for('studio_tests.bank', course_id=course.id) }}" style="text-decoration:underline">Cancel</a></div>
+<div class="row"><button class="btn" type="submit">SAVE QUESTION »</button><a href="{{ url_for('studio_tests.bank', course_id=course.id) if course else url_for('studio.index') ~ '#my-exams' }}" style="text-decoration:underline">Cancel</a></div>
 </div>
 <div><p class="lab">PREVIEW</p><div class="preview"><div id="preview" class="prose">{{ preview.html|safe }}</div></div></div>
 </div>

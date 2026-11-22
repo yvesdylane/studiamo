@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{{ user.player_name or user.name }}{% endblock %}
 {% block content %}
+{% from "partials/role.html" import role_tag %}
 {% set lecturer = 'lecturer' in user.roles|map(attribute='value')|list %}
 <section class="wrap">
 <p class="crumbs">PROFILE</p>
 <div class="row" style="gap:24px;align-items:center">
 <span class="hex" style="width:110px;height:110px;font-size:2.75rem;background:{{ user.accent_color or 'var(--purple)' }}">{{ (user.name.split()|map('first')|join(''))[:2]|upper }}</span>
 <div><h1 class="pagetitle" style="margin:0">{{ (user.player_name or user.name)|upper }}</h1>
-<p class="lead2" style="margin:4px 0 0">{% if user.player_name %}{{ user.name }} · {% endif %}{{ 'Lecturer' if lecturer else 'Student' }}{% if user.class_name %} · {{ user.class_name }}{% endif %} · here since {{ user.created_at.strftime('%B %Y') }}</p></div>
+<p class="lead2" style="margin:4px 0 0">{% if user.player_name %}{{ user.name }} · {% endif %}{{ role_tag(user, is_admin_account) }}{% if user.class_name %} · {{ user.class_name }}{% endif %} · here since {{ user.created_at.strftime('%B %Y') }}</p></div>
 {% if me %}<a class="btn o s" href="{{ url_for('account.settings') }}" style="margin-left:auto">EDIT SETTINGS</a>{% endif %}
 </div>
 </section>

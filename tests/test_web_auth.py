@@ -423,6 +423,7 @@ def main() -> int:
         app.extensions.pop("google", None)
         for cid in course_ids:
             courses.delete(cid)
+        db.execute(sa.text("delete from courses where created_by in (select id from users where email like :d)"), {"d": f"%@{DOMAIN}"})
         db.execute(sa.text("delete from users where email like :d"), {"d": f"%@{DOMAIN}"})
         left = db.scalar(sa.text("select count(*) from users where email like :d"), {"d": f"%@{DOMAIN}"})
         print(f"\ncleanup: {left} test users left")

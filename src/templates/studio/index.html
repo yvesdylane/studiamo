@@ -15,6 +15,15 @@
 <span class="row"><a class="btn xs ghost" href="{{ url_for('learn.course', course_id=c.id) }}">VIEW AS STUDENT</a><a class="btn xs" href="{{ url_for('studio.course', course_id=c.id) }}">EDIT »</a></span></li>{% endfor %}
 </ul></div>
 {% else %}<p class="empty">No courses yet. Create the first one.</p>{% endif %}
+<div id="my-exams" style="margin-top:28px">
+<div class="row" style="justify-content:space-between;align-items:flex-end"><h2 style="font-size:1.875rem;color:var(--accent-text);margin:0">EXAMS WITHOUT A COURSE</h2><a class="btn s" href="{{ url_for('studio_tests.new_standalone_exam') }}">+ NEW EXAM</a></div>
+<p class="muted" style="font-size:1rem;margin:6px 0 12px">For your own students: share the code, they join from <strong>Join an exam</strong>, with or without an account.</p>
+{% if standalone %}<div class="card" style="padding:8px 24px"><ul class="list">
+{% for x in standalone %}<li><span><a href="{{ url_for('studio_tests.edit_exam', exam_id=x.id) }}" style="font-size:1.25rem;text-decoration:underline">{{ x.title }}</a>
+{% if x.join_code and x.join_enabled %}<span class="tag ok" style="font-family:ui-monospace,Menlo,monospace">{{ x.join_code[:3] }}-{{ x.join_code[3:] }}</span>{% elif x.published %}<span class="tag g">CODE OFF</span>{% else %}<span class="tag g">DRAFT</span>{% endif %}</span>
+<span class="row"><a class="btn xs ghost" href="{{ url_for('studio_tests.exam_results', exam_id=x.id) }}">RESULTS</a><a class="btn xs" href="{{ url_for('studio_tests.edit_exam', exam_id=x.id) }}">EDIT »</a></span></li>{% endfor %}
+</ul></div>{% else %}<p class="empty">None yet.</p>{% endif %}
+</div>
 </div>
 <form class="card form" method="post" action="{{ url_for('studio.create_course') }}" novalidate>
 {{ csrf_field() }}

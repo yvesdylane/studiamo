@@ -40,14 +40,17 @@ class ExamBase(DTO):
 
 
 class ExamCreate(ExamBase):
-    """created_by comes from the session; system exams are created by the service."""
+    """created_by comes from the session; system exams are created by the service.
+    course_id None: an exam on its own (scheduled only), joined with its code."""
 
-    course_id: int
+    course_id: int | None = None
     question_ids: list[int] = Field(default_factory=list)  # pool of a scheduled exam
     topic_ids: list[int] = Field(default_factory=list)  # pool source of a system exam
 
     @model_validator(mode="after")
     def _pool_rules(self):
+        if self.course_id is None and self.kind != ExamKind.SCHEDULED:
+            raise ValueError("an exam without a course must be a scheduled exam")
         if self.kind == ExamKind.SCHEDULED:
             if not self.question_ids:
                 raise ValueError("scheduled exams need question_ids (the pool)")
@@ -86,7 +89,11 @@ class ExamUpdate(DTO):
 
 class ExamRead(ExamBase):  # lecturer view, includes the pool
     id: int
-    course_id: int
+    course_id: int | None = None
+    join_code: str | None = None
+    join_enabled: bool = False
+    join_mode: str = "anyone"
+    guest_results: str = "graded"
     created_by: int | None = None
     review_status: str = "draft"        # draft | pending | approved | rejected
     review_comment: str | None = None
@@ -97,7 +104,7 @@ class ExamRead(ExamBase):  # lecturer view, includes the pool
 
 class ExamPublic(DTO):  # student view, no pool
     id: int
-    course_id: int
+    course_id: int | None = None
     title: str
     kind: ExamKind
     opens_at: datetime | None = None

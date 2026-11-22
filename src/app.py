@@ -45,7 +45,7 @@ def create_app() -> Flask:
     if os.getenv("AUTO_MIGRATE", "1") != "0":
         upgrade_database(db)
 
-    from src.web import account, admin, appearance, auth, charts, google, learn, mcp, media, pages, security, studio, studio_tests, tests, verify
+    from src.web import account, admin, appearance, auth, charts, google, join, learn, mcp, media, pages, security, studio, studio_tests, tests, verify
 
     security.init_app(app)
     appearance.init_app(app)
@@ -56,6 +56,7 @@ def create_app() -> Flask:
     verify.init_app(app)
     media.init_app(app)
     mcp.init_app(app)
+    join.init_app(app)
     for blueprint in (learn.bp, studio.bp, studio_tests.bp, tests.bp, account.bp, admin.bp):
         app.register_blueprint(blueprint)
     app.jinja_env.globals.update(

@@ -159,6 +159,13 @@ class UserService:
             ).all()
             return [UserRead.model_validate(u) for u in rows]
 
+    def set_avatar(self, user_id: int, avatar_path: str | None) -> str | None:
+        """Set (or clear, with None) the profile photo; returns the previous file name."""
+        with self._db.session() as session:
+            user = self._find(session, user_id)
+            previous, user.avatar_path = user.avatar_path, avatar_path
+            return previous
+
     def has_role(self, user_id: int, role: UserRole) -> bool:
         return role in self.get(user_id).roles
 
