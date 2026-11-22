@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Result · {{ thing.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / <a href="{{ back }}">{{ thing.title|upper }}</a> / RESULT</p>
+<h1 class="pagetitle">{% if attempt.score_pct is none %}SUBMITTED{% elif attempt.score_pct >= 75 %}WELL DONE{% else %}RESULT{% endif %}</h1>
+</section>
+<section class="section" style="padding-top:10px">
+<div class="cols-3" style="margin-bottom:28px">
+<div class="card stat"><span class="small">SCORE</span>{% if attempt.score_pct is not none %}<span class="big">{{ '%g' % attempt.score_pct }}%</span><span class="small">{{ '%g' % attempt.points_earned }} of {{ '%g' % attempt.points_possible }} points</span>{% else %}<span class="big">…</span><span class="small">Waiting for your lecturer to grade some answers.</span>{% endif %}</div>
+<div class="card stat"><span class="small">ATTEMPT</span><span class="big">{{ attempt.attempt_no }}</span><span class="small">{% if attempt.duration_seconds %}{{ attempt.duration_seconds // 60 }} min {{ attempt.duration_seconds % 60 }} s{% endif %}</span></div>
+<div class="card stat" style="background:var(--purple);color:#fff"><span class="small" style="color:#eee">XEXP</span><span style="font-size:1.1875rem">{% if attempt.score_pct is not none and attempt.score_pct >= 75 %}This score earns Xexp for your rank.{% elif attempt.score_pct is not none %}Score 75% or more to earn Xexp.{% else %}Decided after grading.{% endif %}</span></div>
+</div>
+<div class="row" style="margin-bottom:28px"><a class="btn" href="{{ back }}">BACK »</a>{% if acting_as('student') %}<a class="btn o" href="{{ url_for('learn.dashboard') }}">DASHBOARD</a>{% endif %}</div>
+<h2>REVIEW YOUR ANSWERS</h2>
+{% if review %}<div class="card"><div class="prose" style="max-width:none">{{ review.html|safe }}</div></div>
+{% elif not show_review %}<p class="empty">The correct answers are shown once the exam has closed for everyone.</p>
+{% else %}<p class="empty">No review available.</p>{% endif %}
+</section>
+<script src="{{ url_for('static', filename='js/smd.js') }}"></script>
+{% endblock %}

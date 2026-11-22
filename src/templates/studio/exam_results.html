@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Results · {{ exam.title }}{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}#exams">{{ course.code }}</a> / <a href="{{ url_for('studio_tests.edit_exam', exam_id=exam.id) }}">{{ exam.title|upper }}</a> / RESULTS</p>
+<h1 class="pagetitle">RESULTS</h1>
+<p class="lead2">{{ marks|length }} student{{ 's' if marks|length != 1 }} took this exam. <a href="{{ url_for('studio_tests.grading', course_id=course.id) }}" style="text-decoration:underline;color:var(--accent-text)">Answers waiting for grading »</a></p>
+</section>
+<section class="section" style="padding-top:8px">
+{% if attempts %}<div class="card" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:1.125rem">
+<thead><tr style="background:var(--purple);color:#fff;font-family:var(--font-display)"><th scope="col" style="text-align:left;padding:10px 16px">STUDENT</th><th scope="col">ATTEMPT</th><th scope="col">STATUS</th><th scope="col">SCORE</th><th scope="col">TIME</th><th scope="col"></th></tr></thead><tbody>
+{% for a in attempts %}<tr style="border-top:2px solid var(--line)"><td style="padding:10px 16px">{{ names[a.student_id].name if names[a.student_id] else a.student_id }}</td><td style="text-align:center">{{ a.attempt_no }}</td><td style="text-align:center">{{ a.status.value.replace('_', ' ') }}</td><td style="text-align:center">{{ ('%g' % a.score_pct) ~ '%' if a.score_pct is not none else '–' }}</td><td style="text-align:center">{{ (a.duration_seconds // 60) ~ ' min' if a.duration_seconds else '–' }}</td>
+<td style="padding:6px 12px">{% if a.status.value == 'submitted' %}<a class="btn xs" href="{{ url_for('studio_tests.grade', kind='exam', attempt_id=a.id) }}">GRADE</a>{% elif a.status.value == 'graded' %}<a class="btn xs ghost" href="{{ url_for('tests.result', kind='exam', attempt_id=a.id) }}">ANSWERS</a>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="empty">Nobody has taken this exam yet.</p>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+<section class="wrap">
+<h1 class="pagetitle">COURSES</h1>
+<p class="lead2">Every course on Studiamo. Open one to read its notes, practise and take its exams.</p>
+{% if courses %}
+<div class="cols-4">
+{% for c in courses %}
+<article class="card{% if not c.available %} dim{% endif %}" style="padding:20px;position:relative">
+<span class="d" style="font-size:2.5rem;color:{{ 'var(--purple)' if c.available else 'var(--muted)' }}">{{ '%02d' % loop.index }}</span>
+<h2 style="font-size:1.5rem;margin:6px 0"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h2>
+<p style="font-size:1.0625rem;color:var(--muted);min-height:46px">{% if c.available %}{{ c.published_notes }} notes · {{ c.published_exercises }} exercises · {{ c.published_exams }} exams{% else %}{{ c.description or 'Material is being written.' }}{% endif %}</p>
+<span class="tag{% if not c.available %} g{% endif %}">{{ 'AVAILABLE' if c.available else 'COMING SOON' }}</span>
+<p class="d muted" style="font-size:0.9375rem;margin-top:8px">{{ c.code }}</p>
+</article>
+{% endfor %}
+</div>
+{% else %}<p class="empty">No courses yet.</p>{% endif %}
+</section>
+{% endblock %}

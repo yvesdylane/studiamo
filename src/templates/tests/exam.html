@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ exam.title }}{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / EXAMS</p>
+<h1 class="pagetitle">{{ exam.title|upper }}</h1>
+{% if not exam.published %}<p class="notice" style="margin-bottom:14px">Draft: students cannot see this exam yet.</p>{% endif %}
+</section>
+<section class="section" style="padding-top:10px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div class="card">
+<p class="row" style="gap:10px;margin-bottom:12px"><span class="tag">{{ 'SCHEDULED' if exam.kind.value == 'scheduled' else 'PRACTICE' }}</span>{% if is_open %}<span class="tag ok">OPEN</span>{% else %}<span class="tag g">CLOSED</span>{% endif %}</p>
+<ul style="font-size:1.25rem;line-height:1.7;margin:0 0 16px;padding-left:22px">
+<li>{{ exam.questions_per_attempt or pool }} questions{% if exam.duration_minutes %} · {{ exam.duration_minutes }} minutes{% endif %}{% if exam.max_attempts %} · {{ exam.max_attempts }} attempt{{ 's' if exam.max_attempts != 1 }}{% else %} · unlimited attempts{% endif %}</li>
+{% if exam.opens_at %}<li>Open from {{ exam.opens_at.strftime('%d %b %Y, %H:%M') }} to {{ exam.closes_at.strftime('%d %b %Y, %H:%M') }} (UTC)</li>{% endif %}
+<li>Up to {{ exam.max_exp }} exp for your best score; 75% or more also earns Xexp.</li>
+</ul>
+<h2 style="font-size:1.375rem;color:var(--accent-text)">BEFORE YOU START</h2>
+<ul style="font-size:1.125rem;line-height:1.6;padding-left:22px">{% if exam.duration_minutes %}<li>The timer starts when you press Start and keeps running if you leave the page.</li>{% endif %}<li>Reloading the page keeps your attempt, but answers are only saved when you submit.</li><li>Unanswered questions score zero. You can submit early.</li></ul>
+<div class="row" style="margin-top:16px">
+{% if acting_as('student') %}
+{% if open_attempt %}<a class="btn" href="{{ url_for('tests.take_exam', attempt_id=open_attempt.id) }}">CONTINUE YOUR ATTEMPT »</a>
+{% elif is_open and (left is none or left > 0) %}<form method="post" action="{{ url_for('tests.start_exam', exam_id=exam.id) }}" style="margin:0">{{ csrf_field() }}<button class="btn" type="submit">START EXAM »</button></form>
+{% elif not is_open %}<p class="muted">This exam is not open right now.</p>
+{% else %}<p class="muted">You have used every attempt.</p>{% endif %}
+{% endif %}
+{% if not g.user %}<a class="btn" href="{{ url_for('auth.login', next=request.path) }}">LOG IN TO TAKE IT »</a>{% endif %}
+{% if editor %}<a class="btn o" href="{{ url_for('studio_tests.edit_exam', exam_id=exam.id) }}">EDIT IN STUDIO</a>{% endif %}
+</div>
+</div>
+<div class="card">
+<h2 style="font-size:1.5rem;color:var(--accent-text)">YOUR BEST SCORE</h2>
+{% if mark %}<p class="d" style="font-size:3rem;color:var(--accent-text)">{{ '%g' % mark.best_score_pct }}%</p><p class="muted">{{ mark.exp_earned }} exp · {{ '%g' % mark.xexp_earned }} Xexp</p>{% else %}<p class="muted">None yet.</p>{% endif %}
+{% if left is not none and acting_as('student') %}<p class="muted">{{ left }} attempt{{ 's' if left != 1 }} left</p>{% endif %}
+{% if attempts %}<ul class="list" style="margin-top:10px">{% for a in attempts %}<li><span>Attempt {{ a.attempt_no }}</span>{% if a.status.value == 'in_progress' %}<span class="tag draft">IN PROGRESS</span>{% else %}<a href="{{ url_for('tests.result', kind='exam', attempt_id=a.id) }}" style="text-decoration:underline">{{ ('%g' % a.score_pct) ~ '%' if a.score_pct is not none else 'waiting for grading' }}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
+</div>
+</div>
+</section>
+{% endblock %}

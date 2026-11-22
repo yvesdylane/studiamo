@@ -1,0 +1,57 @@
+{% from "partials/review.html" import review_tag %}
+{% extends "base.html" %}
+{% block title %}{{ exam.title if exam else 'New exam' }}{% endblock %}
+{% block content %}
+{% set f = request.form if request.method == 'POST' else {} %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}#exams">{{ course.code }}</a> / EXAMS / {{ 'EDIT' if exam else 'CREATE' }}</p>
+<div class="row" style="justify-content:space-between;align-items:flex-end">
+<div><h1 class="pagetitle">{{ (exam.title if exam else 'NEW EXAM')|upper }}</h1>
+{% if exam %}<p class="row"><span class="tag g">{{ exam.kind.value|upper }}</span>{{ review_tag(exam) }}<span class="muted">{{ pool }} question{{ 's' if pool != 1 }} in the pool · {{ exam.max_exp }} exp</span></p>
+{% if exam.review_status == 'rejected' and exam.review_comment %}<p class="alert" role="status"><strong>Sent back:</strong> {{ exam.review_comment }}</p>{% endif %}{% endif %}</div>
+{% if exam %}<div class="row"><a class="btn o s" href="{{ url_for('tests.exam', exam_id=exam.id) }}">VIEW AS STUDENT</a><a class="btn o s" href="{{ url_for('studio_tests.exam_results', exam_id=exam.id) }}">RESULTS</a>
+{% set direct = acting_as('admin') or exam.kind.value == 'scheduled' %}
+<form method="post" class="inline-form">{{ csrf_field() }}{% if exam.published %}<button class="btn s ghost" name="action" value="unpublish">{{ 'UNPUBLISH' if direct else 'HIDE' }}</button>{% elif not direct and exam.review_status == 'pending' %}<button class="btn s ghost" name="action" value="unpublish">WITHDRAW FROM REVIEW</button>{% else %}<button class="btn s" name="action" value="publish">{{ 'PUBLISH EXAM »' if direct else 'SUBMIT FOR REVIEW »' }}</button>{% endif %}</form></div>{% endif %}
+</div>
+</section>
+{% if not exam %}<section class="section" style="padding-top:0;padding-bottom:16px"><nav class="seg" aria-label="Exam type" style="max-width:640px"><a href="{{ url_for('studio_tests.new_exam', course_id=course.id, kind='scheduled') }}"{% if kind.value == 'scheduled' %} aria-current="page"{% endif %}>SCHEDULED</a><a href="{{ url_for('studio_tests.new_exam', course_id=course.id, kind='system') }}"{% if kind.value == 'system' %} aria-current="page"{% endif %}>PRACTICE (SYSTEM)</a></nav>
+<p class="muted" style="margin-top:8px;font-size:1.0625rem">{{ 'One attempt, open between two dates, with the questions you pick. You publish it yourself.' if kind.value == 'scheduled' else 'Open to everyone any time, questions drawn at random from the chosen topics, retakes allowed. An admin reviews it before it is published.' }}</p></section>{% endif %}
+<form method="post" class="section" style="padding-top:0" novalidate>
+{{ csrf_field() }}<input type="hidden" name="kind" value="{{ kind.value }}">
+{% if error %}<p class="alert" role="alert" style="margin-bottom:16px">Not saved: {{ error }}</p>{% endif %}
+<div style="display:grid;grid-template-columns:1fr 2fr;gap:28px;align-items:start" class="split">
+<div class="card form">
+<h2 style="font-size:1.5rem;color:var(--accent-text);margin:0">DETAILS</h2>
+{% with name="title", label="TITLE", maxlength=200, values={'title': f.get('title', exam.title if exam else '')} %}{% include "auth/_field.html" %}{% endwith %}
+{% if kind.value == 'scheduled' %}
+<div class="field"><label class="lab" for="o">OPENS ({{ tzname }})</label><input class="input" id="o" type="datetime-local" name="opens_at" value="{{ f.get('opens_at', to_local(exam.opens_at) if exam else '') }}" style="width:100%"></div>
+<div class="field"><label class="lab" for="c">CLOSES ({{ tzname }})</label><input class="input" id="c" type="datetime-local" name="closes_at" value="{{ f.get('closes_at', to_local(exam.closes_at) if exam else '') }}" style="width:100%"></div>
+{% endif %}
+<div class="row"><label class="lab" for="d">MINUTES</label><input class="input" id="d" type="number" min="1" name="duration_minutes" value="{{ f.get('duration_minutes', exam.duration_minutes if exam and exam.duration_minutes else '') }}" style="width:90px" placeholder="none">
+<label class="lab" for="n">QUESTIONS EACH</label><input class="input" id="n" type="number" min="1" name="questions_per_attempt" value="{{ f.get('questions_per_attempt', exam.questions_per_attempt if exam and exam.questions_per_attempt else '') }}" style="width:90px" placeholder="all"></div>
+<div class="row">{% if acting_as('admin') %}<label class="lab" for="x">EXP</label><input class="input" id="x" type="number" min="0" name="max_exp" value="{{ f.get('max_exp', exam.max_exp if exam else 100) }}" style="width:100px">{% endif %}
+{% if kind.value == 'system' and not exam %}<label class="lab" for="m">ATTEMPTS</label><input class="input" id="m" type="number" min="1" name="max_attempts" value="{{ f.get('max_attempts', '') }}" style="width:90px" placeholder="unlimited">{% endif %}</div>
+<label class="check" style="font-size:1.125rem"><input type="checkbox" name="shuffle_questions"{% if (f.get('shuffle_questions') if f else (exam.shuffle_questions if exam else True)) %} checked{% endif %}>Shuffle questions</label>
+<label class="check" style="font-size:1.125rem"><input type="checkbox" name="shuffle_options"{% if (f.get('shuffle_options') if f else (exam.shuffle_options if exam else True)) %} checked{% endif %}>Shuffle answers</label>
+<button class="btn block" type="submit" name="action" value="save">{{ 'SAVE' if exam else 'CREATE DRAFT' }} »</button>
+{% if exam %}<button class="btn danger xs" type="submit" name="action" value="delete" onclick="return confirm('Delete this exam and every attempt at it?')">DELETE EXAM</button>{% endif %}
+</div>
+<div class="card" id="questions">
+{% if kind.value == 'scheduled' %}
+<h2 style="font-size:1.5rem;color:var(--accent-text);margin:0 0 6px">QUESTIONS</h2>
+<p class="muted" style="font-size:1rem;margin-bottom:10px">Tick the questions of the exam. Leave points empty to use the question's own.</p>
+{% if bank %}<ul class="list">{% for q in bank %}{% set on = q.id in chosen or (q.id|string) in request.form.getlist('question_ids') %}
+<li><label class="check" style="flex:1;min-width:260px;font-size:1.125rem"><input type="checkbox" name="question_ids" value="{{ q.id }}"{% if on %} checked{% endif %}><span>{{ q.body_md.split('\n')[0][:100] }} <span class="muted" style="font-size:0.9375rem">· {{ q.type.value.replace('_', ' ') }}</span></span></label>
+<span class="row"><label class="sr-only" for="p{{ q.id }}">Points</label><input class="input" id="p{{ q.id }}" name="points_{{ q.id }}" value="{{ '%g' % chosen[q.id] if chosen.get(q.id) else '' }}" placeholder="{{ '%g' % q.points }} pt" style="width:90px"><a class="btn xs ghost" href="{{ url_for('studio_tests.edit_question', question_id=q.id, add_to=('exam:' ~ exam.id) if exam else '') }}">EDIT</a></span></li>{% endfor %}</ul>
+{% else %}<p class="empty">The question bank is empty.</p>{% endif %}
+{% if exam %}<div class="row" style="margin-top:14px">{% for t, label in [('mcq', 'MULTIPLE CHOICE'), ('short_answer', 'SHORT ANSWER'), ('code', 'CODE')] %}<a class="btn xs ghost" href="{{ url_for('studio_tests.new_question', course_id=course.id, type=t, add_to='exam:' ~ exam.id) }}">+ NEW {{ label }}</a>{% endfor %}</div>
+{% else %}<p class="muted" style="margin-top:12px"><a href="{{ url_for('studio_tests.bank', course_id=course.id) }}" style="text-decoration:underline">Add questions to the bank</a> first if it is empty.</p>{% endif %}
+{% else %}
+<h2 style="font-size:1.5rem;color:var(--accent-text);margin:0 0 6px">TOPICS</h2>
+<p class="muted" style="font-size:1rem;margin-bottom:10px">Each attempt draws its questions at random from the active questions of these topics.</p>
+{% for t in topics %}<label class="check" style="font-size:1.1875rem"><input type="checkbox" name="topic_ids" value="{{ t.id }}"{% if t.id in chosen_topics or (t.id|string) in request.form.getlist('topic_ids') %} checked{% endif %}>{{ t.title }}</label>{% else %}<p class="empty">Add topics to the course first.</p>{% endfor %}
+{% endif %}
+</div>
+</div>
+</form>
+{% endblock %}

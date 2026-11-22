@@ -1,0 +1,35 @@
+{# The site header: main bar + course strip. Used by every page (base.html). #}
+{% set ep = request.endpoint or '' %}
+{% macro item(endpoint, label, active) %}<a class="mainlink" href="{{ url_for(endpoint) }}"{% if active %} aria-current="page"{% endif %}>{{ label }}</a>{% endmacro %}
+<div class="bar">
+<a class="brand" href="{{ url_for('pages.home') }}" aria-label="Studiamo, home"><svg viewBox="0 0 108 100" width="38" height="35" aria-hidden="true"><polygon points="27,4 75,4 98,46 75,88 27,88 4,46" fill="#000" transform="translate(7 7)"></polygon><polygon points="27,4 75,4 98,46 75,88 27,88 4,46" style="fill:var(--purple)"></polygon><rect x="28" y="52" width="14" height="18" fill="#fff"></rect><rect x="44" y="38" width="14" height="32" fill="#fff"></rect><rect x="60" y="24" width="14" height="46" fill="#fff"></rect></svg><span>STUDIAMO</span></a>
+<nav class="mainnav" aria-label="Main">
+{{ item('learn.courses', 'COURSES', ep in ('learn.courses', 'learn.course', 'learn.note')) }}
+{{ item('learn.exercises', 'EXERCISES', ep in ('learn.exercises', 'tests.exercise', 'tests.take_exercise')) }}
+{{ item('learn.exams', 'EXAMS', ep in ('learn.exams', 'tests.exam', 'tests.take_exam')) }}
+{{ item('learn.leaderboard', 'RANKS', ep == 'learn.leaderboard') }}
+</nav>
+<div class="acct">
+<button type="button" class="themebtn" id="theme-toggle" aria-label="Dark mode"{% if g.user %} data-csrf="{{ csrf_token() }}"{% endif %}><span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span></button>
+{% if g.user %}
+{% if acting_as('admin') %}<span class="tag" style="background:var(--warn)">ADMIN</span>{% endif %}
+<details class="menu">
+<summary class="avatar" aria-label="Account menu for {{ g.user.name }}">{{ (g.user.name.split()|map('first')|join(''))[:2]|upper }} <span aria-hidden="true">▾</span></summary>
+<div class="menu-list">
+<p class="menu-who"><strong>{{ g.user.player_name or g.user.name }}</strong><br><span>{{ g.user.email }}</span></p>
+{% if not acting_as('admin') %}<a href="{{ url_for('learn.dashboard') }}">Dashboard</a>{% endif %}
+{% if acting_as('lecturer') or acting_as('admin') %}<a href="{{ url_for('studio.index') }}">Studio</a>{% endif %}
+{% if acting_as('admin') %}<a href="{{ url_for('admin.index') }}">Admin</a>{% endif %}
+<a href="{{ url_for('account.profile', user_id=g.user.id) }}">Profile</a>
+<a href="{{ url_for('account.settings') }}">Settings</a>
+<form method="post" action="{{ url_for('auth.logout') }}">{{ csrf_field() }}<button type="submit">Log out</button></form>
+</div>
+</details>
+{% else %}
+<a class="btn s o" href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.method == 'GET' and not ep.startswith('auth.') else None) }}">LOG IN</a>
+<a class="btn s" href="{{ url_for('auth.register') }}">SIGN UP</a>
+{% endif %}
+</div>
+</div>
+{% set strip = nav_courses()|selectattr('available')|list %}
+{% if strip %}<nav class="strip" aria-label="Courses: open the first lesson">{% for c in strip %}<a href="{{ url_for('learn.course_start', course_id=c.id) }}"{% if course is defined and course and course.id == c.id %} aria-current="page"{% endif %}>{{ c.title|upper }}</a>{% endfor %}</nav>{% endif %}

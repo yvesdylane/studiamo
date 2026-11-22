@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Review · {{ item.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('admin.index') }}#review">ADMIN · REVIEW</a> / {{ course.code }} / {{ kind|upper }}</p>
+<h1 class="pagetitle">{{ item.title|upper }}</h1>
+<p class="row"><span class="tag">{{ item.review_status|upper }}</span><span class="muted">{{ course.title }}</span>{% if item.submitted_at %}<span class="muted">· submitted {{ item.submitted_at.strftime('%d %b %Y %H:%M') }}</span>{% endif %}</p>
+</section>
+<section class="section" style="padding-top:12px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div>
+{% if body %}<div class="card"><div class="prose" style="max-width:none">{{ body.html|safe }}</div>{% if body.problems %}<div class="problems" style="margin-top:16px">{% for p in body.problems %}<div>⚠ {{ p }}</div>{% endfor %}</div>{% endif %}</div>{% endif %}
+{% if kind == 'exam' %}<div class="card" style="margin-bottom:22px"><ul style="font-size:1.1875rem;line-height:1.7;margin:0;padding-left:22px">
+<li>{{ 'Practice exam: open to everyone, retakes allowed' if item.kind.value == 'system' else 'Scheduled exam' }}</li>
+<li>{{ item.questions_per_attempt or questions|length }} questions per attempt, from a pool of {{ questions|length }}{% if item.duration_minutes %} · {{ item.duration_minutes }} minutes{% endif %}{% if item.max_attempts %} · {{ item.max_attempts }} attempts{% endif %}</li></ul></div>{% endif %}
+{% for q in questions %}
+<div class="card" style="margin-bottom:18px"><p class="lab">QUESTION {{ loop.index }} · {{ q.type.value.replace('_', ' ')|upper }} · {{ '%g' % q.points }} PT</p>
+<div class="prose" style="max-width:none">{{ rendered[q.id][0]|safe }}</div>
+{% if q.options %}<ul style="font-size:1.125rem">{% for o in q.options %}<li>{% if o.is_correct %}<strong>✔ {{ o.label }}</strong>{% else %}{{ o.label }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+{% if q.test_cases %}<p class="muted">{{ q.test_cases|length }} test(s), {{ q.test_cases|selectattr('is_hidden')|list|length }} hidden</p>{% endif %}
+{% if q.explanation_md %}<div class="notice" style="margin-top:10px">{{ rendered[q.id][1]|safe }}</div>{% endif %}</div>
+{% endfor %}
+{% if kind != 'note' and not questions %}<p class="empty">No questions: it cannot be approved like this.</p>{% endif %}
+</div>
+<form class="card form" method="post" style="position:sticky;top:calc(var(--header-h) + 12px)" novalidate>
+{{ csrf_field() }}
+<h2 style="font-size:1.5rem;color:var(--accent-text);margin:0">DECISION</h2>
+{% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+<div class="field"><label class="lab" for="exp">EXP IT GIVES</label><input class="input" id="exp" name="max_exp" type="number" min="0" value="{{ request.form.get('max_exp', item.max_exp) }}" style="width:140px"></div>
+<p class="muted" style="font-size:0.9375rem">Students get it in full for a note, and by score for exercises and exams. 75% or more also gives Xexp.</p>
+<button class="btn block" name="decision" value="approve" type="submit">APPROVE AND PUBLISH »</button>
+<div class="field"><label class="lab" for="cm">OR SEND IT BACK WITH A COMMENT</label><textarea id="cm" name="comment" rows="4" class="input" style="width:100%">{{ request.form.get('comment', '') }}</textarea></div>
+<button class="btn danger block" name="decision" value="reject" type="submit">SEND BACK</button>
+</form>
+</div>
+</section>
+<script src="{{ url_for('static', filename='js/smd.js') }}"></script>
+{% endblock %}

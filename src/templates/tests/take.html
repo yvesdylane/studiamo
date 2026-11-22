@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block header %}{% include "partials/topbar.html" %}{% endblock %}
+{% block content %}
+<form id="take" method="post" action="{{ action }}" class="section" style="padding-top:28px" novalidate>
+{{ csrf_field() }}<input type="hidden" name="attempt_id" value="{{ started.attempt.id }}">
+<div class="row" style="justify-content:space-between;position:sticky;top:var(--header-h);background:var(--bg);z-index:5;padding:10px 0;border-bottom:3px solid var(--purple);margin-bottom:24px">
+<div><p class="crumbs" style="margin:0">{{ 'EXAM' if kind == 'exam' else 'EXERCISE' }} · ATTEMPT {{ started.attempt.attempt_no }}</p><h1 style="font-size:2.125rem;color:var(--accent-text)">{{ title|upper }}</h1></div>
+<div class="row">
+{% if deadline %}<p class="d" style="font-size:1.25rem;margin:0">TIME LEFT <span id="timer" data-deadline="{{ deadline.isoformat() }}" style="font-size:1.875rem;color:var(--accent-text)" role="timer" aria-live="off">--:--</span></p>{% endif %}
+<button class="btn s" type="submit">SUBMIT »</button>
+</div>
+</div>
+{% if started.resumed %}<p class="notice" style="margin-bottom:18px">You are continuing an attempt you started earlier.</p>{% endif %}
+<ol style="list-style:none;padding:0;margin:0;max-width:900px">
+{% for q in questions %}
+<li class="card" style="margin-bottom:24px" id="q-{{ q.id }}">
+<fieldset style="border:0;margin:0;padding:0">
+<legend class="d" style="font-size:1.125rem;color:var(--accent-text);padding:0;margin-bottom:6px">QUESTION {{ loop.index }} OF {{ questions|length }} · {{ '%g' % q.points }} POINT{{ 'S' if q.points != 1 }}</legend>
+<div class="prose" style="max-width:none">{{ bodies[q.id]|safe }}</div>
+{% if q.type.value == 'mcq' %}
+<p class="muted" style="font-size:1rem;margin:6px 0 10px">{{ 'Choose every correct answer.' if q.allow_multiple else 'Choose one answer.' }}</p>
+<div class="form" style="gap:10px">
+{% for o in q.options %}
+<label class="check" style="font-size:1.1875rem;border:2px solid var(--ink);padding:12px 14px;align-items:center"><input type="{{ 'checkbox' if q.allow_multiple else 'radio' }}" name="q{{ q.id }}" value="{{ o.id }}"><span><span class="d" style="color:var(--accent-text)">{{ 'ABCDEFGHIJ'[loop.index0] if loop.index0 < 10 else loop.index }}</span> {{ o.label }}</span></label>
+{% endfor %}
+</div>
+{% elif q.type.value == 'short_answer' %}
+<label class="lab" for="a{{ q.id }}">YOUR ANSWER</label>
+<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="4" class="input" style="width:100%;margin-top:4px"></textarea>
+{% else %}
+<label class="lab" for="a{{ q.id }}">YOUR CODE · {{ q.code_language.value|upper }}</label>
+<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="10" class="input code-answer" spellcheck="false" style="width:100%;margin-top:4px;font:0.9375rem/1.6 ui-monospace,Menlo,Consolas,monospace">{{ q.starter_code or '' }}</textarea>
+{% if q.test_cases %}<details style="margin-top:10px"><summary class="lab" style="cursor:pointer">EXAMPLES ({{ q.test_cases|length }})</summary>
+{% for t in q.test_cases %}<div class="smd-compare" style="margin:10px 0"><figure><figcaption>Input</figcaption><pre><code>{{ t.input }}</code></pre></figure><figure><figcaption>Expected output</figcaption><pre><code>{{ t.expected_output }}</code></pre></figure></div>{% endfor %}
+</details>{% endif %}
+<p class="muted" style="font-size:0.9375rem;margin-top:6px">Your program reads the input and prints the output. Hidden tests are also used.</p>
+{% endif %}
+</fieldset>
+</li>
+{% endfor %}
+</ol>
+<div class="row" style="max-width:900px;justify-content:space-between"><a href="{{ back }}" style="text-decoration:underline;color:var(--accent-text)">« Leave (the attempt stays open)</a><button class="btn" type="submit">SUBMIT {{ 'EXAM' if kind == 'exam' else 'ANSWERS' }} »</button></div>
+</form>
+<script src="{{ url_for('static', filename='js/smd.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById("take"), sent = false;
+  form.addEventListener("submit", function (e) {
+    if (sent) { e.preventDefault(); return; }
+    var empty = 0;
+    {% for q in questions %}if (!form.querySelector('[name="q{{ q.id }}"]:checked') && !(form.querySelector('textarea[name="q{{ q.id }}"]') || {}).value) empty++;
+    {% endfor %}
+    if (empty && !window.timeUp && !confirm(empty + " question(s) have no answer. Submit anyway?")) { e.preventDefault(); return; }
+    sent = true;
+  });
+  document.querySelectorAll(".code-answer").forEach(function (t) {
+    t.addEventListener("keydown", function (e) {
+      if (e.key === "Tab" && !e.shiftKey && t.dataset.esc !== "1") { e.preventDefault(); var s = t.selectionStart; t.value = t.value.slice(0, s) + "    " + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = s + 4; }
+      else if (e.key === "Escape") t.dataset.esc = "1"; else t.dataset.esc = "";
+    });
+  });
+  var timer = document.getElementById("timer");
+  if (timer) {
+    var end = new Date(timer.dataset.deadline).getTime(), warned = false;
+    (function tick() {
+      var left = Math.max(0, Math.round((end - Date.now()) / 1000));
+      timer.textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0");
+      if (left <= 60 && !warned) { warned = true; timer.parentNode.setAttribute("aria-live", "assertive"); timer.style.color = "var(--danger)"; }
+      if (left === 0) { window.timeUp = true; if (!sent) { sent = true; form.submit(); } return; }
+      setTimeout(tick, 1000);
+    })();
+  }
+})();
+</script>
+{% endblock %}

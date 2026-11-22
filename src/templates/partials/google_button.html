@@ -1,0 +1,2 @@
+{# needs: g_href, g_label; optional g_id, g_base (register.js adds the role to g_base) #}
+<a class="gbtn" href="{{ g_href }}"{% if g_id %} id="{{ g_id }}"{% endif %}{% if g_base %} data-base="{{ g_base }}"{% endif %}>{% include "partials/google_g.html" %}{{ g_label }}</a>

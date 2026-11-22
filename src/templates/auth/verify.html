@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Verify your email{% endblock %}
+{% block content %}
+<section class="grid" style="padding:56px 40px 64px">
+<div class="card formcard" style="max-width:680px;margin:0 auto">
+{% if state == "sent" %}
+<p class="d" style="font-size:1.25rem;color:var(--accent-text)">ONE LAST STEP</p>
+<h1 style="font-size:3.25rem;line-height:1.05;color:var(--accent-text);margin:8px 0 16px">CHECK YOUR INBOX</h1>
+<p style="font-size:1.3125rem;line-height:1.5">We sent a link to {% if email %}<strong>{{ email }}</strong>{% else %}your email address{% endif %}. Open it to verify your email and log in. It works for 24 hours.</p>
+<p style="font-size:1.125rem;line-height:1.5;color:var(--muted);margin-top:12px">Nothing there? Look in your spam folder, or get a new link.</p>
+{% elif state == "expired" %}
+<h1 style="font-size:3rem;line-height:1.05;color:var(--accent-text);margin:0 0 16px">THIS LINK HAS EXPIRED</h1>
+<p style="font-size:1.3125rem;line-height:1.5">Verification links work for 24 hours. Enter your email to get a new one.</p>
+{% else %}
+<h1 style="font-size:3rem;line-height:1.05;color:var(--accent-text);margin:0 0 16px">THIS LINK DOES NOT WORK</h1>
+<p style="font-size:1.3125rem;line-height:1.5">It may be incomplete, or already replaced by a newer one. Enter your email to get a new link.</p>
+{% endif %}
+<form class="form" method="post" action="{{ url_for('verify.resend') }}" style="margin-top:22px">
+{{ csrf_field() }}
+{% if state == "sent" and email %}<input type="hidden" name="email" value="{{ email }}">
+{% else %}{% with name="email", label="EMAIL", type="email", placeholder="you@example.com", autocomplete="email", values={}, errors=None %}{% include "auth/_field.html" %}{% endwith %}{% endif %}
+<button class="btn {{ 'o ' if state == 'sent' }}block" type="submit">SEND A NEW LINK</button>
+</form>
+<p class="alt">Already verified? <a href="{{ url_for('auth.login') }}" class="d">Log in</a></p>
+</div>
+</section>
+{% endblock %}

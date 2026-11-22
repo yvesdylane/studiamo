@@ -1,0 +1,6 @@
+{# usage: {% with name="email", label="EMAIL", type="email", placeholder="you@example.com", autocomplete="email" %}{% include "auth/_field.html" %}{% endwith %} #}
+<div class="field"><label for="f-{{ name }}" class="lab">{{ label }}</label>
+<input id="f-{{ name }}" name="{{ name }}" type="{{ type or 'text' }}" placeholder="{{ placeholder }}"{% if type != 'password' %} value="{{ values.get(name, '') }}"{% endif %}{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %} required{% if minlength %} minlength="{{ minlength }}"{% endif %}{% if maxlength %} maxlength="{{ maxlength }}"{% endif %}{% if errors and errors.get(name) %} aria-invalid="true" aria-describedby="e-{{ name }}"{% elif hint %} aria-describedby="h-{{ name }}"{% endif %}>
+{% if hint %}<p class="hint" id="h-{{ name }}">{{ hint }}</p>{% endif %}
+{% if errors and errors.get(name) %}<p class="err" id="e-{{ name }}">{{ errors[name] }}</p>{% endif %}
+</div>

@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------- secrets
+# .env holds the database URL, SECRET_KEY, Google and Resend keys, ADMIN_EMAILS.
+# Copy .env.example to .env on each machine; never commit the real one.
+/.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# -------------------------------------------- data written by the running app
+# In production this is real user data: note bodies (notes/), students' attempt
+# records (attempts/), uploaded images. Back it up; never commit or overwrite it
+# from the repository. Paths come from MARKDOWN_DIR and MEDIA_DIR (default data/).
+/data/
+/uploads/
+/media/
+/instance/
+
+# local databases, dumps and exports (production data)
+/studiamo.sql
+*.sql.gz
+*.dump
+*.backup
+*.sqlite
+*.sqlite3
+*.db
+
+# ------------------------------------------------------------ course material
+# lecturers' source documents imported into notes (not code)
+/Course_Notes_Factual_Programming.pdf
+
+# ---------------------------------------------------------------- python
+/.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ------------------------------------------------------------------ logs
+*.log
+logs/
+
+# ------------------------------------------------------------- editors / OS
+# PyCharm: workspace.xml and friends are per developer (they can hold run
+# configurations and local paths)
+/.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Claude Code: personal settings (may hold keys, e.g. MCP headers)
+.claude/settings.local.json

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Studio{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs">STUDIO</p>
+<h1 class="pagetitle">YOUR COURSES</h1>
+<p class="lead2">Write notes, build exercises and exams. {% if acting_as('admin') %}As an admin you can edit every course.{% else %}You can edit the courses you created.{% endif %} <a href="{{ url_for('studio.guide') }}" style="text-decoration:underline;color:var(--accent-text)">How to write notes »</a></p>
+</section>
+<section class="section" style="padding-top:8px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div>
+{% if courses %}
+<div class="card" style="padding:8px 24px"><ul class="list">
+{% for c in courses %}<li><span><a href="{{ url_for('studio.course', course_id=c.id) }}" style="font-size:1.375rem;text-decoration:underline">{{ c.title }}</a> <span class="muted d" style="font-size:1rem">{{ c.code }}</span></span>
+<span class="row"><a class="btn xs ghost" href="{{ url_for('learn.course', course_id=c.id) }}">VIEW AS STUDENT</a><a class="btn xs" href="{{ url_for('studio.course', course_id=c.id) }}">EDIT »</a></span></li>{% endfor %}
+</ul></div>
+{% else %}<p class="empty">No courses yet. Create the first one.</p>{% endif %}
+</div>
+<form class="card form" method="post" action="{{ url_for('studio.create_course') }}" novalidate>
+{{ csrf_field() }}
+<h2 style="font-size:1.875rem;color:var(--accent-text);margin:0">NEW COURSE</h2>
+{% with name="code", label="CODE", placeholder="FP101", maxlength=20 %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="title", label="TITLE", placeholder="Factual Programming", maxlength=200 %}{% include "auth/_field.html" %}{% endwith %}
+<div class="field"><label for="f-description" class="lab">DESCRIPTION (OPTIONAL)</label><textarea id="f-description" name="description" rows="3" class="input" style="width:100%;margin-top:4px">{{ values.get('description', '') }}</textarea></div>
+<button class="btn block" type="submit">CREATE COURSE »</button>
+</form>
+</div>
+</section>
+{% endblock %}

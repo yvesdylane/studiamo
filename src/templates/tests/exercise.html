@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ ex.title }}{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / {{ topic.title|upper }} / EXERCISE</p>
+<h1 class="pagetitle">{{ ex.title|upper }}</h1>
+{% if not ex.published %}<p class="notice" style="margin-bottom:14px">Draft: students cannot see this exercise yet.</p>{% endif %}
+</section>
+<section class="section" style="padding-top:10px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div class="card">
+<p style="font-size:1.25rem;line-height:1.55">{{ ex.questions|length }} question{{ 's' if ex.questions|length != 1 }} · up to <strong>{{ ex.max_exp }} exp</strong>. Each retry gives {{ (ex.retake_decay * 100)|round|int }}% of the exp of the one before. A best score of 75% or more also earns Xexp, which moves your rank.</p>
+<div class="row" style="margin-top:18px">
+{% if acting_as('student') and ex.published %}<a class="btn" href="{{ url_for('tests.take_exercise', exercise_id=ex.id) }}">{{ 'CONTINUE' if attempts and attempts[0].status.value == 'in_progress' else ('TRY AGAIN' if attempts else 'START') }} »</a>{% endif %}
+{% if not g.user and ex.published %}<a class="btn" href="{{ url_for('auth.login', next=request.path) }}">LOG IN TO START »</a>{% endif %}
+{% if editor %}<a class="btn o" href="{{ url_for('studio_tests.edit_exercise', exercise_id=ex.id) }}">EDIT IN STUDIO</a>{% endif %}
+</div>
+</div>
+<div class="card">
+<h2 style="font-size:1.5rem;color:var(--accent-text)">YOUR BEST</h2>
+{% if mark %}<p class="d" style="font-size:3rem;color:var(--accent-text)">{{ '%g' % mark.best_score_pct }}%</p><p class="muted">{{ mark.attempts_count }} attempt{{ 's' if mark.attempts_count != 1 }} · {{ mark.exp_earned }} exp · {{ '%g' % mark.xexp_earned }} Xexp</p>
+{% else %}<p class="muted">None yet.</p>{% endif %}
+{% if attempts %}<ul class="list" style="margin-top:10px">{% for a in attempts %}<li><span>Attempt {{ a.attempt_no }}</span>{% if a.status.value == 'in_progress' %}<span class="tag draft">IN PROGRESS</span>{% else %}<a href="{{ url_for('tests.result', kind='exercise', attempt_id=a.id) }}" style="text-decoration:underline">{{ ('%g' % a.score_pct) ~ '%' if a.score_pct is not none else 'waiting for grading' }}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
+</div>
+</div>
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<section class="wrap">
+<h1 class="pagetitle">LEADERBOARD</h1>
+<p class="lead2">Ordered by exp. The rank (F1 to S5) comes from Xexp: the quality of the work.</p>
+{% if me %}<p class="notice" style="margin-bottom:20px">{% if me.ranking_visibility == 'hidden' %}You are hidden from the ranking.{% elif me.ranking_visibility == 'anonymous' %}You appear as “Anonymous player”.{% else %}You appear as <strong>{{ me.player_name or me.name }}</strong>.{% endif %} <a href="{{ url_for('account.settings') }}#ranking" style="text-decoration:underline;color:var(--accent-text)">Change how you appear »</a></p>{% endif %}
+{% if board %}
+<div class="card" style="padding:0;overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:1.1875rem">
+<thead><tr style="background:var(--purple);color:#fff;font-family:var(--font-display)"><th scope="col" style="padding:10px 16px;text-align:left">#</th><th scope="col" style="text-align:left">PLAYER</th><th scope="col">LEVEL</th><th scope="col">EXP</th><th scope="col">RANK</th><th scope="col">XEXP</th></tr></thead>
+<tbody>
+{% for e in board %}
+<tr style="border-top:2px solid var(--line){% if e.you %};background:var(--accent-soft);font-weight:700{% endif %}">
+<td style="padding:10px 16px">{{ e.position }}</td>
+<td>{% if e.anonymous %}<span class="muted">Anonymous player</span>{% else %}<a href="{{ url_for('account.profile', user_id=e.user.id) }}" style="text-decoration:underline">{{ e.user.player_name or e.user.name }}</a>{% endif %}{% if e.you %} <span class="tag">YOU</span>{% endif %}</td>
+<td style="text-align:center">{{ e.level }}</td><td style="text-align:center">{{ e.total_exp }}</td>
+<td style="text-align:center"><span class="tag">{{ e.rank_label }}</span></td><td style="text-align:center">{{ '%g' % e.total_xexp }}</td>
+</tr>
+{% endfor %}
+</tbody></table></div>
+{% else %}<p class="empty">Nobody has earned exp yet.</p>{% endif %}
+</section>
+{% endblock %}

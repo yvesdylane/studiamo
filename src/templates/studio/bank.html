@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Question bank · {{ course.code }}{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / QUESTION BANK</p>
+<div class="row" style="justify-content:space-between;align-items:flex-end"><h1 class="pagetitle">QUESTION BANK</h1>
+<div class="row"><a class="btn s" href="{{ url_for('studio_tests.new_question', course_id=course.id, type='mcq') }}">+ MULTIPLE CHOICE</a><a class="btn s" href="{{ url_for('studio_tests.new_question', course_id=course.id, type='short_answer') }}">+ SHORT ANSWER</a><a class="btn s" href="{{ url_for('studio_tests.new_question', course_id=course.id, type='code') }}">+ CODE</a></div></div>
+<p class="lead2">Questions are reused by exercises and exams. Practice exams draw at random from the questions of their topics.</p>
+</section>
+<section class="section" style="padding-top:8px">
+{% if questions %}<div class="card" style="padding:8px 24px"><ul class="list">
+{% for q in questions %}<li><span style="flex:1;min-width:260px"><a href="{{ url_for('studio_tests.edit_question', question_id=q.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ q.body_md.split('\n')[0][:110] }}</a><br><span class="muted" style="font-size:0.9375rem">{{ q.type.value.replace('_', ' ') }} · {{ '%g' % q.points }} pt · {{ topics[q.topic_id].title if q.topic_id in topics else 'no topic' }}{% if not q.is_active %} · hidden{% endif %}</span></span>
+<form class="inline-form" method="post" action="{{ url_for('studio_tests.delete_question', question_id=q.id) }}" onsubmit="return confirm('Delete this question?')">{{ csrf_field() }}<button class="iconbtn" type="submit" aria-label="Delete question" style="color:var(--danger)">✕</button></form></li>{% endfor %}
+</ul></div>{% else %}<p class="empty">No questions yet.</p>{% endif %}
+</section>
+{% endblock %}

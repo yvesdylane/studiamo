@@ -1,0 +1,65 @@
+{% from "partials/review.html" import review_tag, publish_button %}
+{% extends "base.html" %}
+{% block title %}{{ course.title }} · Studio{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / {{ course.code }}</p>
+<div class="row" style="justify-content:space-between;align-items:flex-end"><h1 class="pagetitle">{{ course.title|upper }}</h1>
+<a class="btn s o" href="{{ url_for('learn.course', course_id=course.id) }}">VIEW AS STUDENT</a></div>
+</section>
+<section class="section" style="padding-top:12px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div>
+<h2 id="topics">TOPICS AND NOTES</h2>
+{% if not acting_as('admin') %}<p class="notice" style="margin-bottom:18px">Notes, exercises and practice exams are published by an admin after review, who also sets the exp. Your scheduled exams you publish yourself.</p>{% endif %}
+{% for p in parts %}{% set t = p.topic %}
+<div class="card" id="topic-{{ t.id }}" style="margin-bottom:22px">
+<div class="row" style="justify-content:space-between">
+<form class="inline-form" method="post" action="{{ url_for('studio.rename_topic', topic_id=t.id) }}">{{ csrf_field() }}<label class="lab" for="t{{ t.id }}">TOPIC {{ loop.index }}</label><input class="input" id="t{{ t.id }}" name="title" value="{{ t.title }}" maxlength="200" style="font-size:1.25rem;min-width:220px"><button class="btn xs ghost" type="submit">RENAME</button></form>
+<span class="row">
+<form class="inline-form" method="post" action="{{ url_for('studio.move_topic', topic_id=t.id) }}">{{ csrf_field() }}<button class="iconbtn" name="dir" value="up" aria-label="Move topic up"{% if loop.first %} disabled{% endif %}>↑</button><button class="iconbtn" name="dir" value="down" aria-label="Move topic down"{% if loop.last %} disabled{% endif %}>↓</button></form>
+<form class="inline-form" method="post" action="{{ url_for('studio.delete_topic', topic_id=t.id) }}" onsubmit="return confirm('Delete this topic, its notes and its exercises?')">{{ csrf_field() }}<button class="btn xs danger" type="submit">DELETE</button></form>
+</span></div>
+{% if p.notes %}<ul class="list" style="margin-top:10px">
+{% for n in p.notes %}<li><span><a href="{{ url_for('studio.edit_note', note_id=n.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ n.title }}</a> {{ review_tag(n) }} <span class="muted" style="font-size:0.9375rem">{{ n.max_exp }} exp</span></span>
+<span class="row">
+<form class="inline-form" method="post" action="{{ url_for('studio.move_note', note_id=n.id) }}">{{ csrf_field() }}<button class="iconbtn" name="dir" value="up" aria-label="Move note up"{% if loop.first %} disabled{% endif %}>↑</button><button class="iconbtn" name="dir" value="down" aria-label="Move note down"{% if loop.last %} disabled{% endif %}>↓</button></form>
+{{ publish_button(n, url_for('studio.publish_note', note_id=n.id)) }}
+<a class="btn xs" href="{{ url_for('studio.edit_note', note_id=n.id) }}">EDIT</a>
+<form class="inline-form" method="post" action="{{ url_for('studio.delete_note', note_id=n.id) }}" onsubmit="return confirm('Delete this note?')">{{ csrf_field() }}<button class="iconbtn" type="submit" aria-label="Delete note {{ n.title }}" style="color:var(--danger)">✕</button></form>
+</span></li>{% endfor %}</ul>{% else %}<p class="muted" style="margin:10px 0">No notes in this topic yet.</p>{% endif %}
+<form class="inline-form" method="post" action="{{ url_for('studio.add_note', topic_id=t.id) }}" style="margin-top:12px">{{ csrf_field() }}<label class="sr-only" for="n{{ t.id }}">New note title</label><input class="input" id="n{{ t.id }}" name="title" placeholder="New note title" maxlength="200"><button class="btn xs" type="submit">+ ADD NOTE</button><button class="btn xs ghost" type="submit" name="then" value="import">IMPORT A NOTE…</button></form>
+</div>
+{% else %}<p class="empty" style="margin-bottom:22px">No topics yet. A topic is a week or a chapter: it groups notes and exercises.</p>{% endfor %}
+<form class="card inline-form" method="post" action="{{ url_for('studio.add_topic', course_id=course.id) }}" style="display:flex">{{ csrf_field() }}<label class="lab" for="newtopic">NEW TOPIC</label><input class="input" id="newtopic" name="title" placeholder="Week 1: Introduction" maxlength="200" style="flex:1"><button class="btn xs" type="submit">+ ADD TOPIC</button></form>
+
+<h2 style="margin-top:36px" id="exercises">EXERCISES</h2>
+<div class="card">{% if exercises %}<ul class="list">{% for e in exercises %}<li><span><a href="{{ url_for('studio_tests.edit_exercise', exercise_id=e.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ e.title }}</a> {{ review_tag(e) }}</span><a class="btn xs" href="{{ url_for('studio_tests.edit_exercise', exercise_id=e.id) }}">EDIT</a></li>{% endfor %}</ul>{% else %}<p class="muted">No exercises yet.</p>{% endif %}
+{% if parts %}<form class="inline-form" method="post" action="{{ url_for('studio_tests.new_exercise', course_id=course.id) }}" style="margin-top:12px">{{ csrf_field() }}<input class="input" name="title" placeholder="Exercise title" maxlength="200" aria-label="Exercise title"><select class="input" name="topic_id" aria-label="Topic">{% for p in parts %}<option value="{{ p.topic.id }}">{{ p.topic.title }}</option>{% endfor %}</select><button class="btn xs" type="submit">+ NEW EXERCISE</button></form>{% else %}<p class="muted">Add a topic first.</p>{% endif %}</div>
+
+<h2 style="margin-top:36px" id="exams">EXAMS</h2>
+<div class="card">{% if exams %}<ul class="list">{% for x in exams %}<li><span><a href="{{ url_for('studio_tests.edit_exam', exam_id=x.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ x.title }}</a> <span class="tag g">{{ x.kind.value|upper }}</span> {{ review_tag(x) }}</span><span class="row"><a class="btn xs ghost" href="{{ url_for('studio_tests.exam_results', exam_id=x.id) }}">RESULTS</a><a class="btn xs" href="{{ url_for('studio_tests.edit_exam', exam_id=x.id) }}">EDIT</a></span></li>{% endfor %}</ul>{% else %}<p class="muted">No exams yet.</p>{% endif %}
+<a class="btn xs" href="{{ url_for('studio_tests.new_exam', course_id=course.id) }}" style="margin-top:12px">+ NEW EXAM</a>
+<a class="btn xs ghost" href="{{ url_for('studio_tests.bank', course_id=course.id) }}" style="margin-top:12px">QUESTION BANK</a></div>
+</div>
+
+<div>
+<form class="card form" method="post" action="{{ url_for('studio.course', course_id=course.id) }}" novalidate>
+{{ csrf_field() }}
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">DETAILS</h2>
+{% with name="code", label="CODE", maxlength=20, values={'code': course.code} %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="title", label="TITLE", maxlength=200, values={'title': course.title} %}{% include "auth/_field.html" %}{% endwith %}
+<div class="field"><label for="f-description" class="lab">DESCRIPTION</label><textarea id="f-description" name="description" rows="4" class="input" style="width:100%;margin-top:4px">{{ course.description or '' }}</textarea></div>
+<button class="btn block" type="submit">SAVE DETAILS</button>
+</form>
+<form class="card form" method="post" action="{{ url_for('studio.delete_course', course_id=course.id) }}" style="margin-top:24px;border-color:var(--danger)">
+{{ csrf_field() }}
+<h2 style="font-size:1.5rem;color:var(--danger);margin:0">DELETE COURSE</h2>
+<p style="font-size:1.0625rem">Removes every topic, note, exercise and exam of this course, and students' progress in it.</p>
+<div class="field"><label for="confirm_code" class="lab" style="color:var(--danger)">TYPE {{ course.code }} TO CONFIRM</label><input id="confirm_code" name="confirm_code" class="input" autocomplete="off"></div>
+<button class="btn danger block" type="submit">DELETE FOREVER</button>
+</form>
+</div>
+</div>
+</section>
+{% endblock %}

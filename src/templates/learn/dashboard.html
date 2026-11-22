@@ -1,0 +1,77 @@
+{% from "partials/skill_graph.html" import skill_graph %}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs">YOUR LEARNING DASHBOARD</p>
+<h1 class="pagetitle">WELCOME BACK, {{ (g.user.player_name or g.user.name.split()[0])|upper }}</h1>
+</section>
+<section class="section" style="padding-top:16px">
+{% if level %}
+<div class="cols-3" style="margin-bottom:28px">
+<div class="card stat"><span class="small">LEVEL</span><span class="big">{{ level.level }}</span>
+<div class="meter" role="img" aria-label="{{ level.exp_in_level }} of {{ level.exp_to_next_level }} exp to level {{ level.level + 1 }}"><i style="width:{{ (100 * level.exp_in_level / level.exp_to_next_level)|round(1) if level.exp_to_next_level else 100 }}%"></i></div>
+<span class="small">{{ level.exp_in_level }} / {{ level.exp_to_next_level }} exp to level {{ level.level + 1 }} · {{ level.total_exp }} exp in total</span></div>
+<div class="card stat" style="background:var(--purple);color:#fff"><span class="small" style="color:#eee">RANK</span>
+<div class="row"><span class="hex" style="width:64px;height:64px;font-size:1.875rem">{{ level.rank_label }}</span><span style="font-size:1.125rem">from {{ '%g' % level.total_xexp }} Xexp</span></div>
+{% if level.xexp_to_next_rank %}<div class="meter" style="border-color:var(--bg)"><i style="width:{{ (100 * level.xexp_in_rank / level.xexp_to_next_rank)|round(1) }}%;background:var(--bg)"></i></div>
+<span class="small" style="color:#eee">{{ '%g' % level.xexp_in_rank }} / {{ '%g' % level.xexp_to_next_rank }} Xexp to the next rank. Work scored 75% or more earns Xexp.</span>
+{% else %}<span class="small" style="color:#eee">Top rank reached.</span>{% endif %}</div>
+<div class="card stat"><span class="small">LEADERBOARD</span>{% if g.user.ranking_visibility == 'hidden' %}<span class="big">–</span><span class="small">You are hidden from the ranking (you would be #{{ position }}).{% else %}<span class="big">#{{ position }}</span><span class="small">{% if g.user.ranking_visibility == 'anonymous' %}Shown as “Anonymous player”. {% endif %}{% endif %}<a href="{{ url_for('learn.leaderboard') }}" style="text-decoration:underline;color:var(--accent-text)">See everyone »</a> · <a href="{{ url_for('account.settings') }}#ranking" style="text-decoration:underline;color:var(--accent-text)">How you appear</a></span></div>
+</div>
+{% endif %}
+
+{% if skills %}
+<div class="card" style="margin-bottom:28px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:center" id="skills">
+{{ skill_graph(skills, level.rank_label if level else none) }}
+<div><h2 style="font-size:1.875rem;color:var(--accent-text);margin:0 0 8px">YOUR SKILL GRAPH</h2>
+<p style="font-size:1.05rem;line-height:1.55;margin-bottom:10px">It shows the <strong>quality</strong> of your work, not just how much you did:</p>
+<ul style="font-size:1rem;line-height:1.6;padding-left:20px;margin:0">
+<li><strong>Reading:</strong> come back to your notes. A note counts in full when you spent 3× its reading time on it ({{ skills.counts.minutes }} min so far).</li>
+<li><strong>Practice:</strong> your best score on each exercise you took ({{ skills.counts.exercises }}).</li>
+<li><strong>Exams:</strong> your best score on each exam you took ({{ skills.counts.exams }}).</li>
+<li><strong>Subjects:</strong> how far you are in each course you started ({{ skills.counts.courses }}).</li>
+<li><strong>Streak:</strong> days in a row with a daily task done; full at 45 ({{ skills.counts.streak }} now).</li>
+<li><strong>Time:</strong> time on notes, exercises and exams; full at 100 hours ({{ skills.counts.hours }} h).</li>
+<li><strong>Badges:</strong> badges collected out of all of them ({{ skills.counts.badges }}/{{ skills.counts.badges_total }}).</li></ul></div>
+</div>
+{% endif %}
+{% if skills %}{% set eng = skills.engagement %}
+<div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;margin-bottom:28px" class="split">
+<div class="card" id="tasks">
+<div class="row" style="justify-content:space-between"><h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">TODAY'S TASKS</h2><span class="tag" style="background:var(--badge)">{{ eng.streak }}-DAY STREAK</span></div>
+<p class="muted" style="font-size:0.95rem;margin:4px 0 10px">Each task: +{{ eng.task_reward[0] }} exp, +{{ '%g' % eng.task_reward[1] }} Xexp. All of them: +{{ eng.bonus[0] }} exp, +{{ '%g' % eng.bonus[1] }} Xexp more. A day with a task done keeps your streak.</p>
+<ul class="list">{% for t in eng.tasks %}<li><span style="flex:1;min-width:220px">{% if t.done %}<span aria-hidden="true">✓ </span><s>{{ t.title }}</s><span class="sr-only"> (done)</span>{% else %}{{ t.title }}{% endif %}</span>
+<span style="min-width:140px">{% set pct = (100 * t.progress / t.target)|round|int %}<div class="meter" role="img" aria-label="{{ pct }}% done"><i style="width:{{ pct }}%"></i></div>
+<span class="muted" style="font-size:0.85rem">{% if t.unit == 's' %}{{ (t.progress / 60)|round|int }} / {{ (t.target / 60)|int }} min{% else %}{{ t.progress }} / {{ t.target }}{% endif %}</span></span></li>{% endfor %}</ul>
+</div>
+<div class="card" id="badges">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0 0 6px">BADGES {{ eng.badges_earned }}/{{ eng.badges|length }}</h2>
+<ul class="badge-grid">{% for b in eng.badges %}<li class="{{ 'got' if b.earned else 'locked' }}" title="{{ b.description }}"><span class="hex badge-hex" aria-hidden="true">{{ b.name[0] }}</span><span><strong>{{ b.name }}</strong><br><span class="muted">{{ b.description }}</span>{% if not b.earned %}<span class="sr-only"> (not earned yet)</span>{% endif %}</span></li>{% endfor %}</ul>
+</div>
+</div>
+{% endif %}
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<div>
+<h2>PICK UP WHERE YOU LEFT OFF</h2>
+{% if resume %}
+<div class="card" style="margin-bottom:28px"><p class="crumbs">{{ resume.course.title|upper }} / {{ resume.topic.title|upper }}</p><h3 style="font-size:1.875rem;margin:4px 0 14px">{{ resume.note.title }}</h3><a class="btn s" href="{{ url_for('learn.note', note_id=resume.note.id) }}">CONTINUE »</a></div>
+{% else %}<p class="empty" style="margin-bottom:28px">You have read everything that is open. Try an exercise or an exam.</p>{% endif %}
+<h2>COURSES</h2>
+{% if courses %}
+<div class="cols-3" style="grid-template-columns:1fr 1fr">
+{% for c in courses %}{% set cp = progress[c.id] %}
+<article class="card" style="padding:20px;position:relative"><h3 style="font-size:1.5rem"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h3>
+<div class="meter" style="margin:12px 0 6px"><i style="width:{{ cp.completion_pct }}%"></i></div>
+<p class="muted" style="font-size:1rem">{{ cp.completion_pct|round|int }}% done · {{ cp.notes_completed }}/{{ cp.notes_total }} notes · {{ cp.exercises_done }}/{{ cp.exercises_total }} exercises</p></article>
+{% endfor %}</div>
+{% else %}<p class="empty">No course has material yet.</p>{% endif %}
+</div>
+<div>
+<h2>RECENT EXP</h2>
+<div class="card">{% if ledger %}<ul class="list">{% for x in ledger %}<li><span>{{ x.source|capitalize }}</span><span><strong>+{{ x.amount }}</strong> exp{% if x.xexp %} · +{{ '%g' % x.xexp }} Xexp{% endif %}</span></li>{% endfor %}</ul>
+{% else %}<p class="muted">Read a note or do an exercise to earn your first exp.</p>{% endif %}</div>
+</div>
+</div>
+</section>
+{% endblock %}

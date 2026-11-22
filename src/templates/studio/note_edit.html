@@ -1,0 +1,87 @@
+{% from "partials/review.html" import review_tag %}
+{% extends "base.html" %}
+{% block title %}Edit: {{ note.title }}{% endblock %}
+{% block page_class %} page-wide{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap" style="padding-bottom:0">
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}#topic-{{ topic.id }}">{{ course.code }}</a> / {{ topic.title|upper }}</p>
+</section>
+<form id="note-form" data-open-import="{{ '1' if open_import else '' }}" method="post" action="{{ url_for('studio.edit_note', note_id=note.id) }}" class="section" style="padding-top:8px" novalidate data-preview-url="{{ url_for('studio.preview') }}" data-upload-url="{{ url_for('media.upload') }}">
+{{ csrf_field() }}
+<div class="row" style="justify-content:space-between;margin-bottom:14px">
+<div class="row" style="flex:1">
+<label class="sr-only" for="f-title">Title</label>
+<input id="f-title" name="title" class="input" value="{{ note.title }}" maxlength="200" required style="font:1.875rem var(--font-display);color:var(--accent-text);flex:1;min-width:260px">
+{% if acting_as('admin') %}<label class="lab" for="f-max_exp">EXP</label><input id="f-max_exp" name="max_exp" type="number" min="0" class="input" value="{{ note.max_exp }}" style="width:100px">
+<label class="check" style="align-items:center;font-size:1.1875rem"><input type="checkbox" name="published"{% if note.published %} checked{% endif %}>Published</label>
+{% else %}{{ review_tag(note) }}<span class="muted">{{ note.max_exp }} exp (set by an admin)</span>{% endif %}
+</div>
+<div class="row"><a class="btn o s" href="{{ url_for('learn.note', note_id=note.id) }}">OPEN AS READER</a><button class="btn s{{ ' o' if not acting_as('admin') }}" type="submit">SAVE »</button>
+{% if not acting_as('admin') %}{% if note.review_status in ('draft', 'rejected') and not note.published %}<button class="btn s" type="submit" name="action" value="submit">SAVE AND SUBMIT FOR REVIEW »</button>
+{% elif note.review_status == 'pending' %}<button class="btn s ghost" type="submit" name="action" value="withdraw">WITHDRAW FROM REVIEW</button>{% endif %}{% endif %}</div>
+</div>
+{% if note.review_status == 'rejected' and note.review_comment %}<div class="alert" role="status" style="margin-bottom:14px"><strong>Sent back by an admin:</strong> {{ note.review_comment }}</div>{% endif %}
+{% if errors %}<p class="alert" role="alert">{% for k, v in errors.items() %}{{ v }} {% endfor %}</p>{% endif %}
+<div class="ed-tools">
+<div class="row" style="justify-content:space-between">
+<button type="button" class="btn s" id="import-open">IMPORT NOTES…</button>
+</div>
+<dialog id="import-dialog" class="card" aria-labelledby="import-title" style="max-width:640px;width:calc(100% - 40px);border:3px solid var(--purple)">
+<div class="form" id="import-form" data-url="{{ url_for('studio.import_note', note_id=note.id) }}">
+<h2 id="import-title" style="font-size:1.6rem;color:var(--accent-text);margin:0">IMPORT NOTES</h2>
+<p>Word (.docx), PowerPoint (.pptx), PDF, Markdown, text or HTML.</p>
+<div class="field"><label class="lab" for="import-file">FILE</label><input type="file" id="import-file" accept=".docx,.pptx,.pdf,.md,.markdown,.txt,.html,.htm" class="input" style="width:100%"></div>
+<div class="field"><label class="lab" for="import-text">OR PASTE THE TEXT</label><textarea id="import-text" rows="5" class="input" style="width:100%"></textarea></div>
+{% if ai_key %}
+<label class="check" style="font-size:1.1rem"><input type="checkbox" id="import-ai" checked><span>Convert it with my AI (Claude, key <code>{{ ai_key.hint }}</code>): code boxes, diagrams, file trees. <span class="muted">Takes up to a minute or two; billed to your Anthropic account.</span></span></label>
+{% else %}
+<p class="notice">Without AI, headings, lists, tables and code are kept, but nothing is made interactive, and PDFs cannot be read. <a href="{{ url_for('account.settings', tab='ai') }}" style="text-decoration:underline">Add your Claude API key</a> to convert with AI, or use your AI app (MCP).</p>
+{% endif %}
+<fieldset style="border:0;padding:0;margin:0" class="row"><legend class="lab">PUT IT</legend>
+<label class="check" style="font-size:1.05rem;align-items:center"><input type="radio" name="import-where" value="replace"{% if not text.strip() %} checked{% endif %}>instead of the current text</label>
+<label class="check" style="font-size:1.05rem;align-items:center"><input type="radio" name="import-where" value="append"{% if text.strip() %} checked{% endif %}>at the end</label></fieldset>
+<p id="import-status" role="status" class="muted"></p>
+<div class="row"><button type="button" class="btn" id="import-go">IMPORT »</button><button type="button" class="btn ghost" id="import-cancel">CANCEL</button></div>
+</div>
+</dialog>
+<div class="ed-modes" role="group" aria-label="View">
+<button type="button" data-mode-btn="md" aria-pressed="false">MARKDOWN</button><button type="button" data-mode-btn="split" aria-pressed="true">SIDE BY SIDE</button><button type="button" data-mode-btn="preview" aria-pressed="false">PREVIEW</button>
+</div>
+<div class="toolbar" role="toolbar" aria-label="Format">
+<button type="button" data-format="bold" aria-label="Bold (Ctrl+B)"><strong>B</strong></button>
+<button type="button" data-format="italic" aria-label="Italic (Ctrl+I)"><em>I</em></button>
+<button type="button" data-format="strike" aria-label="Strike through"><s>S</s></button>
+<button type="button" data-format="code" aria-label="Inline code"><code>&lt;/&gt;</code></button>
+<button type="button" data-format="link">Link</button>
+<button type="button" data-format="h2">H2</button>
+<button type="button" data-format="h3">H3</button>
+<button type="button" data-format="p">¶</button>
+<button type="button" data-format="ul" aria-label="Bulleted list">• List</button>
+<button type="button" data-format="ol" aria-label="Numbered list">1. List</button>
+<button type="button" data-format="quote" aria-label="Quote">❝</button>
+<a href="{{ url_for('studio.guide') }}" target="_blank" rel="noopener" style="align-self:center;text-decoration:underline;color:var(--accent-text);font-size:1rem">Guide ↗</a>
+</div>
+<div class="palette" role="toolbar" aria-label="Blocks: click to add, or drag where you want them">
+<span class="lab">ADD · DRAG OR CLICK</span>
+{% for key, label in [('code', 'Code (Python)'), ('code-js', 'Code (JavaScript)'), ('ide', 'IDE · files'), ('files', 'File tree'), ('diagram', 'Live diagram'), ('flow', 'Flow diagram'), ('note', 'Note box'), ('compare', 'Side by side'), ('table', 'Table')] %}
+<button type="button" class="tile" draggable="true" data-snippet="{{ key }}">{{ label }}</button>
+{% endfor %}
+<span class="muted" style="font-size:0.9rem">Drop or paste images too (PNG, JPEG, GIF, WebP · 5 MB).</span>
+</div>
+</div>
+<div class="editor-grid" id="editor-grid" data-mode="split">
+<div class="ed-pane-md">
+<label class="sr-only" for="f-body">Note text (Studiamo Markdown)</label>
+<textarea id="f-body" name="body" class="src" spellcheck="true">{{ text }}</textarea>
+<p class="muted" style="font-size:0.9375rem;margin-top:6px">Ctrl+Z undo · Ctrl+Shift+Z redo · Ctrl+S save. Code box: <code>"""python</code> … <code>"""</code>.</p>
+</div>
+<div class="ed-pane-preview">
+<div id="problems" class="problems" role="status"{% if not page.problems %} hidden{% endif %}>{% for p in page.problems %}<div>⚠ {{ p }}</div>{% endfor %}</div>
+<div class="preview" aria-label="Preview: you can write here too"><div id="preview" class="prose">{{ page.html|safe }}</div></div>
+</div>
+</div>
+</form>
+<script src="{{ url_for('static', filename='js/smd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/note-editor.js') }}"></script>
+{% endblock %}

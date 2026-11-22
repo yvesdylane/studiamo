@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs"><a href="{{ url_for('learn.courses') }}">COURSES</a> / {{ course.code }}</p>
+<div class="row" style="justify-content:space-between;align-items:flex-end">
+<div><h1 class="pagetitle">{{ course.title|upper }}</h1>{% if course.description %}<p class="lead2">{{ course.description }}</p>{% endif %}</div>
+{% if editor %}<a class="btn s" href="{{ url_for('studio.course', course_id=course.id) }}">EDIT IN STUDIO »</a>{% endif %}
+</div>
+{% if cp %}
+<div class="card" style="margin:8px 0 28px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:24px;align-items:center">
+<div class="stat"><span class="small">COURSE PROGRESS</span><div class="meter" role="img" aria-label="{{ cp.completion_pct|round|int }}% done"><i style="width:{{ cp.completion_pct }}%"></i></div><span class="small">{{ cp.completion_pct|round|int }}% of notes and exercises done</span></div>
+<div class="stat"><span class="big">{{ cp.notes_completed }}/{{ cp.notes_total }}</span><span class="small">notes read</span></div>
+<div class="stat"><span class="big">{{ cp.exercises_done }}/{{ cp.exercises_total }}</span><span class="small">exercises done</span></div>
+<div class="stat"><span class="big">{{ cp.exp_earned }}</span><span class="small">exp earned here</span></div>
+</div>
+{% endif %}
+</section>
+<section class="section" style="padding-top:10px">
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:32px;align-items:start" class="split">
+<div>
+<h2>NOTES</h2>
+{% set ns = namespace(any=false) %}
+{% for p in parts %}{% if p.notes %}{% set ns.any = true %}
+<div class="card" style="margin-bottom:22px">
+<h3 style="font-size:1.625rem;color:var(--accent-text);margin-bottom:6px">{{ p.topic.title }}</h3>
+<ul class="list">
+{% for n in p.notes %}
+<li><a href="{{ url_for('learn.note', note_id=n.id) }}" style="font-size:1.25rem;text-decoration:underline">{{ n.title }}</a>
+<span class="row">{% if not n.published %}<span class="tag draft">DRAFT</span>{% endif %}{% if n.id in done %}<span class="tag ok">READ ✓</span>{% endif %}<span class="muted" style="font-size:1rem">{{ n.max_exp }} exp</span></span></li>
+{% endfor %}
+</ul></div>
+{% endif %}{% endfor %}
+{% if not ns.any %}<p class="empty">No notes yet.</p>{% endif %}
+</div>
+<div>
+<h2>PRACTICE</h2>
+{% if exercises %}<div class="card" style="margin-bottom:22px"><ul class="list">{% for e in exercises %}<li><a href="{{ url_for('tests.exercise', exercise_id=e.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ e.title }}</a>{% if not e.published %}<span class="tag draft">DRAFT</span>{% endif %}</li>{% endfor %}</ul></div>
+{% else %}<p class="empty" style="margin-bottom:22px">No exercises yet.</p>{% endif %}
+<h2>EXAMS</h2>
+{% if exams %}<div class="card"><ul class="list">{% for x in exams %}<li><a href="{{ url_for('tests.exam', exam_id=x.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ x.title }}</a><span class="row">{% if not x.published %}<span class="tag draft">DRAFT</span>{% endif %}<span class="tag g">{{ x.kind.value|upper }}</span></span></li>{% endfor %}</ul></div>
+{% else %}<p class="empty">No exams yet.</p>{% endif %}
+</div>
+</div>
+</section>
+{% endblock %}

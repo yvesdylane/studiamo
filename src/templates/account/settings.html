@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block head %}
+{# every font, only on this page, so each choice can show itself #}
+<link href="https://fonts.googleapis.com/css2?{% for k, f in fonts.items() if f[3] %}{{ f[3] }}{{ '&' if not loop.last }}{% endfor %}&display=swap" rel="stylesheet">
+{% endblock %}
+{% block content %}
+{% set student = 'student' in me.roles|map(attribute='value')|list %}
+{% set lecturer = 'lecturer' in me.roles|map(attribute='value')|list %}
+{% set tabs = [('profile', 'Profile'), ('appearance', 'Appearance'), ('notifications', 'Notifications'), ('ranking', 'On the ranking'), ('ai', 'AI assistant'), ('security', 'Account and security')]
+   + ([] if lecturer else [('lecturer', 'Become a lecturer')]) + [('delete', 'Delete account')] %}
+{% set tab = tab if tab in tabs|map('first')|list else 'profile' %}
+<section class="wrap">
+<p class="crumbs">YOUR ACCOUNT</p><h1 class="pagetitle">SETTINGS</h1>
+</section>
+<section class="section" style="padding-top:12px">
+<div class="settings" style="display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:start">
+<nav class="side" aria-label="Settings sections"><ul>
+{% for key, label in tabs %}<li><a href="{{ url_for('account.settings', tab=key) }}" data-tab="{{ key }}"{% if key == tab %} aria-current="page"{% endif %}>{{ label }}</a></li>{% endfor %}
+</ul></nav>
+<div style="max-width:780px">
+
+{# ------------------------------------------------------------- profile #}
+<section class="panel-tab" data-panel="profile"{% if tab != 'profile' %} hidden{% endif %}>
+<form class="card form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="profile">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">PROFILE</h2>
+{% set v = {'name': request.form.get('name', me.name), 'player_name': request.form.get('player_name', me.player_name or '')} %}
+{% with name="name", label="FULL NAME", maxlength=100, values=v, errors=errors if section == 'profile' else {} %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="player_name", label="PLAYER NAME (SHOWN ON THE RANKING, OPTIONAL)", maxlength=50, values=v, errors=errors if section == 'profile' else {} %}{% include "auth/_field.html" %}{% endwith %}
+<div class="field"><span class="lab">EMAIL</span><p style="font-size:1.1875rem;margin-top:4px">{{ me.email }}</p></div>
+{% if student %}<div class="field"><label class="lab" for="f-class_name">CLASS</label><select id="f-class_name" name="class_name">{% for c in classes %}<option{% if me.class_name == c %} selected{% endif %}>{{ c }}</option>{% endfor %}</select></div>{% endif %}
+<div class="field"><span class="lab">ROLE</span><p class="row" style="margin-top:4px">{% for r in me.roles %}<span class="tag">{{ r.value|upper }}</span>{% endfor %}<span class="muted" style="font-size:1rem">An admin changes roles.</span></p></div>
+<button class="btn" type="submit" style="align-self:flex-start">SAVE PROFILE</button>
+</form>
+</section>
+
+{# ---------------------------------------------------------- appearance #}
+<section class="panel-tab" data-panel="appearance"{% if tab != 'appearance' %} hidden{% endif %}>
+<form class="card form" method="post" novalidate id="appearance-form">{{ csrf_field() }}<input type="hidden" name="section" value="appearance">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">APPEARANCE</h2>
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab" style="margin-bottom:8px">YOUR COLOUR · IT REPLACES THE PURPLE EVERYWHERE</legend>
+{% set current = me.accent_color or brand_colour %}
+{% set in_palette = current in palette|map(attribute=1)|list %}
+<div class="swatches">
+{% for name, colour in palette %}<label class="swatch" style="--sw:{{ colour }}"><input type="radio" name="accent" value="{{ colour }}"{% if colour == current %} checked{% endif %}><span class="chip" aria-hidden="true"></span><span>{{ name }}</span></label>{% endfor %}
+<label class="swatch"><input type="radio" name="accent" value="custom"{% if not in_palette %} checked{% endif %}><span class="chip" aria-hidden="true" style="background:conic-gradient(#b91c1c,#c2410c,#15803d,#0f766e,#1d4ed8,#722f99,#be185d,#b91c1c)"></span><span>Custom</span></label>
+</div>
+<div class="row" style="margin-top:12px"><label class="lab" for="custom_color">CUSTOM COLOUR</label><input type="color" id="custom_color" name="custom_color" value="{{ current }}" style="width:64px;height:44px;border:2px solid var(--ink);padding:2px;background:var(--bg)"></div>
+{% if errors.get('accent') %}<p class="err" role="alert">{{ errors.accent }}</p>{% endif %}
+<p class="muted" style="font-size:0.9375rem;margin-top:6px">Very light colours are refused: white text must stay readable on buttons and tags.</p>
+</fieldset>
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab" style="margin-bottom:8px">SECONDARY COLOUR · COURSE STRIP, FOOTER AND RANK BADGE</legend>
+{% set sec = me.secondary_color %}
+{% set sec_in = (not sec) or sec in secondary_palette|map(attribute=1)|list %}
+<div class="swatches">
+<label class="swatch" style="--sw:var(--warn)"><input type="radio" name="secondary" value="default"{% if not sec %} checked{% endif %}><span class="chip" aria-hidden="true" style="background:linear-gradient(135deg,#c5c1c1 50%,#b45309 50%)"></span><span>Default</span></label>
+{% for name, colour in secondary_palette %}<label class="swatch" style="--sw:{{ colour }}"><input type="radio" name="secondary" value="{{ colour }}"{% if colour == sec %} checked{% endif %}><span class="chip" aria-hidden="true"></span><span>{{ name }}</span></label>{% endfor %}
+<label class="swatch"><input type="radio" name="secondary" value="custom"{% if not sec_in %} checked{% endif %}><span class="chip" aria-hidden="true" style="background:conic-gradient(#b45309,#047857,#0369a1,#6d28d9,#be123c,#b45309)"></span><span>Custom</span></label>
+</div>
+<div class="row" style="margin-top:12px"><label class="lab" for="custom_secondary">CUSTOM</label><input type="color" id="custom_secondary" name="custom_secondary" value="{{ sec or '#b45309' }}" style="width:64px;height:44px;border:2px solid var(--ink);padding:2px;background:var(--bg)"></div>
+{% if errors.get('secondary') %}<p class="err" role="alert">{{ errors.secondary }}</p>{% endif %}
+</fieldset>
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab" style="margin-bottom:8px">FONT</legend>
+<div class="form" style="gap:8px">
+{% for key, f in fonts.items() %}<label class="check fontpick" style="border:2px solid var(--ink);padding:10px 14px;align-items:center" data-display="{{ f[1] }}" data-body="{{ f[2] }}"><input type="radio" name="font" value="{{ key }}"{% if me.font == key %} checked{% endif %}><span><span style="font:1.35rem {{ f[1] }}">{{ f[0] }}</span><br><span class="muted" style="font:1rem {{ f[2] }}">Knowledge and practice always pay off. 0123456789</span></span></label>{% endfor %}
+</div>
+</fieldset>
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab" style="margin-bottom:8px">TEXT SIZE</legend>
+<div class="row">{% for key, (label, pct) in text_sizes.items() %}<label class="check" style="border:2px solid var(--ink);padding:10px 14px;align-items:center;font-size:calc(1.1rem * {{ pct[:-1]|float / 100 }})" data-size="{{ pct }}"><input type="radio" name="text_size" value="{{ key }}"{% if me.text_size == key %} checked{% endif %}>{{ label }}</label>{% endfor %}</div>
+</fieldset>
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab" style="margin-bottom:8px">THEME</legend>
+<div class="row">{% for value, label in [('system', 'Match my device'), ('light', 'Light'), ('dark', 'Dark')] %}<label class="check" style="font-size:1.1875rem;border:2px solid var(--ink);padding:10px 14px;align-items:center"><input type="radio" name="theme" value="{{ value }}"{% if me.theme == value %} checked{% endif %}>{{ label }}</label>{% endfor %}</div>
+<p class="muted" style="font-size:0.9375rem;margin-top:6px">The ☀ / ☾ button in the header switches too. These choices are saved on your account and only change what you see.</p>
+</fieldset>
+<div class="card" id="accent-preview" style="padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="btn s">BUTTON</span><span class="tag">TAG</span><span class="d" style="font-size:1.5rem;color:var(--accent-text)">HEADING</span><span class="hex" style="width:54px;height:54px;font-size:1.5rem;background:var(--purple)">A</span></div>
+<button class="btn" type="submit" style="align-self:flex-start">SAVE APPEARANCE</button>
+</form>
+</section>
+
+{# ------------------------------------------------------- notifications #}
+<section class="panel-tab" data-panel="notifications"{% if tab != 'notifications' %} hidden{% endif %}>
+<form class="card form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="notifications">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">NOTIFICATIONS</h2>
+<p style="font-size:1.05rem">Messages such as “you are logged in”, a daily task done or a new badge.</p>
+<label class="check" style="font-size:1.1rem;border:2px solid var(--ink);padding:12px 14px"><input type="checkbox" name="toast_enabled"{% if me.toast_enabled %} checked{% endif %}><span><strong>Show them as pop-ups</strong> at the top right<br><span class="muted" style="font-size:0.95rem">Otherwise they appear at the top of the page.</span></span></label>
+<div class="row"><label class="lab" for="toast_seconds">POP-UPS STAY FOR</label><input class="input" type="number" id="toast_seconds" name="toast_seconds" min="3" max="60" value="{{ me.toast_seconds }}" style="width:90px"><span>seconds</span></div>
+<p class="muted" style="font-size:0.95rem">Between 3 and 60 seconds. Moving the mouse over a pop-up (or focusing it) keeps it open; ✕ closes it.</p>
+<button class="btn" type="submit" style="align-self:flex-start">SAVE</button>
+</form>
+</section>
+
+{# ------------------------------------------------------------- ranking #}
+<section class="panel-tab" data-panel="ranking"{% if tab != 'ranking' %} hidden{% endif %}>
+<form class="card form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="ranking">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">ON THE RANKING</h2>
+<fieldset style="border:0;padding:0;margin:0" class="form">
+<legend class="sr-only">How you appear on the ranking</legend>
+{% for value, title, text in [('public', 'Show my name', 'Your player name (or your name) is shown with your level, exp and rank.'),
+                              ('anonymous', 'Anonymous', 'You are listed as “Anonymous player”, with no link to your profile. Your profile hides your progress from others.'),
+                              ('hidden', 'Do not show me', 'You are left off the ranking. Your profile hides your progress from others.')] %}
+<label class="check" style="font-size:1.1875rem;border:2px solid var(--ink);padding:12px 14px"><input type="radio" name="ranking_visibility" value="{{ value }}"{% if me.ranking_visibility == value %} checked{% endif %}><span><strong>{{ title }}</strong><br><span class="muted" style="font-size:1rem">{{ text }}</span></span></label>
+{% endfor %}
+</fieldset>
+<button class="btn" type="submit" style="align-self:flex-start">SAVE</button>
+</form>
+</section>
+
+{# ------------------------------------------------------------------ ai #}
+<section class="panel-tab form" data-panel="ai"{% if tab != 'ai' %} hidden{% endif %} style="gap:24px">
+<div class="card">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0 0 8px">YOUR AI ASSISTANT</h2>
+<p style="font-size:1.15rem;line-height:1.55">AI can turn notes you already have (Word, PowerPoint, PDF, text) into Studiamo notes with code boxes, file trees and live diagrams. There are two ways to connect it, and you can use both. Either way the result is a <strong>draft</strong>: you check it, and an admin reviews it before students see it.</p>
+<div class="ai-compare">
+<div><h3>A · API KEY · INSIDE STUDIAMO</h3>
+<p>You paste a <strong>Claude API key</strong> here once. Then the note editor gets an <strong>Import</strong> button: choose a file, Studiamo sends it to Claude and puts the converted note in the editor.</p>
+<ul><li>Fastest: one click, nothing to install.</li><li>Works from any computer you log in on.</li><li>You pay Anthropic for what you use (your key, your account). The file you import is sent to Anthropic.</li></ul>
+<p class="muted">Best for: importing notes one by one while you write in the Studio.</p></div>
+<div><h3>B · MCP · FROM YOUR AI APP</h3>
+<p>You connect the AI app you already use (Claude Code, Claude Desktop…) to Studiamo with a <strong>Studiamo key</strong>. Then you talk to it there: “convert these notes and save them in Week 2”.</p>
+<ul><li>Uses your AI app's own subscription: no API key needed.</li><li>It can work on many notes, reorganise topics, and fix notes you already wrote.</li><li>Your app must stay connected; it works where the app is installed.</li></ul>
+<p class="muted">Best for: converting a whole course, or longer work with an assistant.</p></div>
+</div>
+{% if not lecturer %}<p class="notice" style="margin-top:12px">This is for lecturers: it writes into the courses you teach. <a href="{{ url_for('account.settings', tab='lecturer') }}" style="text-decoration:underline">Become a lecturer »</a></p>{% endif %}
+</div>
+{% if lecturer %}
+<div class="card form" id="api-key">
+<h3 style="font-size:1.3rem;color:var(--accent-text)">A · YOUR CLAUDE API KEY</h3>
+{% if ai_key %}
+<p class="row"><span class="tag ok">CONNECTED</span><span>Key <code>sk-ant-{{ ai_key.hint }}</code> · {{ ai_key.last_used_at.strftime('last used %d %b %Y') if ai_key.last_used_at else 'not used yet' }}</span></p>
+<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_model"><label class="lab" for="ai-model">MODEL</label>
+<select class="input" id="ai-model" name="model">{% for value, label in ai_models %}<option value="{{ value }}"{% if ai_key.model == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="btn xs ghost" type="submit">SAVE</button></form>
+<form method="post" class="inline-form">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_delete"><button class="btn xs danger" type="submit" onclick="return confirm('Remove your API key from Studiamo?')">REMOVE KEY</button></form>
+{% endif %}
+<form class="form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_save">
+{% with name="api_key", label=("REPLACE THE KEY" if ai_key else "API KEY"), type="password", placeholder="sk-ant-…", autocomplete="off", values={}, errors=errors if section == 'ai_key_save' else {} %}{% include "auth/_field.html" %}{% endwith %}
+{% if not ai_key %}<div class="row"><label class="lab" for="ai-model2">MODEL</label><select class="input" id="ai-model2" name="model">{% for value, label in ai_models %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></div>{% endif %}
+<p class="muted" style="font-size:0.95rem">Create a key in the <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="text-decoration:underline">Anthropic Console</a>. Studiamo checks it with Anthropic before saving, stores it encrypted, and never shows it again.</p>
+<button class="btn" type="submit" style="align-self:flex-start">{{ 'REPLACE KEY' if ai_key else 'SAVE KEY' }}</button>
+</form>
+</div>
+<h3 style="font-size:1.3rem;color:var(--accent-text);margin-top:6px">B · CONNECT YOUR AI APP (MCP)</h3>
+{% if new_key %}
+<div class="card" style="border-color:var(--ok)" role="status">
+<h3 style="font-size:1.3rem;color:var(--ok)">YOUR NEW KEY · COPY IT NOW</h3>
+<p class="muted">It is shown only this once. Anyone with it can edit your notes: keep it private.</p>
+<div class="row" style="margin-top:8px"><input class="input" id="new-key" value="{{ new_key }}" readonly style="flex:1;font-family:ui-monospace,monospace" aria-label="Your new key"><button type="button" class="btn xs" data-copy="new-key">COPY</button></div>
+</div>
+{% endif %}
+<div class="card form">
+<h3 style="font-size:1.3rem;color:var(--accent-text)">1 · CREATE A STUDIAMO KEY</h3>
+<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="section" value="ai_create"><label class="sr-only" for="key_name">Key name</label><input class="input" id="key_name" name="key_name" maxlength="60" placeholder="e.g. Claude on my laptop"><button class="btn xs" type="submit">CREATE KEY</button></form>
+{% if keys %}<ul class="list">{% for k in keys %}<li><span><strong>{{ k.name }}</strong> <code>{{ k.prefix }}…</code><br><span class="muted" style="font-size:0.95rem">created {{ k.created_at.strftime('%d %b %Y') }} · {{ ('last used ' ~ k.last_used_at.strftime('%d %b %Y %H:%M')) if k.last_used_at else 'never used' }}</span></span>
+<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="section" value="ai_revoke"><input type="hidden" name="token_id" value="{{ k.id }}"><button class="btn xs danger" type="submit">REVOKE</button></form></li>{% endfor %}</ul>{% endif %}
+</div>
+{% set key = new_key or 'YOUR_KEY' %}
+<div class="card form">
+<h3 style="font-size:1.3rem;color:var(--accent-text)">2 · CONNECT YOUR APP</h3>
+<p>Server address (MCP, HTTP):</p>
+<div class="row"><input class="input" id="mcp-url" value="{{ mcp_url }}" readonly style="flex:1;font-family:ui-monospace,monospace" aria-label="MCP server address"><button type="button" class="btn xs ghost" data-copy="mcp-url">COPY</button></div>
+<p style="margin-top:10px"><strong>Claude Code</strong> (terminal):</p>
+<pre id="cfg-cc" class="mono" style="white-space:pre-wrap;background:var(--code-bg);border:2px solid var(--ink);padding:10px">claude mcp add --transport http studiamo {{ mcp_url }} --header "Authorization: Bearer {{ key }}"</pre>
+<button type="button" class="btn xs ghost" data-copy="cfg-cc" style="align-self:flex-start">COPY</button>
+<p style="margin-top:10px"><strong>Claude Desktop and other apps</strong> (their MCP config file, through <code>mcp-remote</code>, needs Node.js):</p>
+<pre id="cfg-json" class="mono" style="white-space:pre;overflow:auto;background:var(--code-bg);border:2px solid var(--ink);padding:10px">{
+  "mcpServers": {
+    "studiamo": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "{{ mcp_url }}",
+               "--header", "Authorization:Bearer {{ key }}"]
+    }
+  }
+}</pre>
+<button type="button" class="btn xs ghost" data-copy="cfg-json" style="align-self:flex-start">COPY</button>
+</div>
+<div class="card">
+<h3 style="font-size:1.3rem;color:var(--accent-text)">3 · ASK IT</h3>
+<p style="font-size:1.1rem;line-height:1.55">Paste or attach your old notes and say, for example: <em>“Convert these notes into a Studiamo note in my course FP101, topic Week 2.”</em> Apps that show MCP prompts also offer <strong>Convert my notes to Studiamo</strong>. Then open the draft in the Studio, check it, and submit it for review.</p>
+</div>
+{% endif %}
+</section>
+
+{# ------------------------------------------------------------ security #}
+<section class="panel-tab form" data-panel="security"{% if tab != 'security' %} hidden{% endif %} style="gap:24px">
+<form class="card form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="password">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0">PASSWORD</h2>
+{% set pe = errors if section == 'password' else {} %}
+{% if has_password %}{% with name="current_password", label="CURRENT PASSWORD", type="password", autocomplete="current-password", values={}, errors=pe %}{% include "auth/_field.html" %}{% endwith %}
+{% else %}<p class="muted">You log in with Google. You can also set a password.</p>{% endif %}
+{% with name="new_password", label="NEW PASSWORD", type="password", autocomplete="new-password", minlength=8, values={}, errors=pe %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="new_password2", label="REPEAT NEW PASSWORD", type="password", autocomplete="new-password", minlength=8, values={}, errors=pe %}{% include "auth/_field.html" %}{% endwith %}
+<button class="btn" type="submit" style="align-self:flex-start">{{ 'CHANGE' if has_password else 'SET' }} PASSWORD</button>
+</form>
+<div class="card"><h2 style="font-size:1.5rem;color:var(--accent-text);margin:0">LINKED ACCOUNTS</h2>
+{% if identities %}{% for i in identities %}<div class="row" style="justify-content:space-between;margin-top:8px"><span>{% include "partials/google_g.html" %} {{ i.provider|capitalize }}</span>
+<form method="post" class="inline-form">{{ csrf_field() }}<input type="hidden" name="section" value="unlink"><input type="hidden" name="identity_id" value="{{ i.id }}"><button class="btn xs ghost" type="submit">UNLINK</button></form></div>{% endfor %}
+{% else %}<p class="muted" style="margin-top:6px">None. Log out and use “Continue with Google” with the same email to link it.</p>{% endif %}</div>
+</section>
+
+{# ------------------------------------------------------------ lecturer #}
+{% if not lecturer %}
+<section class="panel-tab" data-panel="lecturer"{% if tab != 'lecturer' %} hidden{% endif %}>
+<div class="card">
+<h2 style="font-size:1.75rem;color:var(--accent-text);margin:0 0 8px">BECOME A LECTURER</h2>
+{% if application %}<p style="font-size:1.1875rem">Your request ({{ application.institution }}) is <strong>{{ application.status.value }}</strong>.</p>
+{% else %}<form class="form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="lecturer">
+{% set le = errors if section == 'lecturer' else {} %}
+{% with name="institution", label="SCHOOL OR INSTITUTION", maxlength=200, values=request.form, errors=le %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="courses_taught", label="COURSES YOU TEACH", hint="Separate them with commas.", maxlength=2000, values=request.form, errors=le %}{% include "auth/_field.html" %}{% endwith %}
+<button class="btn" type="submit" style="align-self:flex-start">SEND REQUEST</button></form>{% endif %}
+</div>
+</section>
+{% endif %}
+
+{# -------------------------------------------------------------- delete #}
+<section class="panel-tab" data-panel="delete"{% if tab != 'delete' %} hidden{% endif %}>
+<form class="card form" method="post" style="border-color:var(--danger)" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="delete">
+<h2 style="font-size:1.75rem;color:var(--danger);margin:0">DELETE ACCOUNT</h2>
+<p style="font-size:1.125rem">This removes your progress, exp and rank. It cannot be undone.</p>
+{% with name="confirm_email", label="TYPE YOUR EMAIL TO CONFIRM", type="email", values={}, errors=errors if section == 'delete' else {} %}{% include "auth/_field.html" %}{% endwith %}
+<button class="btn danger" type="submit" style="align-self:flex-start">DELETE MY ACCOUNT</button>
+</form>
+</section>
+
+</div></div>
+</section>
+<script>
+(function () {
+  // switch sections without reloading; the address keeps ?tab= so reloads and links work
+  var links = document.querySelectorAll(".settings .side a[data-tab]"), panels = document.querySelectorAll(".panel-tab");
+  links.forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      links.forEach(function (x) { x.removeAttribute("aria-current"); });
+      a.setAttribute("aria-current", "page");
+      panels.forEach(function (p) { p.hidden = p.dataset.panel !== a.dataset.tab; });
+      history.replaceState(null, "", a.href);
+      var first = document.querySelector('.panel-tab[data-panel="' + a.dataset.tab + '"] h2');
+      if (first) { first.setAttribute("tabindex", "-1"); first.focus({preventScroll: true}); }
+    });
+  });
+  document.querySelectorAll("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var el = document.getElementById(b.dataset.copy), text = el.value !== undefined ? el.value : el.textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { b.textContent = "COPIED ✓"; },
+        function () { if (el.select) el.select(); });
+    });
+  });
+  // live preview of the colour before saving
+  var form = document.getElementById("appearance-form");
+  if (form) {
+    var custom = document.getElementById("custom_color");
+    function chosen() {
+      var r = form.querySelector('input[name=accent]:checked');
+      return !r ? null : (r.value === "custom" ? custom.value : r.value);
+    }
+    var root = document.documentElement, customSec = document.getElementById("custom_secondary");
+    function show() {
+      var c = chosen(); if (c) root.style.setProperty("--purple", c);
+      var s = form.querySelector('input[name=secondary]:checked');
+      if (s) {
+        var v = s.value === "custom" ? customSec.value : s.value;
+        if (v === "default") { ["--strip", "--footer", "--badge"].forEach(function (k) { root.style.removeProperty(k); }); }
+        else { root.style.setProperty("--strip", "color-mix(in srgb, " + v + " 34%, var(--bg))"); root.style.setProperty("--footer", "color-mix(in srgb, " + v + " 18%, var(--bg))"); root.style.setProperty("--badge", v); }
+      }
+      var f = form.querySelector('input[name=font]:checked');
+      if (f) { var l = f.closest(".fontpick"); root.style.setProperty("--font-display", l.dataset.display); root.style.setProperty("--font-body", l.dataset.body); }
+      var z = form.querySelector('input[name=text_size]:checked');
+      if (z) root.style.fontSize = z.closest("[data-size]").dataset.size;
+    }
+    form.addEventListener("change", show);
+    custom.addEventListener("input", function () { form.querySelector('input[name=accent][value=custom]').checked = true; show(); });
+    customSec.addEventListener("input", function () { form.querySelector('input[name=secondary][value=custom]').checked = true; show(); });
+  }
+})();
+</script>
+{% endblock %}

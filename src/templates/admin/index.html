@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<section class="wrap">
+<p class="crumbs">ADMIN</p><h1 class="pagetitle">ADMIN</h1>
+<p class="lead2">{{ user_count }} accounts · {{ course_count }} courses. You are acting as an admin: no student or lecturer rights in this session. <a href="{{ url_for('studio.index') }}" style="text-decoration:underline;color:var(--accent-text)">Every course is editable in the studio »</a></p>
+</section>
+<section class="section" style="padding-top:8px">
+<h2 id="review">WAITING FOR REVIEW</h2>
+{% if queue %}<div class="card" style="margin-bottom:32px"><ul class="list">
+{% for r in queue %}<li><span style="flex:1;min-width:280px"><span class="tag g">{{ r.kind|upper }}</span> <strong style="font-size:1.1875rem">{{ r.title }}</strong><br><span class="muted">{{ r.course_code }} · {{ r.course_title }} · {{ r.max_exp }} exp now{% if r.submitted_at %} · sent {{ r.submitted_at.strftime('%d %b %H:%M') }}{% endif %}</span></span>
+<a class="btn xs" href="{{ url_for('admin.review_item', kind=r.kind, item_id=r.id) }}">REVIEW »</a></li>{% endfor %}
+</ul></div>{% else %}<p class="empty" style="margin-bottom:32px">Nothing waiting for review.</p>{% endif %}
+
+<h2>LECTURER REQUESTS</h2>
+{% if pending %}<div class="card" style="margin-bottom:32px"><ul class="list">
+{% for a in pending %}{% set u = people[a.user_id] %}<li><span style="flex:1;min-width:280px"><strong style="font-size:1.25rem">{{ u.name }}</strong> · {{ u.email }}{% if not u.email_verified %} <span class="tag draft">EMAIL NOT VERIFIED</span>{% endif %}<br><span class="muted">{{ a.institution }} · teaches: {{ a.courses_taught }} · asked {{ a.created_at.strftime('%d %b %Y') }}</span></span>
+<form class="inline-form" method="post" action="{{ url_for('admin.review', application_id=a.id) }}">{{ csrf_field() }}<button class="btn xs" name="decision" value="approve">APPROVE</button><button class="btn xs danger" name="decision" value="reject" onclick="return confirm('Reject this request?')">REJECT</button></form></li>{% endfor %}
+</ul></div>{% else %}<p class="empty" style="margin-bottom:32px">No requests waiting.</p>{% endif %}
+
+<h2>USERS</h2>
+<form method="get" class="inline-form" style="margin-bottom:14px"><label class="sr-only" for="q">Search users</label><input class="input" id="q" name="q" value="{{ query }}" placeholder="Name or email" style="min-width:300px"><button class="btn xs" type="submit">SEARCH</button></form>
+<div class="card" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:1.0625rem">
+<thead><tr style="background:var(--purple);color:#fff;font-family:var(--font-display)"><th scope="col" style="text-align:left;padding:10px 16px">NAME</th><th scope="col" style="text-align:left">EMAIL</th><th scope="col">VERIFIED</th><th scope="col">LECTURER</th></tr></thead><tbody>
+{% for u in found %}{% set lec = 'lecturer' in u.roles|map(attribute='value')|list %}<tr style="border-top:2px solid var(--line)"><td style="padding:8px 16px"><a href="{{ url_for('account.profile', user_id=u.id) }}" style="text-decoration:underline">{{ u.name }}</a></td><td>{{ u.email }}</td><td style="text-align:center">{{ '✓' if u.email_verified else '–' }}</td>
+<td style="text-align:center"><form class="inline-form" method="post" action="{{ url_for('admin.set_roles', user_id=u.id) }}">{{ csrf_field() }}<input type="hidden" name="q" value="{{ query }}"><input type="hidden" name="lecturer" value="{{ '' if lec else 'on' }}"><button class="btn xs {{ 'ghost' if lec else '' }}" type="submit">{{ 'REMOVE LECTURER' if lec else 'MAKE LECTURER' }}</button></form></td></tr>{% else %}<tr><td colspan="4" style="padding:16px">No users found.</td></tr>{% endfor %}
+</tbody></table></div>
+</section>
+{% endblock %}
