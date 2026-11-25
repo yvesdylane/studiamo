@@ -38,7 +38,7 @@
 </div>
 
 <div class="row" style="margin-top:18px">
-{% if resume %}<a class="btn s" href="{{ url_for('learn.note', note_id=resume.note.id) }}">{{ 'CONTINUE' if resume.started else 'START HERE' }} »</a>{% endif %}
+{% if resume %}<a class="btn s" href="{{ url_for('learn.note', note_id=resume.note.id) }}">{{ 'CONTINUE' if resume.started else 'START HERE' }} »</a>{% endif %}<a class="btn s o" href="{{ url_for('join.join') }}">JOIN AN EXAM</a>
 <a class="btn s o" href="{{ url_for('account.profile', user_id=me.id) }}">PROFILE</a>
 <a class="btn s o" href="{{ url_for('account.settings') }}">SETTINGS</a>
 {% if is_lecturer %}<a class="btn s ghost" href="{{ url_for('studio.index') }}">STUDIO</a>{% endif %}

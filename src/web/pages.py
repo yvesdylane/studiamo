@@ -28,4 +28,4 @@ def home():
         from src.web.learn import lobby_context
 
         return render_template("learn/lobby.html", **lobby_context(g.user.id))
-    return render_template("home.html", courses=catalog(), skills=None, level=None)
+    return render_template("home.html", courses=catalog())

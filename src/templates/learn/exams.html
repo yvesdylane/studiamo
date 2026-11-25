@@ -2,7 +2,7 @@
 {% block title %}Exams{% endblock %}
 {% block content %}
 <section class="wrap">
-<h1 class="pagetitle">EXAMS</h1>
+<div class="row" style="justify-content:space-between;align-items:flex-end"><h1 class="pagetitle">EXAMS</h1><a class="btn" href="{{ url_for('join.join') }}">JOIN AN EXAM WITH A CODE »</a></div>
 <p class="lead2">Exams show what you really know and move your rank. Your best score for each exam is the one that counts.{% if not g.user %} <a href="{{ url_for('auth.login', next=request.path) }}" style="text-decoration:underline;color:var(--accent-text)">Log in</a> to take them.{% endif %}</p>
 </section>
 <section class="section" style="padding-top:8px">

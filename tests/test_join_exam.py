@@ -126,7 +126,7 @@ def main() -> int:
         r = stu.post(f"/exams/{exam_id}/start", data={"csrf_token": token(stu, "/join")})
         t.check("starting it directly sends them to Join", r.status_code == 302 and "/join" in r.headers["Location"])
         t.check("anonymous visitor: 404", app.test_client().get(f"/exams/{exam_id}").status_code == 404)
-        t.check("JOIN AN EXAM in the header", "JOIN AN EXAM" in text(app.test_client(), "/"))
+        t.check("JOIN AN EXAM button on the home page", "JOIN AN EXAM" in text(app.test_client(), "/"))
 
         t.section("guest: code, email check, exam, result email")
         g1 = f"guest1-{run}@{DOMAIN}"

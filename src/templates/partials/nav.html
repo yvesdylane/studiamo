@@ -8,7 +8,6 @@
 {{ item('learn.exercises', 'EXERCISES', ep in ('learn.exercises', 'tests.exercise', 'tests.take_exercise')) }}
 {{ item('learn.exams', 'EXAMS', ep in ('learn.exams', 'tests.exam', 'tests.take_exam')) }}
 {{ item('learn.leaderboard', 'RANKS', ep == 'learn.leaderboard') }}
-{{ item('join.join', 'JOIN AN EXAM', ep.startswith('join.')) }}
 </nav>
 <div class="acct">
 <button type="button" class="themebtn" id="theme-toggle" aria-label="Dark mode"{% if g.user %} data-csrf="{{ csrf_token() }}"{% endif %}><span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span></button>

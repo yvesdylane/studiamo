@@ -363,3 +363,8 @@ html[data-theme="dark"] img{opacity:.92}
 
 .role-heading{font-size:1.3rem;color:var(--muted);letter-spacing:.06em;border-bottom:3px solid var(--line);padding-bottom:6px;margin:38px 0 16px}
 .role-heading:first-child{margin-top:0}
+
+/* home page hero photo: framed like the cards (black border, hard shadow) */
+.hero-photo{display:block}
+.hero-photo img{display:block;width:100%;height:auto;aspect-ratio:1400/1045;object-fit:cover;
+  border:4px solid var(--ink);box-shadow:10px 10px 0 var(--purple);background:var(--accent-soft)}

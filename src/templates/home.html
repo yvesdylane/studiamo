@@ -1,4 +1,3 @@
-{% from "partials/skill_graph.html" import skill_graph %}
 {% extends "base.html" %}
 {% block title %}Learn, practise, level up{% endblock %}
 
@@ -11,17 +10,13 @@
 <div style="display:flex;gap:20px;flex-wrap:wrap">
 {% if g.user %}<a class="btn" href="{{ url_for('learn.dashboard') }}">GO TO MY DASHBOARD »</a>
 {% else %}<a class="btn" href="{{ url_for('auth.register') }}">START LEARNING »</a><a class="btn o" href="{{ url_for('auth.login') }}">LOG IN</a>{% endif %}
+<a class="btn o" href="{{ url_for('join.join') }}">JOIN AN EXAM</a>
 </div></div>
-<div class="card" style="padding:28px">
-{% if skills %}
-<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2 style="font-size:1.875rem;color:var(--accent-text)">YOUR SKILL GRAPH</h2><p style="font-size:1rem;color:var(--muted)">Further out is stronger. It measures the quality of your work.</p></div>{% if level %}<span class="hex" aria-label="Rank {{ level.rank_label }}">{{ level.rank_label }}</span>{% endif %}</div>
-{{ skill_graph(skills, level.rank_label if level else none) }}
-<p class="muted" style="font-size:0.95rem;margin-top:8px">{{ skills.counts.notes }} note{{ 's' if skills.counts.notes != 1 }} read ({{ skills.counts.minutes }} min) · {{ skills.counts.exercises }} exercise{{ 's' if skills.counts.exercises != 1 }} · {{ skills.counts.exams }} exam{{ 's' if skills.counts.exams != 1 }} · {{ skills.counts.courses }} course{{ 's' if skills.counts.courses != 1 }} started · {{ skills.counts.streak }}-day streak · {{ skills.counts.hours }} h · {{ skills.counts.badges }}/{{ skills.counts.badges_total }} badges · <a href="{{ url_for('learn.dashboard') }}#tasks" style="text-decoration:underline">today's tasks</a></p>
-{% else %}
-<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="font-size:1.875rem;color:var(--accent-text)">YOUR SKILL GRAPH</h2><p style="font-size:1rem;color:var(--muted)">Example of what you will see</p></div><span class="hex" aria-label="Example rank B3">B3</span></div>
-{{ skill_graph({'reading': 80, 'practice': 65, 'exams': 50, 'subjects': 70, 'streak': 60, 'time': 40, 'badges': 55}, 'B3', example=true) }}
-{% endif %}
-</div>
+<picture class="hero-photo">
+<source type="image/webp" srcset="{{ url_for('static', filename='img/hero-students-800.webp') }} 800w, {{ url_for('static', filename='img/hero-students-1400.webp') }} 1400w" sizes="(max-width: 900px) 100vw, 45vw">
+<img src="{{ url_for('static', filename='img/hero-students-1400.jpg') }}" width="1400" height="1045" fetchpriority="high" decoding="async"
+     alt="Three students studying together at a library table: one points at a page in a textbook, one takes notes, one works on a laptop">
+</picture>
 </section>
 
 <section class="section" id="how" style="padding-top:24px"><h2>HOW IT WORKS</h2>
