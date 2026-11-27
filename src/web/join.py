@@ -193,7 +193,8 @@ def guest_attempt(attempt_id: int):
         abort(404)
     if request.method == "POST":
         try:
-            result = svc.submit_exam(attempt_id, None, _answers(started.questions), guest_id=guest.id)
+            auto = request.form.get("auto_submit") or None
+            result = svc.submit_exam(attempt_id, None, _answers(started.questions), guest_id=guest.id, auto_submitted=auto)
         except ValidationError:
             flash("Some answers could not be read. Please try again.")
         except AttemptAlreadySubmittedError:
@@ -202,11 +203,22 @@ def guest_attempt(attempt_id: int):
             if not result.pending_manual and exam.guest_results == "graded":
                 send_guest_result(attempt_id)
             session["join_done_late"] = bool(result.late)
+            session["join_done_auto"] = auto if auto in ("left", "back") else None
             return redirect(url_for("join.done"))
     return render_template("tests/take.html", kind="exam", title=started.exam.title, started=started,
                            questions=started.questions, bodies=_rendered(started.questions),
                            action=url_for("join.guest_attempt", attempt_id=attempt_id), deadline=started.deadline,
-                           back=url_for("join.guest_exam"))
+                           back=url_for("join.guest_exam"), event_url=url_for("join.guest_event", attempt_id=attempt_id))
+
+
+@bp.post("/join/attempt/<int:attempt_id>/event")
+def guest_event(attempt_id: int):
+    from src.web.tests import _log_event
+
+    guest, _ = _guest_exam()
+    if guest is None:
+        abort(404)
+    return _log_event(lambda event: deps.attempts().log_exam_event(attempt_id, None, event, guest_id=guest.id))
 
 
 @bp.get("/join/done")
@@ -214,7 +226,11 @@ def done():
     guest, exam = _guest_exam()
     if guest is None:
         return redirect(url_for("join.join"))
-    return render_template("join/done.html", guest=guest, exam=exam, late=session.pop("join_done_late", False))
+    from src.web.tests import AUTO_MESSAGES
+
+    auto = session.pop("join_done_auto", None)
+    return render_template("join/done.html", guest=guest, exam=exam, late=session.pop("join_done_late", False),
+                           auto_message=AUTO_MESSAGES.get(auto))
 
 
 # ---------------------------------------------------------- result email

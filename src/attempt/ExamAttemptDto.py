@@ -26,3 +26,5 @@ class ExamAttemptRead(DTO):
     started_at: datetime
     submitted_at: datetime | None = None
     duration_seconds: int | None = None
+    integrity_events: list[dict] = []   # [{type, at}] (migration 0020)
+    auto_submitted: str | None = None   # 'left' | 'back': submitted by the exam guard

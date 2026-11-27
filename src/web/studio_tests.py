@@ -511,7 +511,40 @@ def exam_results(exam_id: int):
                 names[a.student_id] = None
     unsent = sum(1 for a in attempts if a.guest_id and a.status.value == "graded" and not guests[a.guest_id].results_sent_at)
     return render_template("studio/exam_results.html", exam=exam, course=course, attempts=attempts, names=names,
-                           guests=guests, unsent=unsent, marks=deps.progress().exam_results(exam_id))
+                           guests=guests, unsent=unsent, marks=deps.progress().exam_results(exam_id),
+                           integrity={a.id: integrity_summary(a) for a in attempts})
+
+
+EVENT_WORDS = {"left_window": ("left the exam", "left the exam {n} times"),
+               "left_fullscreen": ("left full screen", "left full screen {n} times"),
+               "back": ("tried to go back", "tried to go back {n} times"),
+               "leave_link": ("clicked a link out", "clicked links out {n} times"),
+               "page_closed": ("closed or reloaded the page", "closed or reloaded the page {n} times"),
+               "copy": ("tried to copy", "tried to copy"), "paste": ("tried to paste", "tried to paste"),
+               "context_menu": ("right-clicked", "right-clicked"),
+               "no_fullscreen": ("no full screen on this device", "no full screen on this device")}
+
+
+def integrity_summary(attempt) -> dict:
+    """What happened during an exam attempt, for the lecturer: a short line, a flag, and the timeline."""
+    from collections import Counter
+
+    events = attempt.integrity_events or []
+    counts = Counter(e.get("type") for e in events)
+    parts = [(one if n == 1 else many.format(n=n)) for t, (one, many) in EVENT_WORDS.items() if (n := counts.get(t))]
+    if attempt.auto_submitted == "left":
+        parts.insert(0, "submitted automatically after leaving")
+    elif attempt.auto_submitted == "back":
+        parts.insert(0, "chose to leave (submitted)")
+    timeline = "\n".join(f"{e.get('at', '')[11:19]}  {e.get('type', '').replace('_', ' ')}" for e in events)
+    flagged = bool(attempt.auto_submitted or counts.get("left_window") or counts.get("page_closed")
+                   or counts.get("left_fullscreen", 0) > 1)
+    started = counts.get("started_fullscreen") or counts.get("no_fullscreen")
+    if not events:
+        parts = ["nothing recorded"]
+    elif not parts and started:
+        parts = ["stayed in the exam"]
+    return {"text": "; ".join(parts), "flagged": flagged, "timeline": timeline}
 
 
 @bp.post("/exams/<int:exam_id>/email-results")

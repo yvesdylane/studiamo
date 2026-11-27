@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.attempt.AttemptStatus import AttemptStatus
@@ -57,6 +58,10 @@ class ExamAttempt(Base):
             "extract(epoch from (submitted_at - started_at))::integer", persisted=True
         ),
     )
+
+    # what happened while it was taken (migration 0020, src/static/js/exam-guard.js)
+    integrity_events: Mapped[list] = mapped_column(JSONB, server_default="[]")
+    auto_submitted: Mapped[str | None] = mapped_column(sa.String(10))   # 'left' | 'back'
 
     questions: Mapped[list[ExamAttemptQuestion]] = relationship(
         order_by="ExamAttemptQuestion.position", passive_deletes=True

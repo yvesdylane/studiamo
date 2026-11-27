@@ -368,3 +368,13 @@ html[data-theme="dark"] img{opacity:.92}
 .hero-photo{display:block}
 .hero-photo img{display:block;width:100%;height:auto;aspect-ratio:1400/1045;object-fit:cover;
   border:4px solid var(--ink);box-shadow:10px 10px 0 var(--purple);background:var(--accent-soft)}
+
+/* exam guard (static/js/exam-guard.js): start screen and warnings cover the questions */
+.guard-layer{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.guard-layer[hidden]{display:none}
+#guard-modal{background:color-mix(in srgb, var(--bg) 92%, transparent)}
+.guard-card{max-width:680px;width:100%;border:4px solid var(--purple);box-shadow:10px 10px 0 var(--shadow)}
+.guard-rules{font-size:1.05rem;line-height:1.55;margin:6px 0 14px;padding-left:22px}
+.guard-rules li{margin-bottom:6px}
+body.guard-blocked #take{visibility:hidden}
+body.guard-blocked{overflow:hidden}

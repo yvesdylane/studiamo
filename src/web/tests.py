@@ -165,17 +165,46 @@ def take_exam(attempt_id: int):
         abort(404)
     if request.method == "POST":
         try:
-            result = svc.submit_exam(attempt_id, g.user.id, _answers(started.questions))
+            auto = request.form.get("auto_submit") or None
+            result = svc.submit_exam(attempt_id, g.user.id, _answers(started.questions), auto_submitted=auto)
         except ValidationError:
             flash("Some answers could not be read. Please try again.")
         except AttemptAlreadySubmittedError:
             return redirect(url_for("tests.result", kind="exam", attempt_id=attempt_id))
         else:
+            if auto in AUTO_MESSAGES:
+                flash(AUTO_MESSAGES[auto])
             _flash_result(result)
             return redirect(url_for("tests.result", kind="exam", attempt_id=attempt_id))
     return render_template("tests/take.html", kind="exam", title=started.exam.title, started=started, questions=started.questions,
                            bodies=_rendered(started.questions), action=url_for("tests.take_exam", attempt_id=attempt_id),
-                           deadline=started.deadline, back=url_for("tests.exam", exam_id=started.exam.id))
+                           deadline=started.deadline, back=url_for("tests.exam", exam_id=started.exam.id),
+                           event_url=url_for("tests.exam_event", attempt_id=attempt_id))
+
+
+AUTO_MESSAGES = {
+    "left": "Your exam was submitted automatically because you left it again after the warning.",
+    "back": "Your exam was submitted because you chose to leave it.",
+}
+
+
+@bp.post("/exams/attempts/<int:attempt_id>/event")
+@roles_required("student")
+def exam_event(attempt_id: int):
+    """The exam page reports what it saw (left the tab, left full screen…)."""
+    return _log_event(lambda event: deps.attempts().log_exam_event(attempt_id, g.user.id, event))
+
+
+def _log_event(log):
+    try:
+        count = log(request.form.get("event", ""))
+    except ValueError:
+        return {"error": "unknown event"}, 400
+    except (AttemptNotFoundError, AttemptNotYoursError):
+        abort(404)
+    except AttemptAlreadySubmittedError:
+        return {"error": "already submitted"}, 409
+    return {"events": count}
 
 
 def _may_take(exam) -> bool:

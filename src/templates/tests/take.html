@@ -3,7 +3,28 @@
 {% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
 {% block header %}{% include "partials/topbar.html" %}{% endblock %}
 {% block content %}
-<form id="take" method="post" action="{{ action }}" class="section" style="padding-top:28px" novalidate>
+{% set guarded = kind == 'exam' and event_url %}
+{% if guarded %}
+<div id="guard-gate" class="guard-layer" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+<div class="card guard-card">
+<p class="crumbs" style="margin:0">EXAM · ATTEMPT {{ started.attempt.attempt_no }}</p>
+<h1 id="gate-title" style="font-size:2.2rem;line-height:1.1;color:var(--accent-text);margin:6px 0 12px">{{ title|upper }}</h1>
+<p data-gate-text style="font-size:1.15rem;line-height:1.5">The exam opens in full screen. Before you start:</p>
+<ul class="guard-rules">
+<li>Stay in the exam until you submit. <strong>Leaving it</strong> (another tab, another app, minimising) is recorded: the first time you get a warning, the second time <strong>your exam is submitted automatically</strong>.</li>
+<li><strong>Going back</strong> or leaving the page submits your exam.</li>
+<li>Copy, paste and right-click are switched off.</li>
+<li>Your lecturer sees what happened during your attempt.</li>
+{% if deadline %}<li>The timer keeps running whatever you do.</li>{% endif %}
+</ul>
+<p data-gate-note class="muted" style="font-size:0.95rem"></p>
+<button type="button" class="btn" data-gate-start>START IN FULL SCREEN »</button>
+</div></div>
+<div id="guard-modal" class="guard-layer" role="alertdialog" aria-modal="true" aria-labelledby="guard-modal-title" hidden>
+<div class="card guard-card"><h2 id="guard-modal-title" style="font-size:1.8rem;color:var(--accent-text);margin:0 0 10px"></h2>
+<p style="font-size:1.15rem;line-height:1.5"></p><div class="row guard-buttons" style="margin-top:16px"></div></div></div>
+{% endif %}
+<form id="take" method="post" action="{{ action }}" class="section" style="padding-top:28px" novalidate{% if guarded %} data-guard-url="{{ event_url }}" data-guard-strikes="2"{% endif %}>
 {{ csrf_field() }}<input type="hidden" name="attempt_id" value="{{ started.attempt.id }}">
 <div class="row" style="justify-content:space-between;position:sticky;top:var(--header-h);background:var(--bg);z-index:5;padding:10px 0;border-bottom:3px solid var(--purple);margin-bottom:24px">
 <div><p class="crumbs" style="margin:0">{{ 'EXAM' if kind == 'exam' else 'EXERCISE' }} · ATTEMPT {{ started.attempt.attempt_no }}</p><h1 style="font-size:2.125rem;color:var(--accent-text)">{{ title|upper }}</h1></div>
@@ -41,7 +62,7 @@
 </li>
 {% endfor %}
 </ol>
-<div class="row" style="max-width:900px;justify-content:space-between"><a href="{{ back }}" style="text-decoration:underline;color:var(--accent-text)">« Leave (the attempt stays open)</a><button class="btn" type="submit">SUBMIT {{ 'EXAM' if kind == 'exam' else 'ANSWERS' }} »</button></div>
+<div class="row" style="max-width:900px;justify-content:space-between">{% if guarded %}<span></span>{% else %}<a href="{{ back }}" style="text-decoration:underline;color:var(--accent-text)">« Leave (the attempt stays open)</a>{% endif %}<button class="btn" type="submit">SUBMIT {{ 'EXAM' if kind == 'exam' else 'ANSWERS' }} »</button></div>
 </form>
 <script src="{{ url_for('static', filename='js/smd.js') }}"></script>
 <script>
@@ -68,10 +89,11 @@
       var left = Math.max(0, Math.round((end - Date.now()) / 1000));
       timer.textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0");
       if (left <= 60 && !warned) { warned = true; timer.parentNode.setAttribute("aria-live", "assertive"); timer.style.color = "var(--danger)"; }
-      if (left === 0) { window.timeUp = true; if (!sent) { sent = true; form.submit(); } return; }
+      if (left === 0) { window.timeUp = true; if (!sent) { sent = true; if (window.examGuard) window.examGuard.release(); form.submit(); } return; }
       setTimeout(tick, 1000);
     })();
   }
 })();
 </script>
+{% if guarded %}<script src="{{ url_for('static', filename='js/exam-guard.js') }}"></script>{% endif %}
 {% endblock %}

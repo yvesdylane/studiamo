@@ -83,6 +83,12 @@ Kind = Literal["exercise", "exam"]
 AnyAttempt = ExerciseAttempt | ExamAttempt
 
 
+# what the exam page reports (src/static/js/exam-guard.js), kept on the attempt
+INTEGRITY_EVENTS = {"started_fullscreen", "no_fullscreen", "left_fullscreen", "left_window", "back", "leave_link",
+                    "copy", "paste", "context_menu", "page_closed"}
+INTEGRITY_AUTO = {"left", "back"}
+MAX_EVENTS = 200
+
 class AttemptService:
     def __init__(
         self,
@@ -249,15 +255,34 @@ class AttemptService:
         return self._exam_started(session, exam, attempt, resumed=False)
 
     def submit_exam(self, attempt_id: int, student_id: int | None, data: AttemptSubmit, *,
-                    guest_id: int | None = None) -> AttemptResult:
+                    guest_id: int | None = None, auto_submitted: str | None = None) -> AttemptResult:
+        """auto_submitted: 'left' | 'back' when the exam page submitted it by itself."""
         with self._db.session() as session:
             attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id, guest_id=guest_id)
+            if auto_submitted in INTEGRITY_AUTO:
+                attempt.auto_submitted = auto_submitted
+                attempt.integrity_events = [*(attempt.integrity_events or []),
+                                            {"type": f"auto_submit_{auto_submitted}", "at": self._now().isoformat()}][-MAX_EVENTS:]
             exam = session.get(Exam, attempt.exam_id)
             late = self._is_late(exam, attempt, self._now())
             questions = self._exam_questions(session, attempt)
             points = self._exam_points(session, exam, questions)
             graded = self._grade_all(questions, points, [] if late else data.answers)
             return self._finish(session, "exam", attempt, exam.title, graded, late=late, exam=exam)
+
+    def log_exam_event(self, attempt_id: int, student_id: int | None, event: str, *,
+                       guest_id: int | None = None) -> int:
+        """Note something the exam page saw (left the tab, left full screen…) on an
+        unfinished attempt. Returns how many events the attempt has."""
+        if event not in INTEGRITY_EVENTS:
+            raise ValueError(f"unknown exam event {event!r}")
+        with self._db.session() as session:
+            attempt = self._own_open_attempt(session, ExamAttempt, attempt_id, student_id, guest_id=guest_id)
+            events = list(attempt.integrity_events or [])
+            if len(events) < MAX_EVENTS:
+                events.append({"type": event, "at": self._now().isoformat()})
+                attempt.integrity_events = events
+            return len(events)
 
     def get_exam_attempt(self, attempt_id: int) -> ExamAttemptRead:
         with self._db.session() as session:
