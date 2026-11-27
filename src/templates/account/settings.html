@@ -125,11 +125,11 @@
 <p style="font-size:1.15rem;line-height:1.55">AI can turn notes you already have (Word, PowerPoint, PDF, text) into Studiamo notes with code boxes, file trees and live diagrams. There are two ways to connect it, and you can use both. Either way the result is a <strong>draft</strong>: you check it, and an admin reviews it before students see it.</p>
 <div class="ai-compare">
 <div><h3>A · API KEY · INSIDE STUDIAMO</h3>
-<p>You paste a <strong>Claude API key</strong> here once. Then the note editor gets an <strong>Import</strong> button: choose a file, Studiamo sends it to Claude and puts the converted note in the editor.</p>
-<ul><li>Fastest: one click, nothing to install.</li><li>Works from any computer you log in on.</li><li>You pay Anthropic for what you use (your key, your account). The file you import is sent to Anthropic.</li></ul>
+<p>You paste an <strong>API key</strong> here once: <strong>Claude</strong> (the default), <strong>Gemini</strong> or <strong>OpenAI</strong>, or several and switch whenever you like. Then the note editor's <strong>Import</strong> button sends your file to that AI and puts the converted note in the editor.</p>
+<ul><li>Fastest: one click, nothing to install.</li><li>Works from any computer you log in on.</li><li>You pay the AI company for what you use (your key, your account); Gemini has a free tier. The file you import is sent to them.</li><li>A ChatGPT, Gemini or Claude <em>subscription</em> is not an API key: keys come from the developer consoles linked below.</li></ul>
 <p class="muted">Best for: importing notes one by one while you write in the Studio.</p></div>
 <div><h3>B · MCP · FROM YOUR AI APP</h3>
-<p>You connect the AI app you already use (Claude Code, Claude Desktop…) to Studiamo with a <strong>Studiamo key</strong>. Then you talk to it there: “convert these notes and save them in Week 2”.</p>
+<p>You connect the AI app you already use to Studiamo with a <strong>Studiamo key</strong>. MCP is an open standard, so the model does not matter: Claude Code, Claude Desktop, Gemini CLI, and editors like VS Code or Cursor all work. Then you talk to it there: “convert these notes and save them in Week 2”.</p>
 <ul><li>Uses your AI app's own subscription: no API key needed.</li><li>It can work on many notes, reorganise topics, and fix notes you already wrote.</li><li>Your app must stay connected; it works where the app is installed.</li></ul>
 <p class="muted">Best for: converting a whole course, or longer work with an assistant.</p></div>
 </div>
@@ -137,20 +137,38 @@
 </div>
 {% if lecturer %}
 <div class="card form" id="api-key">
-<h3 style="font-size:1.3rem;color:var(--accent-text)">A · YOUR CLAUDE API KEY</h3>
-{% if ai_key %}
-<p class="row"><span class="tag ok">CONNECTED</span><span>Key <code>sk-ant-{{ ai_key.hint }}</code> · {{ ai_key.last_used_at.strftime('last used %d %b %Y') if ai_key.last_used_at else 'not used yet' }}</span></p>
-<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_model"><label class="lab" for="ai-model">MODEL</label>
-<select class="input" id="ai-model" name="model">{% for value, label in ai_models %}<option value="{{ value }}"{% if ai_key.model == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="btn xs ghost" type="submit">SAVE</button></form>
-<form method="post" class="inline-form">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_delete"><button class="btn xs danger" type="submit" onclick="return confirm('Remove your API key from Studiamo?')">REMOVE KEY</button></form>
+<h3 style="font-size:1.3rem;color:var(--accent-text)">A · YOUR API KEYS</h3>
+<p class="muted" style="font-size:1rem;margin:0">Connect one or more. Studiamo uses your default AI; in the Import dialog you can pick another one each time.</p>
+{% if ai.connected %}
+<form method="post" class="form" style="gap:6px">{{ csrf_field() }}<input type="hidden" name="section" value="ai_default">
+<fieldset style="border:0;padding:0;margin:0"><legend class="lab">USE BY DEFAULT</legend>
+<div class="row" style="gap:18px">{% for pid, p in ai_providers.items() %}<label class="check"{% if pid not in ai.connected %} style="opacity:.5" title="Add a {{ p.name }} key first"{% endif %}><input type="radio" name="provider" value="{{ pid }}"{% if pid == ai.default %} checked{% endif %}{% if pid not in ai.connected %} disabled{% endif %}>{{ p.name }}</label>{% endfor %}
+<button class="btn xs ghost" type="submit">SAVE</button></div></fieldset></form>
 {% endif %}
-<form class="form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_save">
-{% with name="api_key", label=("REPLACE THE KEY" if ai_key else "API KEY"), type="password", placeholder="sk-ant-…", autocomplete="off", values={}, errors=errors if section == 'ai_key_save' else {} %}{% include "auth/_field.html" %}{% endwith %}
-{% if not ai_key %}<div class="row"><label class="lab" for="ai-model2">MODEL</label><select class="input" id="ai-model2" name="model">{% for value, label in ai_models %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></div>{% endif %}
-<p class="muted" style="font-size:0.95rem">Create a key in the <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="text-decoration:underline">Anthropic Console</a>. Studiamo checks it with Anthropic before saving, stores it encrypted, and never shows it again.</p>
-<button class="btn" type="submit" style="align-self:flex-start">{{ 'REPLACE KEY' if ai_key else 'SAVE KEY' }}</button>
+</div>
+{% for pid, p in ai_providers.items() %}{% set k = ai.connected.get(pid) %}
+<div class="card form" id="ai-{{ pid }}">
+<div class="row" style="justify-content:space-between;align-items:baseline"><h3 style="font-size:1.25rem;color:var(--accent-text);margin:0">{{ p.name|upper }} <span class="muted" style="font-size:0.95rem">· {{ p.company }}</span></h3>
+{% if k %}<span class="row" style="gap:8px"><span class="tag ok">CONNECTED</span>{% if pid == ai.default %}<span class="tag">DEFAULT</span>{% endif %}</span>{% else %}<span class="tag g">NOT CONNECTED</span>{% endif %}</div>
+<p class="muted" style="font-size:0.95rem;margin:0">{{ p.note }}</p>
+{% if k %}
+<p style="margin:0">Key <code>{{ k.hint }}</code> · {{ k.last_used_at.strftime('last used %d %b %Y') if k.last_used_at else 'not used yet' }}</p>
+<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_model"><input type="hidden" name="provider" value="{{ pid }}"><label class="lab" for="ai-model-{{ pid }}">MODEL</label>
+<select class="input" id="ai-model-{{ pid }}" name="model" style="max-width:100%">{% for m in k.models %}<option value="{{ m }}"{% if k.model == m %} selected{% endif %}>{{ p.label(m) }}</option>{% endfor %}</select><button class="btn xs ghost" type="submit">SAVE</button></form>
+<div class="row" style="gap:10px">
+{% if pid != 'anthropic' %}<form method="post" class="inline-form">{{ csrf_field() }}<input type="hidden" name="section" value="ai_refresh"><input type="hidden" name="provider" value="{{ pid }}"><button class="btn xs ghost" type="submit" title="Ask {{ p.company }} again which models your key can use">REFRESH MODEL LIST</button></form>{% endif %}
+<form method="post" class="inline-form">{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_delete"><input type="hidden" name="provider" value="{{ pid }}"><button class="btn xs danger" type="submit" onclick="return confirm('Remove your {{ p.name }} key from Studiamo?')">REMOVE KEY</button></form></div>
+{% endif %}
+<form class="form" method="post" novalidate>{{ csrf_field() }}<input type="hidden" name="section" value="ai_key_save"><input type="hidden" name="provider" value="{{ pid }}">
+{% set err = errors.get('api_key') if section == 'ai_key_save' and (ai_form_provider or 'anthropic') == pid else none %}
+<div class="field"><label for="ai-key-{{ pid }}" class="lab">{{ 'REPLACE THE KEY' if k else 'API KEY' }}</label>
+<input class="input" id="ai-key-{{ pid }}" name="api_key" type="password" autocomplete="off" placeholder="{{ p.placeholder }}" style="width:100%"{% if err %} aria-invalid="true" aria-describedby="ai-err-{{ pid }}"{% endif %}>
+{% if err %}<p class="err" id="ai-err-{{ pid }}">{{ err }}</p>{% endif %}</div>
+<p class="muted" style="font-size:0.95rem;margin:0">Create a key in <a href="{{ p.console_url }}" target="_blank" rel="noopener" style="text-decoration:underline">{{ p.console_name }}</a>. Studiamo checks it with {{ p.company }}{% if pid != 'anthropic' %}, asks which models it can use{% endif %}, stores it encrypted, and never shows it again.</p>
+<button class="btn s" type="submit" style="align-self:flex-start">{{ 'REPLACE KEY' if k else 'SAVE KEY' }}</button>
 </form>
 </div>
+{% endfor %}
 <h3 style="font-size:1.3rem;color:var(--accent-text);margin-top:6px">B · CONNECT YOUR AI APP (MCP)</h3>
 {% if new_key %}
 <div class="card" style="border-color:var(--ok)" role="status">
@@ -173,6 +191,16 @@
 <p style="margin-top:10px"><strong>Claude Code</strong> (terminal):</p>
 <pre id="cfg-cc" class="mono" style="white-space:pre-wrap;background:var(--code-bg);border:2px solid var(--ink);padding:10px">claude mcp add --transport http studiamo {{ mcp_url }} --header "Authorization: Bearer {{ key }}"</pre>
 <button type="button" class="btn xs ghost" data-copy="cfg-cc" style="align-self:flex-start">COPY</button>
+<p style="margin-top:10px"><strong>Gemini CLI</strong> (add to <code>~/.gemini/settings.json</code>):</p>
+<pre id="cfg-gem" class="mono" style="white-space:pre;overflow:auto;background:var(--code-bg);border:2px solid var(--ink);padding:10px">{
+  "mcpServers": {
+    "studiamo": {
+      "httpUrl": "{{ mcp_url }}",
+      "headers": { "Authorization": "Bearer {{ key }}" }
+    }
+  }
+}</pre>
+<button type="button" class="btn xs ghost" data-copy="cfg-gem" style="align-self:flex-start">COPY</button>
 <p style="margin-top:10px"><strong>Claude Desktop and other apps</strong> (their MCP config file, through <code>mcp-remote</code>, needs Node.js):</p>
 <pre id="cfg-json" class="mono" style="white-space:pre;overflow:auto;background:var(--code-bg);border:2px solid var(--ink);padding:10px">{
   "mcpServers": {
@@ -184,6 +212,7 @@
   }
 }</pre>
 <button type="button" class="btn xs ghost" data-copy="cfg-json" style="align-self:flex-start">COPY</button>
+<p class="muted" style="font-size:0.95rem;margin-top:10px"><strong>ChatGPT and other web apps</strong> run on their company's servers, so they can only connect once Studiamo is online at a public address, and they expect a “Sign in with Studiamo” login rather than a pasted key. Until then, use one of the apps above.</p>
 </div>
 <div class="card">
 <h3 style="font-size:1.3rem;color:var(--accent-text)">3 · ASK IT</h3>

@@ -49,6 +49,7 @@ class User(Base):
     toast_enabled: Mapped[bool] = mapped_column(server_default=sa.true())
     toast_seconds: Mapped[int] = mapped_column(server_default="10")
     avatar_path: Mapped[str | None] = mapped_column(sa.String(80))   # profile photo in MEDIA_DIR (migration 0017)
+    ai_provider: Mapped[str] = mapped_column(sa.String(20), server_default="anthropic")   # AI used by default (migration 0019)
     roles: Mapped[list[UserRole]] = mapped_column(
         pg.ARRAY(pg_enum(UserRole, "user_role")),
         server_default=sa.text("'{student}'"),

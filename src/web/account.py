@@ -9,7 +9,7 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
 from pydantic import ValidationError
 
-from src.ai.NoteConverter import MODELS as AI_MODELS
+from src.ai.providers import PROVIDERS as AI_PROVIDERS
 from src.player.service.PlayerErrors import PlayerNotFoundError
 from src.user.dto.LecturerApplicationDto import LecturerApplicationCreate
 from src.user.dto.UserDto import UserUpdate
@@ -56,7 +56,7 @@ def profile(user_id: int):
 TABS = ["profile", "appearance", "notifications", "ranking", "ai", "security", "lecturer", "delete"]
 SECTION_TAB = {"profile": "profile", "appearance": "appearance", "ranking": "ranking", "password": "security",
                "unlink": "security", "lecturer": "lecturer", "delete": "delete", "ai_create": "ai", "ai_revoke": "ai",
-               "ai_key_save": "ai", "ai_key_model": "ai", "ai_key_delete": "ai", "notifications": "notifications",
+               "ai_key_save": "ai", "ai_key_model": "ai", "ai_key_delete": "ai", "ai_default": "ai", "ai_refresh": "ai", "notifications": "notifications",
                "photo": "profile", "photo_remove": "profile"}
 
 
@@ -132,24 +132,37 @@ def settings():
                 return redirect(url_for("account.settings", tab="ai"))
             # shown once, in this answer only (never stored, never in a cookie)
             return _settings_page(deps.users().get(me.id), {}, section, "ai", new_key=new_key)
-        elif section in ("ai_key_save", "ai_key_model", "ai_key_delete"):
-            from src.ai.NoteConverter import AiKeyError
+        elif section in ("ai_key_save", "ai_key_model", "ai_key_delete", "ai_default", "ai_refresh"):
+            from src.ai.NoteConverter import PROVIDERS, AiKeyError
 
             conv = deps.converter()
-            if section == "ai_key_delete":
-                conv.delete_key(me.id)
-                flash("Your API key was removed from Studiamo.")
-            elif section == "ai_key_model":
-                conv.set_model(me.id, request.form.get("model", ""))
-                flash("Model saved.")
-            else:
-                try:
-                    conv.save_key(me.id, request.form.get("api_key", ""), request.form.get("model", ""))
-                    flash("API key checked with Anthropic and saved (encrypted).")
-                except AiKeyError as exc:
-                    errors["api_key"] = str(exc)
-                    return _settings_page(deps.users().get(me.id), errors, section, "ai")
-            return redirect(url_for("account.settings", tab="ai"))
+            provider = request.form.get("provider") or "anthropic"
+            if provider not in PROVIDERS:
+                abort(400)
+            name = PROVIDERS[provider].name
+            try:
+                if section == "ai_key_delete":
+                    conv.delete_key(me.id, provider)
+                    flash(f"Your {name} key was removed from Studiamo.")
+                elif section == "ai_key_model":
+                    conv.set_model(me.id, provider, request.form.get("model", ""))
+                    flash(f"{name} model saved.")
+                elif section == "ai_default":
+                    conv.set_default(me.id, provider)
+                    flash(f"{name} is now the AI Studiamo uses by default.")
+                elif section == "ai_refresh":
+                    n = len(conv.refresh_models(me.id, provider))
+                    flash(f"{name}: {n} model{'s' if n != 1 else ''} available to your key.")
+                else:
+                    conv.save_key(me.id, provider, request.form.get("api_key", ""), request.form.get("model") or None)
+                    flash(f"{name} key checked with {PROVIDERS[provider].company} and saved (encrypted).")
+            except AiKeyError as exc:
+                if section != "ai_key_save":
+                    flash(str(exc))
+                    return redirect(url_for("account.settings", tab="ai"))
+                errors["api_key"] = str(exc)
+                return _settings_page(deps.users().get(me.id), errors, section, "ai", ai_form_provider=provider)
+            return redirect(url_for("account.settings", tab="ai") + "#ai-" + provider)
         elif section == "ai_revoke":
             from src.user.service.ApiTokenService import ApiTokenNotFoundError, ApiTokenService
 
@@ -246,7 +259,7 @@ def settings():
     return _settings_page(deps.users().get(me.id), errors, section, tab)
 
 
-def _settings_page(me, errors, section, tab, new_key: str | None = None):
+def _settings_page(me, errors, section, tab, new_key: str | None = None, ai_form_provider: str | None = None):
     from src.user.service.ApiTokenService import ApiTokenService
 
     return render_template(
@@ -254,5 +267,5 @@ def _settings_page(me, errors, section, tab, new_key: str | None = None):
         has_password=deps.users().has_password(me.id), identities=deps.users().list_identities(me.id),
         application=deps.lecturer_apps().for_user(me.id), keys=ApiTokenService(deps.db()).list(me.id),
         new_key=new_key, mcp_url=url_for("mcp.endpoint", _external=True),
-        ai_key=deps.converter().settings(me.id), ai_models=AI_MODELS,
+        ai=deps.converter().settings(me.id), ai_providers=AI_PROVIDERS, ai_form_provider=ai_form_provider,
     ), (400 if errors else 200)

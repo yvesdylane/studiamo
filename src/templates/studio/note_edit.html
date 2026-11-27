@@ -33,10 +33,14 @@
 <p>Word (.docx), PowerPoint (.pptx), PDF, Markdown, text or HTML.</p>
 <div class="field"><label class="lab" for="import-file">FILE</label><input type="file" id="import-file" accept=".docx,.pptx,.pdf,.md,.markdown,.txt,.html,.htm" class="input" style="width:100%"></div>
 <div class="field"><label class="lab" for="import-text">OR PASTE THE TEXT</label><textarea id="import-text" rows="5" class="input" style="width:100%"></textarea></div>
-{% if ai_key %}
-<label class="check" style="font-size:1.1rem"><input type="checkbox" id="import-ai" checked><span>Convert it with my AI (Claude, key <code>{{ ai_key.hint }}</code>): code boxes, diagrams, file trees. <span class="muted">Takes up to a minute or two; billed to your Anthropic account.</span></span></label>
+{% if ai.connected %}
+{% set first = ai.default if ai.default in ai.connected else (ai.connected|list)[0] %}
+<label class="check" style="font-size:1.1rem"><input type="checkbox" id="import-ai" checked><span>Convert it with my AI: code boxes, diagrams, file trees. <span class="muted">Takes up to a minute or two; billed to your own account with that AI.</span></span></label>
+<div class="row"><label class="lab" for="import-provider">AI</label>
+<select class="input" id="import-provider">{% for pid, p in ai_providers.items() if pid in ai.connected %}<option value="{{ pid }}"{% if pid == first %} selected{% endif %}>{{ p.name }} · {{ p.label(ai.connected[pid].model) }}{{ ' (default)' if pid == ai.default }}</option>{% endfor %}</select>
+<a href="{{ url_for('account.settings', tab='ai') }}" class="muted" style="text-decoration:underline;font-size:0.95rem">change models</a></div>
 {% else %}
-<p class="notice">Without AI, headings, lists, tables and code are kept, but nothing is made interactive, and PDFs cannot be read. <a href="{{ url_for('account.settings', tab='ai') }}" style="text-decoration:underline">Add your Claude API key</a> to convert with AI, or use your AI app (MCP).</p>
+<p class="notice">Without AI, headings, lists, tables and code are kept, but nothing is made interactive, and PDFs cannot be read. <a href="{{ url_for('account.settings', tab='ai') }}" style="text-decoration:underline">Add an API key (Claude, Gemini or OpenAI)</a> to convert with AI, or use your AI app (MCP).</p>
 {% endif %}
 <fieldset style="border:0;padding:0;margin:0" class="row"><legend class="lab">PUT IT</legend>
 <label class="check" style="font-size:1.05rem;align-items:center"><input type="radio" name="import-where" value="replace"{% if not text.strip() %} checked{% endif %}>instead of the current text</label>

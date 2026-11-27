@@ -460,7 +460,11 @@
       if (!file && !text.trim()) { status.textContent = "Choose a file or paste some text."; return; }
       var d = new FormData();
       if (file) d.append("file", file); else d.append("text", text);
-      if (ai && ai.checked) d.append("use_ai", "1");
+      if (ai && ai.checked) {
+        d.append("use_ai", "1");
+        var prov = document.getElementById("import-provider");
+        if (prov) d.append("provider", prov.value);
+      }
       d.append("title", (document.getElementById("f-title") || {}).value || "");
       d.append("csrf_token", token);
       go.disabled = true;

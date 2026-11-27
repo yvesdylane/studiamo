@@ -266,8 +266,14 @@ def edit_note(note_id: int):
     page = render(text, source_map=True)
     return render_template(
         "studio/note_edit.html", note=note, topic=topic, course=course, text=text, page=page, errors=errors,
-        ai_key=deps.converter().settings(g.user.id), open_import=request.args.get("import") == "1",
+        ai=deps.converter().settings(g.user.id), ai_providers=_ai_providers(), open_import=request.args.get("import") == "1",
     ), (400 if errors else 200)
+
+
+def _ai_providers():
+    from src.ai.providers import PROVIDERS
+
+    return PROVIDERS
 
 
 def _read(note_id: int) -> str:
@@ -332,7 +338,8 @@ def delete_note(note_id: int):
 def import_note(note_id: int):
     """Turn an uploaded file (or pasted text) into Studiamo Markdown for the editor.
 
-    use_ai=1 and a saved Claude key: Claude converts it (src/ai/NoteConverter.py).
+    use_ai=1 and a saved API key: the chosen AI (provider=…, else the user's default)
+    converts it (src/ai/NoteConverter.py).
     Otherwise: the plain conversion (src/ai/importers.py). Nothing is saved
     here: the editor shows the result, and the lecturer saves it."""
     from src.ai.NoteConverter import AiKeyError
@@ -352,12 +359,14 @@ def import_note(note_id: int):
     use_ai = request.form.get("use_ai") == "1"
     if use_ai:
         try:
-            result = deps.converter().convert(g.user.id, doc, title=request.form.get("title") or note.title)
+            result = deps.converter().convert(g.user.id, doc, title=request.form.get("title") or note.title,
+                                              provider=request.form.get("provider") or None)
         except AiKeyError as exc:
             return jsonify(error=str(exc)), 400
-        return jsonify(markdown=result.markdown, problems=result.problems, used_ai=True, model=result.model)
+        return jsonify(markdown=result.markdown, problems=result.problems, used_ai=True, model=result.model,
+                       provider=result.provider)
     if doc.kind == "pdf":
-        return jsonify(error="PDF files need the AI: add your Claude API key in Settings > AI assistant, "
+        return jsonify(error="PDF files need the AI: add an API key (Claude, Gemini or OpenAI) in Settings > AI assistant, "
                              "or copy the text out of the PDF and paste it."), 400
     return jsonify(markdown=doc.markdown, problems=render(doc.markdown).problems, used_ai=False, model=None)
 
