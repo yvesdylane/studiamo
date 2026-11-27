@@ -38,6 +38,12 @@ def create_app() -> Flask:
     app.config["SECRET_KEY"] = secret or "dev-only-change-me"
     # set SESSION_COOKIE_SECURE=1 when the site is served over https
     app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "0") == "1"
+    # behind a reverse proxy (nginx, Caddy…) that serves https: trust its X-Forwarded-* headers,
+    # so links in emails, the Google callback and the MCP address use https and the real host
+    if os.getenv("TRUST_PROXY", "0") == "1":
+        from werkzeug.middleware.proxy_fix import ProxyFix
+
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     db = Db.from_env()
     app.extensions["db"] = db
