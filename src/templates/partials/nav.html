@@ -27,8 +27,7 @@
 </div>
 </details>
 {% else %}
-<a class="btn s o" href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.method == 'GET' and not ep.startswith('auth.') else None) }}">{{ _('LOG IN') }}</a>
-<a class="btn s" href="{{ url_for('auth.register') }}">{{ _('SIGN UP') }}</a>
+<a class="btn s" href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.method == 'GET' and not ep.startswith('auth.') else None) }}">{{ _('LOG IN') }}</a>
 {% endif %}
 </div>
 </div>
