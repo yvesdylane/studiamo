@@ -1,17 +1,24 @@
-{# The site header: main bar + course strip. Used by every page (base.html). #}
+{# The site header: main bar + course strip. Used by every page (base.html).
+   Up to 900px wide the sections, courses, language and theme move into the
+   ☰ menu (a <details>, so it opens without JavaScript; base.html closes it on
+   Escape, outside clicks and link clicks). #}
 {% set ep = request.endpoint or '' %}
+{% set strip = nav_courses()|selectattr('available')|list %}
 {% macro item(endpoint, label, active) %}<a class="mainlink" href="{{ url_for(endpoint) }}"{% if active %} aria-current="page"{% endif %}>{{ label }}</a>{% endmacro %}
-<div class="bar">
-<a class="brand" href="{{ url_for('pages.home') }}" aria-label="{{ _('Studiamo, home') }}"><svg viewBox="0 0 108 100" width="38" height="35" aria-hidden="true"><polygon points="27,4 75,4 98,46 75,88 27,88 4,46" fill="#000" transform="translate(7 7)"></polygon><polygon class="fill-purple" points="27,4 75,4 98,46 75,88 27,88 4,46"></polygon><rect x="28" y="52" width="14" height="18" fill="#fff"></rect><rect x="44" y="38" width="14" height="32" fill="#fff"></rect><rect x="60" y="24" width="14" height="46" fill="#fff"></rect></svg><span>{{ _('STUDIAMO') }}</span></a>
-<nav class="mainnav" aria-label="{{ _('Main') }}">
+{% macro sections() %}
 {{ item('learn.courses', _('COURSES'), ep in ('learn.courses', 'learn.course', 'learn.note')) }}
 {{ item('learn.exercises', _('EXERCISES'), ep in ('learn.exercises', 'tests.exercise', 'tests.take_exercise')) }}
 {{ item('learn.exams', _('EXAMS'), ep in ('learn.exams', 'tests.exam', 'tests.take_exam')) }}
 {{ item('learn.leaderboard', _('RANKS'), ep == 'learn.leaderboard') }}
-</nav>
+{% endmacro %}
+{% macro lang_switch() %}{% set lang = current_lang() %}{% set other = 'en' if lang == 'fr' else 'fr' %}<a class="langbtn inline-flex items-stretch h-[44px] border-2 border-solid border-ink text-ink font-display text-[1rem] hover:bg-accent-soft [&>span]:inline-flex [&>span]:items-center [&>span]:px-[8px] [&>.on]:bg-purple [&>.on]:text-white" href="{{ url_for('i18n.switch', code=other) }}" hreflang="{{ other }}" aria-label="{{ _('Switch to French') if other == 'fr' else _('Switch to English') }}"><span{% if lang == 'en' %} class="on"{% endif %}>EN</span><span{% if lang == 'fr' %} class="on"{% endif %}>FR</span></a>{% endmacro %}
+{% macro theme_switch() %}<button type="button" class="themebtn" data-theme-toggle aria-label="{{ _('Dark mode') }}"{% if g.user %} data-csrf="{{ csrf_token() }}"{% endif %}><span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span></button>{% endmacro %}
+<div class="bar">
+<a class="brand" href="{{ url_for('pages.home') }}" aria-label="{{ _('Studiamo, home') }}"><svg viewBox="0 0 108 100" width="38" height="35" aria-hidden="true"><polygon points="27,4 75,4 98,46 75,88 27,88 4,46" fill="#000" transform="translate(7 7)"></polygon><polygon class="fill-purple" points="27,4 75,4 98,46 75,88 27,88 4,46"></polygon><rect x="28" y="52" width="14" height="18" fill="#fff"></rect><rect x="44" y="38" width="14" height="32" fill="#fff"></rect><rect x="60" y="24" width="14" height="46" fill="#fff"></rect></svg><span>{{ _('STUDIAMO') }}</span></a>
+<nav class="mainnav" aria-label="{{ _('Main') }}">{{ sections() }}</nav>
 <div class="acct">
-{% set lang = current_lang() %}{% set other = 'en' if lang == 'fr' else 'fr' %}<a class="langbtn inline-flex items-stretch h-[44px] max-[600px]:h-[40px] border-2 border-solid border-ink text-ink font-display text-[1rem] hover:bg-accent-soft [&>span]:inline-flex [&>span]:items-center [&>span]:px-[8px] [&>.on]:bg-purple [&>.on]:text-white" href="{{ url_for('i18n.switch', code=other) }}" hreflang="{{ other }}" aria-label="{{ _('Switch to French') if other == 'fr' else _('Switch to English') }}"><span{% if lang == 'en' %} class="on"{% endif %}>EN</span><span{% if lang == 'fr' %} class="on"{% endif %}>FR</span></a>
-<button type="button" class="themebtn" id="theme-toggle" aria-label="{{ _('Dark mode') }}"{% if g.user %} data-csrf="{{ csrf_token() }}"{% endif %}><span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span></button>
+<span class="wide-only">{{ lang_switch() }}</span>
+<span class="wide-only">{{ theme_switch() }}</span>
 {% if g.user %}
 {% if acting_as('admin') %}<span class="tag bg-warn">{{ _('ADMIN') }}</span>{% endif %}
 <details class="menu">
@@ -29,7 +36,14 @@
 {% else %}
 <a class="btn s" href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.method == 'GET' and not ep.startswith('auth.') else None) }}">{{ _('LOG IN') }}</a>
 {% endif %}
+<details class="mnav">
+<summary class="menubtn" aria-label="{{ _('Menu') }}"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span></summary>
+<div class="mnav-panel">
+<nav class="mnav-links" aria-label="{{ _('Main') }}">{{ sections() }}</nav>
+{% if strip %}<nav class="mnav-courses" aria-label="{{ _('Courses: open the first lesson') }}"><p class="mnav-head">{{ _('COURSES') }}</p>{% for c in strip %}<a href="{{ url_for('learn.course_start', course_id=c.id) }}"{% if course is defined and course and course.id == c.id %} aria-current="page"{% endif %}>{{ c.title|upper }}</a>{% endfor %}</nav>{% endif %}
+<div class="mnav-tools">{{ lang_switch() }}{{ theme_switch() }}</div>
+</div>
+</details>
 </div>
 </div>
-{% set strip = nav_courses()|selectattr('available')|list %}
 {% if strip %}<nav class="strip" aria-label="{{ _('Courses: open the first lesson') }}">{% for c in strip %}<a href="{{ url_for('learn.course_start', course_id=c.id) }}"{% if course is defined and course and course.id == c.id %} aria-current="page"{% endif %}>{{ c.title|upper }}</a>{% endfor %}</nav>{% endif %}

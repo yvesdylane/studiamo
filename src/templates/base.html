@@ -70,17 +70,38 @@ window.tr = function (s, v) { s = window.I18N[s] || s; for (var k in v || {}) s 
     });
   }
   // light / dark switch: saved in a cookie, and on the account when logged in
-  var btn = document.getElementById("theme-toggle");
-  if (btn) btn.addEventListener("click", function () {
-    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    btn.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
-    document.cookie = "theme=" + next + ";path=/;max-age=31536000;SameSite=Lax";
-    var token = btn.getAttribute("data-csrf");
-    if (token) fetch("{{ url_for('account.save_theme') }}", {method: "POST", credentials: "same-origin",
-      headers: {"X-CSRF-Token": token, "Content-Type": "application/x-www-form-urlencoded"}, body: "theme=" + next}).catch(function () {});
+  // (two buttons: the header's, and the ☰ menu's on small screens)
+  var themeBtns = document.querySelectorAll("[data-theme-toggle]");
+  function pressed() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark" ? "true" : "false";
+    themeBtns.forEach(function (b) { b.setAttribute("aria-pressed", dark); });
+  }
+  themeBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      pressed();
+      document.cookie = "theme=" + next + ";path=/;max-age=31536000;SameSite=Lax";
+      var token = btn.getAttribute("data-csrf");
+      if (token) fetch("{{ url_for('account.save_theme') }}", {method: "POST", credentials: "same-origin",
+        headers: {"X-CSRF-Token": token, "Content-Type": "application/x-www-form-urlencoded"}, body: "theme=" + next}).catch(function () {});
+    });
   });
-  if (btn) btn.setAttribute("aria-pressed", document.documentElement.getAttribute("data-theme") === "dark" ? "true" : "false");
+  pressed();
+  // header drop-downs (☰ menu, account menu): one open at a time; Escape, a
+  // click elsewhere or a link inside closes them
+  var drops = document.querySelectorAll(".site-header details");
+  function closeAll(except) { drops.forEach(function (d) { if (d !== except) d.open = false; }); }
+  drops.forEach(function (d) {
+    d.addEventListener("toggle", function () { if (d.open) closeAll(d); });
+    d.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { d.open = false; }); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    var open = document.querySelector(".site-header details[open]");
+    if (open) { open.open = false; open.querySelector("summary").focus(); }
+  });
+  document.addEventListener("click", function (e) { if (!e.target.closest(".site-header details")) closeAll(); });
 })();
 </script>
 </body>

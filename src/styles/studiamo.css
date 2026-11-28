@@ -245,10 +245,39 @@ a{color:inherit;text-decoration:none}p{margin:0}
 .site-header .strip a{color:var(--ink);padding:6px 4px;border-bottom:3px solid transparent}
 .site-header .strip a:hover{border-bottom-color:var(--ink)}
 .site-header .strip a[aria-current="page"]{border-bottom-color:var(--purple);color:var(--purple)}
+
+/* ☰ menu (partials/nav.html): up to 900px it replaces the sections, the course
+   strip and the language / theme switches. A <details>: the summary is the
+   button, and while open its ::before dims the page and closes it on a tap. */
+.wide-only{display:contents}
+.mnav{display:none}
+.menubtn{list-style:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:2px solid var(--ink);background:var(--bg);color:var(--ink)}
+.menubtn::-webkit-details-marker{display:none}
+.menubtn:hover{background:var(--accent-soft)}
+.menubtn .bars{position:relative;width:20px;height:14px}
+.menubtn .bars i{position:absolute;left:0;width:100%;height:2px;background:currentColor;transition:transform .2s,opacity .2s,top .2s}
+.menubtn .bars i:nth-child(1){top:0}.menubtn .bars i:nth-child(2){top:6px}.menubtn .bars i:nth-child(3){top:12px}
+.mnav[open] .menubtn{background:var(--purple);border-color:var(--purple);color:#fff}
+.mnav[open] .menubtn .bars i:nth-child(1){top:6px;transform:rotate(45deg)}
+.mnav[open] .menubtn .bars i:nth-child(2){opacity:0}
+.mnav[open] .menubtn .bars i:nth-child(3){top:6px;transform:rotate(-45deg)}
+.mnav[open] > .menubtn::before{content:"";position:fixed;left:0;right:0;bottom:0;top:var(--header-h);background:rgb(0 0 0 / .45);cursor:default}
+.mnav-panel{position:absolute;left:0;right:0;top:100%;z-index:25;background:var(--bg);border-bottom:3px solid var(--purple);box-shadow:0 10px 0 rgb(0 0 0 / .12);
+  padding:10px 20px 20px;display:flex;flex-direction:column;gap:16px;max-height:calc(100dvh - var(--header-h));overflow:auto;animation:mnav-in .2s ease-out}
+@keyframes mnav-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.mnav-links{display:flex;flex-direction:column;gap:6px}
+.mnav-links .mainlink{display:flex;width:100%;font-size:1.25rem;padding:10px 14px;border-color:var(--line)}
+.mnav-head{font:0.9375rem var(--font-display);color:var(--muted);margin:0 0 6px;letter-spacing:.04em}
+.mnav-courses{display:flex;flex-direction:column;border-top:2px solid var(--line);padding-top:12px}
+.mnav-courses a{font:1.0625rem var(--font-display);padding:9px 14px;border-left:4px solid transparent}
+.mnav-courses a:hover{background:var(--accent-soft)}
+.mnav-courses a[aria-current="page"]{border-left-color:var(--purple);color:var(--accent-text)}
+.mnav-tools{display:flex;gap:10px;align-items:center;border-top:2px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:reduce){.mnav-panel{animation:none}.menubtn .bars i{transition:none}}
 @media (max-width:900px){
   .bar{grid-template-columns:1fr auto;padding:10px 20px}
-  .mainnav{grid-column:1 / -1;grid-row:2;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}
-  .mainlink{font-size:1.125rem;padding:6px 12px}
+  .mainnav,.wide-only,.site-header .strip{display:none}
+  .mnav{display:block}
 }
 
 /* footer at the bottom of the screen even on short pages:
@@ -394,20 +423,16 @@ main pre{max-width:100%;overflow-x:auto}
   .wrap{padding:28px 20px 0}
 }
 @media (max-width:600px){
-  /* header: logo, theme and account on one line, the four sections under it */
+  /* header: logo, account and the ☰ menu on one line */
   .bar{gap:8px 10px;padding:8px 14px;min-height:0}
   .brand{font-size:1.375rem;gap:8px}
   .brand svg{width:30px;height:28px}
-  .bar{grid-template-columns:auto 1fr}
-  .acct{gap:8px;flex-wrap:wrap}  /* language, theme and account buttons wrap instead of pushing the logo off screen */
+  .acct{gap:8px}
   .acct .btn.s{font-size:1rem;padding:6px 12px;min-height:40px;box-shadow:3px 3px 0 var(--shadow)}
-  .themebtn{width:40px;height:40px}
+  .themebtn,.menubtn{width:40px;height:40px}
+  .mnav-panel{padding:8px 14px 18px}
   .menu .avatar{font-size:1.125rem;padding:4px 10px;min-height:40px}
   .menu-list{min-width:min(260px,calc(100vw - 28px))}
-  .mainnav{justify-content:space-between;gap:4px;flex-wrap:wrap;overflow:visible}
-  .mainlink{font-size:1rem;padding:6px 8px;min-height:40px}
-  .site-header .strip{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:6px 22px;font-size:1.0625rem;padding:2px 14px}
-  .site-header .strip a{white-space:nowrap}
 
   /* page spacing and type */
   .section{padding:0 16px 40px}
@@ -438,8 +463,6 @@ main pre{max-width:100%;overflow-x:auto}
   .footer .base{padding:14px 16px;flex-direction:column;gap:8px}
 }
 @media (max-width:400px){
-  .mainnav{justify-content:space-around;gap:2px}
-  .mainlink{font-size:0.875rem;padding:6px 4px}
   .acct{gap:6px}
   .acct .btn.s{font-size:0.9375rem;padding:6px 10px}
   .panel{padding:20px}
