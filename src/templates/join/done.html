@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Submitted{% endblock %}
+{% block title %}{{ _('Submitted') }}{% endblock %}
 {% block content %}
-<section class="grid" style="padding:56px 20px 64px">
-<div class="card formcard" style="max-width:640px;margin:0 auto">
-<h1 style="font-size:2.8rem;line-height:1.05;color:var(--accent-text);margin:0 0 14px">{{ 'TIME WAS UP' if late else 'SUBMITTED' }}</h1>
-{% if auto_message %}<p class="notice" style="margin-bottom:12px">{{ auto_message }}</p>{% endif %}
-{% if late %}<p style="font-size:1.15rem">Your answers arrived after the time was up, so they could not be counted.</p>{% endif %}
-<p style="font-size:1.15rem;line-height:1.5">Your result for <strong>{{ exam.title }}</strong> will be emailed to <strong>{{ guest.email }}</strong>{% if exam.guest_results == 'manual' %} when your lecturer sends the results{% else %} as soon as it is graded{% endif %}.</p>
-<p class="muted" style="margin-top:14px">Want to keep your results and earn exp? <a href="{{ url_for('auth.register') }}" style="text-decoration:underline">Create a free account</a> with this email.</p>
+<section class="grid-bg pt-[56px] px-[20px] pb-[64px]">
+<div class="card formcard max-w-[640px] my-0 mx-auto">
+<h1 class="text-[2.8rem] leading-[1.05] text-accent mt-0 mx-0 mb-[14px]">{{ _('TIME WAS UP') if late else _('SUBMITTED') }}</h1>
+{% if auto_message %}<p class="notice mb-[12px]">{{ auto_message }}</p>{% endif %}
+{% if late %}<p class="text-[1.15rem]">{{ _('Your answers arrived after the time was up, so they could not be counted.') }}</p>{% endif %}
+<p class="text-[1.15rem] leading-[1.5]">{{ _('Your result for') }} <strong>{{ exam.title }}</strong> {{ _('will be emailed to') }} <strong>{{ guest.email }}</strong>{% if exam.guest_results == 'manual' %} {{ _('when your lecturer sends the results') }}{% else %} {{ _('as soon as it is graded') }}{% endif %}.</p>
+<p class="muted mt-[14px]">{{ _('Want to keep your results and earn exp?') }} <a class="underline" href="{{ url_for('auth.register') }}">{{ _('Create a free account') }}</a> {{ _('with this email.') }}</p>
 </div>
 </section>
 {% endblock %}

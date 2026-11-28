@@ -1,13 +1,14 @@
 """Turning pydantic validation errors into messages next to form fields."""
 
 from __future__ import annotations
+from flask_babel import gettext as _, lazy_gettext as _l
 
 from pydantic import ValidationError
 
 MESSAGES = {
-    "string_too_short": "This field is required.",
-    "value_error": "Enter a valid email address.",
-    "missing": "This field is required.",
+    "string_too_short": _l("This field is required."),
+    "value_error": _l("Enter a valid email address."),
+    "missing": _l("This field is required."),
 }
 
 
@@ -21,9 +22,9 @@ def field_errors(exc: ValidationError, rename: dict[str, str] | None = None) -> 
         if field in errors:
             continue
         if err["type"] == "string_too_short" and field == "password":
-            errors[field] = "Use at least 8 characters."
+            errors[field] = _("Use at least 8 characters.")
         elif err["type"] == "string_too_long":
-            errors[field] = f"Too long: at most {err['ctx']['max_length']} characters."
+            errors[field] = _('Too long: at most %(value)s characters.', value=err['ctx']['max_length'])
         else:
             errors[field] = MESSAGES.get(err["type"], err["msg"])
     return errors

@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Grade attempt{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block title %}{{ _('Grade attempt') }}{% endblock %}
+
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio_tests.grading', course_id=course.id) }}">{{ course.code }} GRADING</a> / {{ kind|upper }} ATTEMPT {{ attempt.id }}</p>
-<h1 class="pagetitle">GRADE BY HAND</h1>
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">{{ _('STUDIO') }}</a> / <a href="{{ url_for('studio_tests.grading', course_id=course.id) }}">{{ _('%(code)s GRADING', code=course.code) }}</a> {{ _('/ %(kind)s ATTEMPT %(id)s', kind=kind|upper, id=attempt.id) }}</p>
+<h1 class="pagetitle">{{ _('GRADE BY HAND') }}</h1>
 </section>
-<section class="section" style="padding-top:8px">
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
-<div class="card"><div class="prose" style="max-width:none">{{ record.html|safe }}</div></div>
-<form class="card form" method="post" style="position:sticky;top:calc(var(--header-h) + 12px)" novalidate>
+<section class="section pt-[8px]">
+<div class="split grid max-[1000px]:grid-cols-1 grid-cols-[2fr_1fr] gap-[28px] items-start">
+<div class="card"><div class="prose max-w-none">{{ record.html|safe }}</div></div>
+<form class="card form sticky top-[calc(var(--header-h)_+_12px)]" method="post" novalidate>
 {{ csrf_field() }}
-<h2 style="font-size:1.5rem;color:var(--accent-text);margin:0">POINTS</h2>
+<h2 class="text-[1.5rem] text-accent m-0">{{ _('POINTS') }}</h2>
 {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
 {% if pending %}
-{% for qid in pending %}<div class="row"><label class="lab" for="p{{ qid }}" style="flex:1">QUESTION ID {{ qid }}</label><input class="input" id="p{{ qid }}" name="points_{{ qid }}" value="{{ request.form.get('points_' ~ qid, '') }}" style="width:100px" inputmode="decimal" required></div>{% endfor %}
-<p class="muted" style="font-size:0.9375rem">The maximum for each question is shown in its heading on the left.</p>
-<div class="field"><label class="lab" for="cm">COMMENT FOR THE STUDENT (OPTIONAL)</label><textarea id="cm" name="comment_md" rows="4" class="input" style="width:100%">{{ request.form.get('comment_md', '') }}</textarea></div>
-<button class="btn block" type="submit">SAVE GRADES »</button>
-{% else %}<p class="muted">Nothing is waiting for grading in this attempt.</p>{% endif %}
+{% for qid in pending %}<div class="row"><label class="lab flex-1" for="p{{ qid }}">{{ _('QUESTION ID %(qid)s', qid=qid) }}</label><input class="input w-[100px]" id="p{{ qid }}" name="points_{{ qid }}" value="{{ request.form.get('points_' ~ qid, '') }}" inputmode="decimal" required></div>{% endfor %}
+<p class="muted text-[0.9375rem]">{{ _('The maximum for each question is shown in its heading on the left.') }}</p>
+<div class="field"><label class="lab" for="cm">{{ _('COMMENT FOR THE STUDENT (OPTIONAL)') }}</label><textarea id="cm" name="comment_md" rows="4" class="input w-full">{{ request.form.get('comment_md', '') }}</textarea></div>
+<button class="btn btn-block" type="submit">{{ _('SAVE GRADES »') }}</button>
+{% else %}<p class="muted">{{ _('Nothing is waiting for grading in this attempt.') }}</p>{% endif %}
 </form>
 </div>
 </section>

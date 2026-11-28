@@ -1,41 +1,41 @@
 {% from "partials/review.html" import review_tag %}
 {% extends "base.html" %}
-{% block title %}Exercise · {{ ex.title }}{% endblock %}
+{% block title %}{{ _('Exercise · %(title)s', title=ex.title) }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}#exercises">{{ course.code }}</a> / {{ topic.title|upper }} / EXERCISE</p>
-<div class="row" style="justify-content:space-between;align-items:flex-end"><h1 class="pagetitle">{{ ex.title|upper }}</h1><a class="btn o s" href="{{ url_for('tests.exercise', exercise_id=ex.id) }}">VIEW AS STUDENT</a></div>
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">{{ _('STUDIO') }}</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}#exercises">{{ course.code }}</a> {{ _('/ %(title)s / EXERCISE', title=topic.title|upper) }}</p>
+<div class="row justify-between items-end"><h1 class="pagetitle">{{ ex.title|upper }}</h1><a class="btn o s" href="{{ url_for('tests.exercise', exercise_id=ex.id) }}">{{ _('VIEW AS STUDENT') }}</a></div>
 </section>
-<section class="section" style="padding-top:8px">
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<section class="section pt-[8px]">
+<div class="split grid max-[1000px]:grid-cols-1 grid-cols-[2fr_1fr] gap-[28px] items-start">
 <div>
-<h2 id="questions">QUESTIONS</h2>
+<h2 id="questions">{{ _('QUESTIONS') }}</h2>
 <div class="card">
 {% if ordered %}<ol class="list">
 {% for item in ordered %}{% set q = qs.get(item.question_id) %}
-<li><span style="flex:1;min-width:240px"><span class="d" style="color:var(--accent-text)">{{ loop.index }}.</span> {% if q %}<a href="{{ url_for('studio_tests.edit_question', question_id=q.id, add_to='exercise:' ~ ex.id) }}" style="text-decoration:underline">{{ q.body_md.split('\n')[0][:100] }}</a> <span class="muted" style="font-size:0.9375rem">{{ q.type.value.replace('_', ' ') }} · {{ '%g' % q.points }} pt</span>{% else %}(question {{ item.question_id }}){% endif %}</span>
-<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="question_id" value="{{ item.question_id }}"><button class="iconbtn" name="action" value="up" aria-label="Move up"{% if loop.first %} disabled{% endif %}>↑</button><button class="iconbtn" name="action" value="down" aria-label="Move down"{% if loop.last %} disabled{% endif %}>↓</button><button class="iconbtn" name="action" value="remove" aria-label="Remove from exercise" style="color:var(--danger)">✕</button></form></li>
-{% endfor %}</ol>{% else %}<p class="muted">No questions yet: students cannot start it.</p>{% endif %}
-<div class="row" style="margin-top:14px">
-{% if bank %}<form class="inline-form" method="post">{{ csrf_field() }}<label class="sr-only" for="pick">Question from the bank</label><select class="input" id="pick" name="question_id" style="max-width:420px">{% for q in bank %}<option value="{{ q.id }}">{{ q.body_md.split('\n')[0][:70] }} ({{ q.type.value.replace('_', ' ') }})</option>{% endfor %}</select><button class="btn xs" name="action" value="add">+ ADD FROM BANK</button></form>{% endif %}
-<span class="row">{% for t, label in [('mcq', 'MULTIPLE CHOICE'), ('short_answer', 'SHORT ANSWER'), ('code', 'CODE')] %}<a class="btn xs ghost" href="{{ url_for('studio_tests.new_question', course_id=course.id, type=t, topic_id=topic.id, add_to='exercise:' ~ ex.id) }}">+ NEW {{ label }}</a>{% endfor %}</span>
+<li><span class="flex-1 min-w-[240px]"><span class="d text-accent">{{ loop.index }}.</span> {% if q %}<a class="underline" href="{{ url_for('studio_tests.edit_question', question_id=q.id, add_to='exercise:' ~ ex.id) }}">{{ q.body_md.split('\n')[0][:100] }}</a> <span class="muted text-[0.9375rem]">{{ _('%(value)s · %(value2)s pt', value=q.type.value.replace('_', ' '), value2='%g' % q.points) }}</span>{% else %}{{ _('(question %(question_id)s)', question_id=item.question_id) }}{% endif %}</span>
+<form class="inline-form" method="post">{{ csrf_field() }}<input type="hidden" name="question_id" value="{{ item.question_id }}"><button class="iconbtn" name="action" value="up" aria-label="{{ _('Move up') }}"{% if loop.first %} disabled{% endif %}>↑</button><button class="iconbtn" name="action" value="down" aria-label="{{ _('Move down') }}"{% if loop.last %} disabled{% endif %}>↓</button><button class="iconbtn text-danger" name="action" value="remove" aria-label="{{ _('Remove from exercise') }}">✕</button></form></li>
+{% endfor %}</ol>{% else %}<p class="muted">{{ _('No questions yet: students cannot start it.') }}</p>{% endif %}
+<div class="row mt-[14px]">
+{% if bank %}<form class="inline-form" method="post">{{ csrf_field() }}<label class="sr-only" for="pick">{{ _('Question from the bank') }}</label><select class="input max-w-[420px]" id="pick" name="question_id">{% for q in bank %}<option value="{{ q.id }}">{{ q.body_md.split('\n')[0][:70] }} ({{ q.type.value.replace('_', ' ') }})</option>{% endfor %}</select><button class="btn xs" name="action" value="add">{{ _('+ ADD FROM BANK') }}</button></form>{% endif %}
+<span class="row">{% for t, label in [('mcq', _('MULTIPLE CHOICE')), ('short_answer', _('SHORT ANSWER')), ('code', _('CODE'))] %}<a class="btn xs ghost" href="{{ url_for('studio_tests.new_question', course_id=course.id, type=t, topic_id=topic.id, add_to='exercise:' ~ ex.id) }}">{{ _('+ NEW %(label)s', label=label) }}</a>{% endfor %}</span>
 </div>
 </div>
 </div>
 <form class="card form" method="post" novalidate>
 {{ csrf_field() }}
-<h2 style="font-size:1.625rem;color:var(--accent-text);margin:0">SETTINGS</h2>
-{% with name="title", label="TITLE", maxlength=200, values={'title': ex.title} %}{% include "auth/_field.html" %}{% endwith %}
-<p class="row">{{ review_tag(ex) }}{% if not acting_as('admin') %}<span class="muted">{{ ex.max_exp }} exp (set by an admin)</span>{% endif %}</p>
-{% if ex.review_status == 'rejected' and ex.review_comment %}<p class="alert" role="status"><strong>Sent back:</strong> {{ ex.review_comment }}</p>{% endif %}
-<div class="row">{% if acting_as('admin') %}<label class="lab" for="mx">EXP</label><input class="input" id="mx" name="max_exp" type="number" min="0" value="{{ ex.max_exp }}" style="width:100px">{% endif %}
-<label class="lab" for="decay">RETRY ×</label><input class="input" id="decay" name="retake_decay" value="{{ ex.retake_decay }}" style="width:80px" title="exp multiplier for each retry"></div>
-<p class="muted" style="font-size:0.9375rem">Retry ×0.5: the 2nd attempt gives half the exp, the 3rd a quarter…</p>
-<fieldset style="border:0;padding:0;margin:0"><legend class="lab">SHOW UNDER THESE NOTES</legend>
-{% for n in notes %}<label class="check" style="font-size:1.0625rem"><input type="checkbox" name="note_ids" value="{{ n.id }}"{% if n.id in attached %} checked{% endif %}>{{ n.title }}</label>{% else %}<p class="muted">No notes in this course yet.</p>{% endfor %}</fieldset>
-<button class="btn block" name="action" value="save" type="submit">SAVE »</button>
-<button class="btn block {{ 'ghost' if ex.published or ex.review_status == 'pending' else '' }}" name="action" value="publish" type="submit">{% if acting_as('admin') %}{{ 'UNPUBLISH' if ex.published else 'PUBLISH' }}{% elif ex.review_status == 'pending' %}WITHDRAW FROM REVIEW{% elif ex.published %}HIDE FROM STUDENTS{% else %}SUBMIT FOR REVIEW »{% endif %}</button>
-<button class="btn danger xs" name="action" value="delete" type="submit" onclick="return confirm('Delete this exercise and its attempts?')">DELETE EXERCISE</button>
+<h2 class="text-[1.625rem] text-accent m-0">{{ _('SETTINGS') }}</h2>
+{% with name="title", label=_("TITLE"), maxlength=200, values={'title': ex.title} %}{% include "auth/_field.html" %}{% endwith %}
+<p class="row">{{ review_tag(ex) }}{% if not acting_as('admin') %}<span class="muted">{{ _('%(max_exp)s exp (set by an admin)', max_exp=ex.max_exp) }}</span>{% endif %}</p>
+{% if ex.review_status == 'rejected' and ex.review_comment %}<p class="alert" role="status"><strong>{{ _('Sent back:') }}</strong> {{ ex.review_comment }}</p>{% endif %}
+<div class="row">{% if acting_as('admin') %}<label class="lab" for="mx">{{ _('EXP') }}</label><input class="input w-[100px]" id="mx" name="max_exp" type="number" min="0" value="{{ ex.max_exp }}">{% endif %}
+<label class="lab" for="decay">{{ _('RETRY ×') }}</label><input class="input w-[80px]" id="decay" name="retake_decay" value="{{ ex.retake_decay }}" title="{{ _('exp multiplier for each retry') }}"></div>
+<p class="muted text-[0.9375rem]">{{ _('Retry ×0.5: the 2nd attempt gives half the exp, the 3rd a quarter…') }}</p>
+<fieldset class="[border:0] p-0 m-0"><legend class="lab">{{ _('SHOW UNDER THESE NOTES') }}</legend>
+{% for n in notes %}<label class="check text-[1.0625rem]"><input type="checkbox" name="note_ids" value="{{ n.id }}"{% if n.id in attached %} checked{% endif %}>{{ n.title }}</label>{% else %}<p class="muted">{{ _('No notes in this course yet.') }}</p>{% endfor %}</fieldset>
+<button class="btn btn-block" name="action" value="save" type="submit">{{ _('SAVE »') }}</button>
+<button class="btn btn-block {{ 'ghost' if ex.published or ex.review_status == 'pending' else '' }}" name="action" value="publish" type="submit">{% if acting_as('admin') %}{{ _('UNPUBLISH') if ex.published else _('PUBLISH') }}{% elif ex.review_status == 'pending' %}{{ _('WITHDRAW FROM REVIEW') }}{% elif ex.published %}{{ _('HIDE FROM STUDENTS') }}{% else %}{{ _('SUBMIT FOR REVIEW »') }}{% endif %}</button>
+<button class="btn danger xs" name="action" value="delete" type="submit" onclick="return confirm('{{ _("Delete this exercise and its attempts?") }}')">{{ _('DELETE EXERCISE') }}</button>
 </form>
 </div>
 </section>

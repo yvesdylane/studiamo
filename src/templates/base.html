@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme-pref="{{ theme_pref() }}">
+<html lang="{{ current_lang() }}" data-theme-pref="{{ theme_pref() }}">
 <head>
 <meta charset="utf-8">
 <script>
@@ -10,15 +10,20 @@
   document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
 })();
 </script>
+<script>
+/* text in scripts: tr("English %(n)s", {n: 3}) gives the page language (src/web/js_strings.py) */
+window.I18N = {{ js_strings()|tojson }};
+window.tr = function (s, v) { s = window.I18N[s] || s; for (var k in v || {}) s = s.split("%(" + k + ")s").join(v[k]); return s; };
+</script>
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Code Alchemists">
-<title>{% block title %}Studiamo{% endblock %} · Studiamo</title>
+<title>{% block title %}{{ _('Studiamo') }}{% endblock %} {{ _('· Studiamo') }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 {% set ps = page_style() %}
 {% if ps.font_url %}<link href="{{ ps.font_url }}" rel="stylesheet">{% endif %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/studiamo.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 <style>:root{ {{- ps.css -}} }html{font-size:{{ ps.text_size }}}{% if ps.themed_css %}html[data-theme]{ {{- ps.themed_css -}} }{% endif %}</style>
 {% block head %}{% endblock %}
 </head>
@@ -32,8 +37,8 @@
 {% set notes = notifications() %}
 {% if ts.enabled %}
 <div class="toasts" id="toasts" aria-live="polite" aria-relevant="additions" data-seconds="{{ ts.seconds }}">
-{% for m in msgs %}<div class="toast" role="status"><span>{{ m }}</span><button type="button" class="toast-x" aria-label="Close this message">✕</button></div>{% endfor %}
-{% for n in notes %}<div class="toast toast-{{ n.kind }}" role="status"><span>{{ n.text }}</span><button type="button" class="toast-x" aria-label="Close this message">✕</button></div>{% endfor %}
+{% for m in msgs %}<div class="toast" role="status"><span>{{ m }}</span><button type="button" class="toast-x" aria-label="{{ _('Close this message') }}">✕</button></div>{% endfor %}
+{% for n in notes %}<div class="toast toast-{{ n.kind }}" role="status"><span>{{ n.text }}</span><button type="button" class="toast-x" aria-label="{{ _('Close this message') }}">✕</button></div>{% endfor %}
 </div>
 {% else %}
 {% for m in msgs %}<p class="flash" role="status">{{ m }}</p>{% endfor %}

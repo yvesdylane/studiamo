@@ -60,12 +60,32 @@ the port is closed:
 
 ```bash
 git pull
-uv sync --frozen
-pkill -f "gunicorn.*main:app"
-nohup uv run gunicorn --bind 0.0.0.0:3000 --workers 1 --threads 8 --timeout 900 main:app > studiamo.log 2>&1 &
+uv sync --frozen --no-dev
+sudo systemctl restart studiamo      # or, without the service: stop gunicorn and start it again
 ```
 
-New migrations run by themselves when the app starts.
+New migrations run by themselves when the app starts. The built CSS
+(`src/static/css/app.css`) and the French translations (`messages.mo`) are
+committed, so the server builds nothing.
+
+## Styles and translations (on your machine, before committing)
+
+Styles are Tailwind: classes in the templates, shared components in
+`src/styles/`. After changing either, rebuild:
+
+```bash
+uv run tailwindcss -i src/styles/app.css -o src/static/css/app.css --minify
+```
+
+Text is English in the code, translated to French in
+`src/translations/fr/LC_MESSAGES/messages.po`. After adding or changing text:
+
+```bash
+uv run pybabel extract -F babel.cfg -k _l -o messages.pot --no-location .
+uv run pybabel update -i messages.pot -d src/translations
+# fill in the new empty msgstr lines in messages.po, then:
+uv run pybabel compile -d src/translations
+```
 
 ## Not yet working on http://SERVER_IP:3000
 

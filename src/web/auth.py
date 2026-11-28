@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask_babel import gettext as _, lazy_gettext as _l
 from pydantic import ValidationError
 
 from src.user.dto.LecturerApplicationDto import LecturerApplicationCreate
@@ -27,9 +28,9 @@ from src.web.security import admin_emails, login_user, logout_user, safe_next, u
 bp = Blueprint("auth", __name__)
 
 CLASSES = ["HND 1", "HND 2", "Other"]
-TERMS_REQUIRED = "You need to accept the terms to create an account."
-EMAIL_TAKEN = "An account with this email already exists. Log in instead."
-LECTURER_PENDING = "Your lecturer request was sent. Until it is approved, your account works as a student account."
+TERMS_REQUIRED = _l("You need to accept the terms to create an account.")
+EMAIL_TAKEN = _l("An account with this email already exists. Log in instead.")
+LECTURER_PENDING = _l("Your lecturer request was sent. Until it is approved, your account works as a student account.")
 
 
 def _form(*names: str) -> dict[str, str]:
@@ -55,21 +56,21 @@ def login():
     if request.method == "POST":
         password = request.form.get("password", "")
         if not values["email"] or not password:
-            error = "Enter your email and password."
+            error = _("Enter your email and password.")
         else:
             try:
                 user = users().authenticate(values["email"], password)
             except InvalidCredentialsError:
-                error = "Wrong email or password."
+                error = _("Wrong email or password.")
             except EmailNotVerifiedError:
-                error = "Your email is not verified yet. Open the link we emailed you, or get a new one below."
+                error = _("Your email is not verified yet. Open the link we emailed you, or get a new one below.")
                 unverified = True
             else:
                 google.clear_pending()
                 login_user(user, remember=request.form.get("remember") == "on")
-                flash(f"Welcome back, {user.name}." + (" Your daily tasks are on your dashboard." if "student" in [r.value for r in user.roles] else ""))
+                flash(_('Welcome back, %(name)s.', name=user.name) + (_(" Your daily tasks are on your dashboard.") if "student" in [r.value for r in user.roles] else ""))
                 if user.email in admin_emails():
-                    flash("Admin access needs Google: log out and use 'Continue with Google'.")
+                    flash(_("Admin access needs Google: log out and use 'Continue with Google'."))
                 return redirect(next_url)
     status = 401 if error else 200
     return render_template(
@@ -80,7 +81,7 @@ def login():
 @bp.post("/logout")
 def logout():
     logout_user()
-    flash("You are logged out.")
+    flash(_("You are logged out."))
     return redirect(url_for("pages.home"))
 
 
@@ -113,7 +114,7 @@ def register():
     errors: dict[str, str] = {}
     if request.method == "POST":
         if role is None:
-            errors["role"] = "Choose whether you are a student or a lecturer."
+            errors["role"] = _("Choose whether you are a student or a lecturer.")
         else:
             lecturer = role == "lecturer"
             account, application, errors = _validate(values, lecturer=lecturer, with_password=profile is None)
@@ -125,17 +126,17 @@ def register():
                     errors["email"] = EMAIL_TAKEN
                 except IdentityTakenError:
                     google.clear_pending()
-                    flash("This Google account already has an account here. Log in with Google.")
+                    flash(_("This Google account already has an account here. Log in with Google."))
                     return redirect(url_for("auth.login"))
                 else:
                     google.clear_pending()
                     if lecturer:
-                        flash(LECTURER_PENDING)
+                        flash(str(LECTURER_PENDING))
                     if profile is None:
                         return verify.after_signup(user)   # password sign-up: verify the email first
                     login_user(user)                        # Google already verified it
                     if not lecturer:
-                        flash(f"Welcome to Studiamo, {user.name}. Your account is ready.")
+                        flash(_('Welcome to Studiamo, %(name)s. Your account is ready.', name=user.name))
                     return redirect(url_for("pages.home"))
 
     step = 2 if errors and not (STEP_ONE_FIELDS & errors.keys()) and "role" not in errors else 1
@@ -167,7 +168,7 @@ def _validate(values: dict[str, str], *, lecturer: bool, with_password: bool):
     errors: dict[str, str] = {}
     account = application = None
     if not lecturer and values.get("class_name") not in CLASSES:
-        errors["class_name"] = "Pick your class."
+        errors["class_name"] = _("Pick your class.")
     if request.form.get("terms") != "on":
         errors["terms"] = TERMS_REQUIRED
     try:
@@ -194,7 +195,7 @@ def _create(
     account: UserCreate, application: LecturerApplicationCreate | None, identity: UserIdentityCreate | None
 ) -> UserRead:
     if application is not None:
-        user, _ = _lecturers().register(account, application, identity)
+        user, _unused = _lecturers().register(account, application, identity)
         return user
     if identity is not None:
         return users().create_with_identity(account, identity)

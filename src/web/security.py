@@ -51,6 +51,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from flask import Flask, abort, current_app, g, redirect, request, session, url_for
+from flask_babel import gettext as _
 from markupsafe import Markup
 
 from src.user.dto.UserDto import UserRead
@@ -90,7 +91,7 @@ def _check_csrf() -> None:
     expected = session.get(CSRF_KEY)
     sent = request.form.get("csrf_token") or request.headers.get("X-CSRF-Token")
     if not expected or not sent or not hmac.compare_digest(expected, sent):
-        abort(400, description="The form expired. Go back, reload the page and try again.")
+        abort(400, description=_("The form expired. Go back, reload the page and try again."))
 
 
 # ------------------------------------------------------------- the user

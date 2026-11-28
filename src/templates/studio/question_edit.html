@@ -1,51 +1,51 @@
 {% extends "base.html" %}
-{% block title %}{{ 'Edit' if question else 'New' }} question{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+{% block title %}{{ _('Edit question') if question else _('New question') }}{% endblock %}
+
 {% block content %}
 {% set qtype = form.type if form.type is string else form.type.value %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / {% if course %}<a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / <a href="{{ url_for('studio_tests.bank', course_id=course.id) }}">QUESTIONS</a>{% else %}<a href="{{ url_for('studio.index') }}#my-exams">EXAMS WITHOUT A COURSE</a> / QUESTION{% endif %} / {{ 'EDIT' if question else 'NEW' }}</p>
-<h1 class="pagetitle">{{ {'mcq': 'MULTIPLE CHOICE', 'short_answer': 'SHORT ANSWER', 'code': 'CODE'}[qtype] }} QUESTION</h1>
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">{{ _('STUDIO') }}</a> / {% if course %}<a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / <a href="{{ url_for('studio_tests.bank', course_id=course.id) }}">{{ _('QUESTIONS') }}</a>{% else %}<a href="{{ url_for('studio.index') }}#my-exams">{{ _('EXAMS WITHOUT A COURSE') }}</a> {{ _('/ QUESTION') }}{% endif %} / {{ _('EDIT') if question else _('NEW') }}</p>
+<h1 class="pagetitle">{{ {'mcq': _('MULTIPLE CHOICE QUESTION'), 'short_answer': _('SHORT ANSWER QUESTION'), 'code': _('CODE QUESTION')}[qtype] }}</h1>
 </section>
-<form id="qform" method="post" class="section" style="padding-top:8px" novalidate>
+<form id="qform" method="post" class="section pt-[8px]" novalidate>
 {{ csrf_field() }}<input type="hidden" name="type" value="{{ qtype }}"><input type="hidden" name="add_to" value="{{ add_to }}">
-{% if error %}<p class="alert" role="alert" style="margin-bottom:16px">Not saved: {{ error }}</p>{% endif %}
+{% if error %}<p class="alert mb-[16px]" role="alert">{{ _('Not saved: %(error)s', error=error) }}</p>{% endif %}
 <div class="editor-grid">
 <div class="form">
-<div class="field"><label class="lab" for="body">QUESTION (STUDIAMO MARKDOWN: CODE, DIAGRAMS…)</label><textarea id="body" name="body_md" class="src" style="min-height:200px">{{ form.body_md or '' }}</textarea></div>
+<div class="field"><label class="lab" for="body">{{ _('QUESTION (STUDIAMO MARKDOWN: CODE, DIAGRAMS…)') }}</label><textarea id="body" name="body_md" class="src min-h-[200px]">{{ form.body_md or '' }}</textarea></div>
 {% if qtype == 'mcq' %}
-<fieldset class="card" style="padding:16px"><legend class="lab">ANSWERS · TICK EVERY CORRECT ONE</legend>
-<div id="options" class="form" style="gap:10px">
-{% for o in form.options %}<div class="row opt"><input type="checkbox" name="opt_correct" value="{{ loop.index0 }}" aria-label="Correct"{% if o.is_correct %} checked{% endif %} style="width:22px;height:22px;accent-color:var(--purple)"><input class="input" name="opt_label" value="{{ o.label }}" aria-label="Answer {{ loop.index }}" style="flex:1"><button type="button" class="iconbtn rm" aria-label="Remove answer">✕</button></div>{% endfor %}
+<fieldset class="card p-[16px]"><legend class="lab">{{ _('ANSWERS · TICK EVERY CORRECT ONE') }}</legend>
+<div id="options" class="form gap-[10px]">
+{% for o in form.options %}<div class="row opt"><input class="w-[22px] h-[22px] accent-purple" type="checkbox" name="opt_correct" value="{{ loop.index0 }}" aria-label="{{ _('Correct') }}"{% if o.is_correct %} checked{% endif %}><input class="input flex-1" name="opt_label" value="{{ o.label }}" aria-label="Answer {{ loop.index }}"><button type="button" class="iconbtn rm" aria-label="{{ _('Remove answer') }}">✕</button></div>{% endfor %}
 </div>
-<button type="button" class="btn xs ghost" id="add-opt" style="margin-top:10px">+ ADD ANSWER</button>
-<p class="muted" style="font-size:0.9375rem;margin-top:8px">Several ticks make it a "choose every correct answer" question. Scoring is all or nothing.</p>
+<button type="button" class="btn xs ghost mt-[10px]" id="add-opt">{{ _('+ ADD ANSWER') }}</button>
+<p class="muted text-[0.9375rem] mt-[8px]">{{ _('Several ticks make it a "choose every correct answer" question. Scoring is all or nothing.') }}</p>
 </fieldset>
 {% elif qtype == 'code' %}
-<div class="row"><label class="lab" for="lang">LANGUAGE</label><select class="input" id="lang" name="code_language">{% for l in languages %}<option value="{{ l.value }}"{% if (form.code_language or '') == l.value %} selected{% endif %}>{{ l.value }}</option>{% endfor %}</select></div>
-<div class="field"><label class="lab" for="starter">STARTER CODE (OPTIONAL)</label><textarea id="starter" name="starter_code" class="src" style="min-height:120px">{{ form.starter_code or '' }}</textarea></div>
-<fieldset class="card" style="padding:16px"><legend class="lab">TESTS · INPUT → EXPECTED OUTPUT</legend>
-<div id="cases" class="form" style="gap:14px">
+<div class="row"><label class="lab" for="lang">{{ _('LANGUAGE') }}</label><select class="input" id="lang" name="code_language">{% for l in languages %}<option value="{{ l.value }}"{% if (form.code_language or '') == l.value %} selected{% endif %}>{{ l.value }}</option>{% endfor %}</select></div>
+<div class="field"><label class="lab" for="starter">{{ _('STARTER CODE (OPTIONAL)') }}</label><textarea id="starter" name="starter_code" class="src min-h-[120px]">{{ form.starter_code or '' }}</textarea></div>
+<fieldset class="card p-[16px]"><legend class="lab">{{ _('TESTS · INPUT → EXPECTED OUTPUT') }}</legend>
+<div id="cases" class="form gap-[14px]">
 {% for t in form.test_cases or [{'input': '', 'expected_output': '', 'is_hidden': false, 'weight': 1}] %}
-<div class="case" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:start"><textarea class="input" name="tc_input" rows="2" aria-label="Input" placeholder="input" style="font-family:ui-monospace,monospace">{{ t.input }}</textarea><textarea class="input" name="tc_expected" rows="2" aria-label="Expected output" placeholder="expected output" style="font-family:ui-monospace,monospace">{{ t.expected_output }}</textarea>
-<div class="form" style="gap:4px"><label class="check" style="font-size:0.9375rem"><input type="checkbox" name="tc_hidden" value="{{ loop.index0 }}"{% if t.is_hidden %} checked{% endif %}>hidden</label><input class="input" name="tc_weight" value="{{ '%g' % t.weight }}" aria-label="Weight" style="width:70px" title="weight"><button type="button" class="iconbtn rm" aria-label="Remove test">✕</button></div></div>
+<div class="case grid grid-cols-[1fr_1fr_auto] max-[600px]:grid-cols-1 gap-[8px] items-start"><textarea class="input font-mono" name="tc_input" rows="2" aria-label="Input" placeholder="input">{{ t.input }}</textarea><textarea class="input font-mono" name="tc_expected" rows="2" aria-label="Expected output" placeholder="expected output">{{ t.expected_output }}</textarea>
+<div class="form gap-[4px]"><label class="check text-[0.9375rem]"><input type="checkbox" name="tc_hidden" value="{{ loop.index0 }}"{% if t.is_hidden %} checked{% endif %}>{{ _('hidden') }}</label><input class="input w-[70px]" name="tc_weight" value="{{ '%g' % t.weight }}" aria-label="{{ _('Weight') }}" title="{{ _('weight') }}"><button type="button" class="iconbtn rm" aria-label="{{ _('Remove test') }}">✕</button></div></div>
 {% endfor %}
 </div>
-<button type="button" class="btn xs ghost" id="add-case" style="margin-top:10px">+ ADD TEST</button>
-<p class="muted" style="font-size:0.9375rem;margin-top:8px">Visible tests are shown to students as examples. Until a code runner is set up on the server, code answers are graded by hand.</p>
+<button type="button" class="btn xs ghost mt-[10px]" id="add-case">{{ _('+ ADD TEST') }}</button>
+<p class="muted text-[0.9375rem] mt-[8px]">{{ _('Visible tests are shown to students as examples. Until a code runner is set up on the server, code answers are graded by hand.') }}</p>
 </fieldset>
 {% endif %}
 <div class="row">
-<label class="lab" for="points">POINTS</label><input class="input" id="points" name="points" value="{{ '%g' % (form.points or 1) }}" style="width:90px">
-<label class="lab" for="difficulty">DIFFICULTY</label><select class="input" id="difficulty" name="difficulty"><option value="">–</option>{% for d in range(1, 6) %}<option{% if form.difficulty == d %} selected{% endif %}>{{ d }}</option>{% endfor %}</select>
-{% if course %}<label class="lab" for="topic">TOPIC</label><select class="input" id="topic" name="topic_id" required>{% for t in topics %}<option value="{{ t.id }}"{% if form.topic_id == t.id %} selected{% endif %}>{{ t.title }}</option>{% endfor %}</select>{% endif %}
+<label class="lab" for="points">{{ _('POINTS') }}</label><input class="input w-[90px]" id="points" name="points" value="{{ '%g' % (form.points or 1) }}">
+<label class="lab" for="difficulty">{{ _('DIFFICULTY') }}</label><select class="input" id="difficulty" name="difficulty"><option value="">–</option>{% for d in range(1, 6) %}<option{% if form.difficulty == d %} selected{% endif %}>{{ d }}</option>{% endfor %}</select>
+{% if course %}<label class="lab" for="topic">{{ _('TOPIC') }}</label><select class="input" id="topic" name="topic_id" required>{% for t in topics %}<option value="{{ t.id }}"{% if form.topic_id == t.id %} selected{% endif %}>{{ t.title }}</option>{% endfor %}</select>{% endif %}
 </div>
-<div class="field"><label class="lab" for="expl">EXPLANATION, SHOWN AFTER ANSWERING (OPTIONAL)</label><textarea id="expl" name="explanation_md" class="src" style="min-height:100px">{{ form.explanation_md or '' }}</textarea></div>
-<label class="check" style="font-size:1.125rem"><input type="checkbox" name="is_active"{% if form.is_active is not defined or form.is_active %} checked{% endif %}>Active (can be used in new exercises and exams)</label>
+<div class="field"><label class="lab" for="expl">{{ _('EXPLANATION, SHOWN AFTER ANSWERING (OPTIONAL)') }}</label><textarea id="expl" name="explanation_md" class="src min-h-[100px]">{{ form.explanation_md or '' }}</textarea></div>
+<label class="check text-[1.125rem]"><input type="checkbox" name="is_active"{% if form.is_active is not defined or form.is_active %} checked{% endif %}>{{ _('Active (can be used in new exercises and exams)') }}</label>
 <input type="hidden" name="is_active_sent" value="1">
-<div class="row"><button class="btn" type="submit">SAVE QUESTION »</button><a href="{{ url_for('studio_tests.bank', course_id=course.id) if course else url_for('studio.index') ~ '#my-exams' }}" style="text-decoration:underline">Cancel</a></div>
+<div class="row"><button class="btn" type="submit">{{ _('SAVE QUESTION »') }}</button><a class="underline" href="{{ url_for('studio_tests.bank', course_id=course.id) if course else url_for('studio.index') ~ '#my-exams' }}">{{ _('Cancel') }}</a></div>
 </div>
-<div><p class="lab">PREVIEW</p><div class="preview"><div id="preview" class="prose">{{ preview.html|safe }}</div></div></div>
+<div><p class="lab">{{ _('PREVIEW') }}</p><div class="preview"><div id="preview" class="prose">{{ preview.html|safe }}</div></div></div>
 </div>
 </form>
 <script src="{{ url_for('static', filename='js/smd.js') }}"></script>

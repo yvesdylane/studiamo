@@ -2,28 +2,28 @@
    One series in the user's accent; values and labels in ink; a table for screen readers and print. #}
 {% macro skill_graph(skills, rank_label, example=false) %}
 {% set g = radar(skills) %}
-{% set summary %}{% for a in g.axes %}{{ a.label|capitalize }} {{ ('%g' % a.value) ~ '%' if a.value is not none else 'not started' }}{{ ', ' if not loop.last }}{% endfor %}{% endset %}
-<figure class="skillgraph" style="margin:0">
-<svg viewBox="0 0 460 336" width="100%" role="img" aria-label="{{ 'Example skill graph' if example else 'Your skill graph' }}: {{ summary }}{% if rank_label %}; rank {{ rank_label }}{% endif %}" style="max-width:520px;display:block;margin:0 auto">
-{% for ring in g.rings %}<polygon points="{{ ring }}" style="fill:none;stroke:var(--line-strong);stroke-width:1"{% if loop.last %} stroke-dasharray="none"{% endif %}></polygon>{% endfor %}
-{% for a in g.axes %}<line x1="{{ g.cx }}" y1="{{ g.cy }}" x2="{{ a.end[0] }}" y2="{{ a.end[1] }}" style="stroke:var(--line-strong);stroke-width:1"></line>{% endfor %}
-<polygon points="{{ g.shape }}" style="fill:color-mix(in srgb, var(--purple) 24%, transparent);stroke:var(--purple);stroke-width:2;stroke-linejoin:round"></polygon>
+{% set summary %}{% for a in g.axes %}{{ a.label|capitalize }} {{ ('%g' % a.value) ~ '%' if a.value is not none else _('not started') }}{{ ', ' if not loop.last }}{% endfor %}{% endset %}
+<figure class="skillgraph m-0">
+<svg class="max-w-[520px] block my-0 mx-auto" viewBox="0 0 460 336" width="100%" role="img" aria-label="{{ _('Example skill graph') if example else _('Your skill graph') }}: {{ summary }}{% if rank_label %}; rank {{ rank_label }}{% endif %}">
+{% for ring in g.rings %}<polygon class="fill-[none] stroke-line-strong stroke-w-[1]" points="{{ ring }}"{% if loop.last %} stroke-dasharray="none"{% endif %}></polygon>{% endfor %}
+{% for a in g.axes %}<line class="stroke-line-strong stroke-w-[1]" x1="{{ g.cx }}" y1="{{ g.cy }}" x2="{{ a.end[0] }}" y2="{{ a.end[1] }}"></line>{% endfor %}
+<polygon class="fill-[color-mix(in_srgb,_var(--purple)_24%,_transparent)] stroke-purple stroke-w-[2] [stroke-linejoin:round]" points="{{ g.shape }}"></polygon>
 {% for a in g.axes %}
 <g class="sg-point" tabindex="0">
-<title>{{ a.label|capitalize }}: {{ ('%g' % a.value) ~ '%' if a.value is not none else 'not started yet' }} · 100% = {{ a.full }}</title>
-<circle cx="{{ a.x }}" cy="{{ a.y }}" r="15" style="fill:transparent"></circle>
-<circle cx="{{ a.x }}" cy="{{ a.y }}" r="5" style="fill:var(--purple);stroke:var(--bg);stroke-width:2"></circle>
+<title>{{ a.label|capitalize }}: {{ ('%g' % a.value) ~ '%' if a.value is not none else _('not started yet') }} · 100% = {{ a.full }}</title>
+<circle class="fill-transparent" cx="{{ a.x }}" cy="{{ a.y }}" r="15"></circle>
+<circle class="fill-purple stroke-bg stroke-w-[2]" cx="{{ a.x }}" cy="{{ a.y }}" r="5"></circle>
 </g>
-<text x="{{ a.lx }}" y="{{ a.ly }}" text-anchor="{{ a.anchor }}" style="font:15px var(--font-display);fill:var(--ink)">{{ a.label }}</text>
-<text x="{{ a.lx }}" y="{{ a.ly + 17 }}" text-anchor="{{ a.anchor }}" style="font:13px var(--font-body);fill:var(--muted)">{{ ('%g' % a.value) ~ '%' if a.value is not none else 'not started' }}</text>
+<text class="[font:15px_var(--font-display)] fill-ink" x="{{ a.lx }}" y="{{ a.ly }}" text-anchor="{{ a.anchor }}">{{ a.label }}</text>
+<text class="[font:13px_var(--font-body)] fill-muted" x="{{ a.lx }}" y="{{ a.ly + 17 }}" text-anchor="{{ a.anchor }}">{{ ('%g' % a.value) ~ '%' if a.value is not none else _('not started') }}</text>
 {% endfor %}
-{% if rank_label %}<circle cx="{{ g.cx }}" cy="{{ g.cy }}" r="25" style="fill:var(--purple);stroke:var(--bg);stroke-width:4"></circle>
-<text x="{{ g.cx }}" y="{{ g.cy + 6 }}" text-anchor="middle" style="font:17px var(--font-display);fill:#fff">{{ rank_label }}</text>{% endif %}
+{% if rank_label %}<circle class="fill-purple stroke-bg stroke-w-[4]" cx="{{ g.cx }}" cy="{{ g.cy }}" r="25"></circle>
+<text class="[font:17px_var(--font-display)] fill-white" x="{{ g.cx }}" y="{{ g.cy + 6 }}" text-anchor="middle">{{ rank_label }}</text>{% endif %}
 </svg>
-<details class="sg-table"><summary class="lab" style="cursor:pointer">SHOW AS TABLE</summary>
-<table style="width:100%;border-collapse:collapse;font-size:0.95rem;margin-top:8px">
-<thead><tr><th scope="col" style="text-align:left">Axis</th><th scope="col" style="text-align:right">Score</th><th scope="col" style="text-align:left;padding-left:12px">100% means</th></tr></thead>
-<tbody>{% for a in g.axes %}<tr style="border-top:1px solid var(--line)"><td>{{ a.label|capitalize }}</td><td style="text-align:right">{{ ('%g' % a.value) ~ '%' if a.value is not none else '–' }}</td><td style="padding-left:12px" class="muted">{{ a.full }}</td></tr>{% endfor %}</tbody>
+<details class="sg-table"><summary class="lab cursor-pointer">{{ _('SHOW AS TABLE') }}</summary>
+<table class="w-full border-collapse text-[0.95rem] mt-[8px]">
+<thead><tr><th class="text-left" scope="col">{{ _('Axis') }}</th><th class="text-right" scope="col">{{ _('Score') }}</th><th class="text-left pl-[12px]" scope="col">{{ _('100%% means') }}</th></tr></thead>
+<tbody>{% for a in g.axes %}<tr class="border-t-[1px] border-solid border-t-line border-r-0 border-b-0 border-l-0"><td>{{ a.label|capitalize }}</td><td class="text-right">{{ ('%g' % a.value) ~ '%' if a.value is not none else '–' }}</td><td class="muted pl-[12px]">{{ a.full }}</td></tr>{% endfor %}</tbody>
 </table></details>
 </figure>
 {% endmacro %}

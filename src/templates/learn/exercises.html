@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Exercises{% endblock %}
+{% block title %}{{ _('Exercises') }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<h1 class="pagetitle">EXERCISES</h1>
-<p class="lead2">Practice for every course. Retry as often as you like: each retry gives less exp, but your best score counts for Xexp.{% if not g.user %} <a href="{{ url_for('auth.login', next=request.path) }}" style="text-decoration:underline;color:var(--accent-text)">Log in</a> to save your answers and earn exp.{% endif %}</p>
+<h1 class="pagetitle">{{ _('EXERCISES') }}</h1>
+<p class="lead2">{{ _('Practice for every course. Retry as often as you like: each retry gives less exp, but your best score counts for Xexp.') }}{% if not g.user %} <a class="underline text-accent" href="{{ url_for('auth.login', next=request.path) }}">{{ _('Log in') }}</a> {{ _('to save your answers and earn exp.') }}{% endif %}</p>
 </section>
-<section class="section" style="padding-top:8px">
+<section class="section pt-[8px]">
 {% for grp in groups %}
-<h2 style="font-size:2rem">{{ grp.course.title|upper }}</h2>
-<div class="card" style="margin-bottom:26px"><ul class="list">
-{% for e in grp.entries %}<li><a href="{{ url_for('tests.exercise', exercise_id=e.id) }}" style="font-size:1.25rem;text-decoration:underline">{{ e.title }}</a>
-<span class="row">{% if e.id in best %}<span class="tag ok">BEST {{ '%g' % best[e.id].best_score_pct }}%</span>{% endif %}<span class="muted">{{ e.questions|length }} question{{ 's' if e.questions|length != 1 }} · {{ e.max_exp }} exp</span></span></li>{% endfor %}
+<h2 class="text-[2rem]">{{ grp.course.title|upper }}</h2>
+<div class="card mb-[26px]"><ul class="list">
+{% for e in grp.entries %}<li><a class="text-[1.25rem] underline" href="{{ url_for('tests.exercise', exercise_id=e.id) }}">{{ e.title }}</a>
+<span class="row">{% if e.id in best %}<span class="tag ok">{{ _('BEST %(value)s%%', value='%g' % best[e.id].best_score_pct) }}</span>{% endif %}<span class="muted">{{ _('%(questions)s question%(value)s · %(max_exp)s exp', questions=e.questions|length, value='s' if e.questions|length != 1, max_exp=e.max_exp) }}</span></span></li>{% endfor %}
 </ul></div>
-{% else %}<p class="empty">No exercises are open yet.</p>{% endfor %}
+{% else %}<p class="empty">{{ _('No exercises are open yet.') }}</p>{% endfor %}
 </section>
 {% endblock %}

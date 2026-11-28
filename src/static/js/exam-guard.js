@@ -87,10 +87,10 @@
   }
   function askLeave(event) {
     report(event);
-    show("LEAVE THE EXAM?",
-      "Going back or leaving this page submits your exam now, with the answers you have given so far. You cannot come back to it.",
-      [{ label: "SUBMIT AND LEAVE", danger: true, run: function () { autoSubmit("back"); } },
-       { label: "STAY IN THE EXAM", run: enterFullscreen }]);
+    show(tr("LEAVE THE EXAM?"),
+      tr("Going back or leaving this page submits your exam now, with the answers you have given so far. You cannot come back to it."),
+      [{ label: tr("SUBMIT AND LEAVE"), danger: true, run: function () { autoSubmit("back"); } },
+       { label: tr("STAY IN THE EXAM"), run: enterFullscreen }]);
   }
 
   /* ---------------------------------------------------------- full screen */
@@ -110,7 +110,7 @@
   gate.querySelector("[data-gate-start]").addEventListener("click", function () {
     enterFullscreen().then(function () {
       if (canFullscreen && !document.fullscreenElement) {
-        gate.querySelector("[data-gate-text]").textContent = "Your browser did not allow full screen. Press the button again, or allow full screen for this site.";
+        gate.querySelector("[data-gate-text]").textContent = tr("Your browser did not allow full screen. Press the button again, or allow full screen for this site.");
         return;
       }
       if (!armed) {
@@ -124,7 +124,7 @@
   document.addEventListener("fullscreenchange", function () {
     if (!armed || submitting || document.fullscreenElement) return;
     report("left_fullscreen");
-    lockGate("You left full screen. The questions are hidden until you go back to full screen.");
+    lockGate(tr("You left full screen. The questions are hidden until you go back to full screen."));
   });
 
   /* ------------------------------------------------- leaving the window */
@@ -137,11 +137,11 @@
     report("left_window");
     if (strikes >= maxStrikes) { autoSubmit("left"); return; }
     var left = maxStrikes - strikes;
-    show("YOU LEFT THE EXAM",
-      "Leaving the exam (another tab, another app, or minimising) is recorded and your lecturer sees it. " +
-      (left === 1 ? "If you leave once more, your exam is submitted automatically."
-                  : "After " + left + " more times, your exam is submitted automatically."),
-      [{ label: "BACK TO THE EXAM", run: enterFullscreen }]);
+    show(tr("YOU LEFT THE EXAM"),
+      tr("Leaving the exam (another tab, another app, or minimising) is recorded and your lecturer sees it.") + " " +
+      (left === 1 ? tr("If you leave once more, your exam is submitted automatically.")
+                  : tr("After %(n)s more times, your exam is submitted automatically.", {n: left})),
+      [{ label: tr("BACK TO THE EXAM"), run: enterFullscreen }]);
   }
   document.addEventListener("visibilitychange", function () { if (document.hidden) strike(); });
   window.addEventListener("blur", function () {
@@ -183,9 +183,9 @@
 
   /* ---------------------------------------------------------------- start */
   if (!canFullscreen) {
-    gate.querySelector("[data-gate-start]").textContent = "START THE EXAM »";
+    gate.querySelector("[data-gate-start]").textContent = tr("START THE EXAM »");
     gate.querySelector("[data-gate-note]").textContent =
-      "This device cannot show the exam in full screen. Stay on this page: leaving it is still detected.";
+      tr("This device cannot show the exam in full screen. Stay on this page: leaving it is still detected.");
   }
   lockGate(gate.querySelector("[data-gate-text]").textContent);
 })();

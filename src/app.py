@@ -51,8 +51,9 @@ def create_app() -> Flask:
     if os.getenv("AUTO_MIGRATE", "1") != "0":
         upgrade_database(db)
 
-    from src.web import account, admin, appearance, auth, charts, google, join, learn, mcp, media, pages, security, studio, studio_tests, tests, verify
+    from src.web import account, admin, appearance, auth, charts, google, i18n, join, learn, mcp, media, pages, security, studio, studio_tests, tests, verify
 
+    i18n.init_app(app)
     security.init_app(app)
     appearance.init_app(app)
     charts.init_app(app)

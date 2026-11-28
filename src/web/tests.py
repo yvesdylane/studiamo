@@ -16,6 +16,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, session, url_for
+from flask_babel import gettext as _, lazy_gettext as _l
 from pydantic import ValidationError
 
 from src.attempt.AttemptStatus import AttemptStatus
@@ -93,7 +94,7 @@ def take_exercise(exercise_id: int):
         try:
             result = deps.attempts().submit_exercise(started.attempt.id, g.user.id, _answers(started.questions))
         except ValidationError:
-            flash("Some answers could not be read. Please try again.")
+            flash(_("Some answers could not be read. Please try again."))
         except AttemptAlreadySubmittedError:
             pass
         else:
@@ -106,11 +107,11 @@ def take_exercise(exercise_id: int):
 
 def _flash_result(result) -> None:
     if result.late:
-        flash("Submitted after the time was up: the answers could not be counted.")
+        flash(_("Submitted after the time was up: the answers could not be counted."))
     elif result.pending_manual:
-        flash(f"Submitted. Some answers are graded by your lecturer; your score and exp follow then.")
+        flash(_('Submitted. Some answers are graded by your lecturer; your score and exp follow then.'))
     else:
-        flash(f"Submitted: {result.attempt.score_pct:g}% · +{result.exp_awarded} exp.")
+        flash(_('Submitted: %(score_pct)s%% · +%(exp_awarded)s exp.', score_pct=f'{result.attempt.score_pct:g}', exp_awarded=result.exp_awarded))
 
 
 # ==================================================================== exams
@@ -143,7 +144,7 @@ def exam(exam_id: int):
 @roles_required("student")
 def start_exam(exam_id: int):
     if not _may_take(deps.exams().get(exam_id)):
-        flash("This exam needs its code: use Join an exam.")
+        flash(_("This exam needs its code: use Join an exam."))
         return redirect(url_for("join.join"))
     try:
         started = deps.attempts().start_exam(g.user.id, exam_id)
@@ -168,12 +169,12 @@ def take_exam(attempt_id: int):
             auto = request.form.get("auto_submit") or None
             result = svc.submit_exam(attempt_id, g.user.id, _answers(started.questions), auto_submitted=auto)
         except ValidationError:
-            flash("Some answers could not be read. Please try again.")
+            flash(_("Some answers could not be read. Please try again."))
         except AttemptAlreadySubmittedError:
             return redirect(url_for("tests.result", kind="exam", attempt_id=attempt_id))
         else:
             if auto in AUTO_MESSAGES:
-                flash(AUTO_MESSAGES[auto])
+                flash(str(AUTO_MESSAGES[auto]))
             _flash_result(result)
             return redirect(url_for("tests.result", kind="exam", attempt_id=attempt_id))
     return render_template("tests/take.html", kind="exam", title=started.exam.title, started=started, questions=started.questions,
@@ -183,8 +184,8 @@ def take_exam(attempt_id: int):
 
 
 AUTO_MESSAGES = {
-    "left": "Your exam was submitted automatically because you left it again after the warning.",
-    "back": "Your exam was submitted because you chose to leave it.",
+    "left": _l("Your exam was submitted automatically because you left it again after the warning."),
+    "back": _l("Your exam was submitted because you chose to leave it."),
 }
 
 

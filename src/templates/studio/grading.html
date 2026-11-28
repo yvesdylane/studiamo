@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Grading · {{ course.code }}{% endblock %}
+{% block title %}{{ _('Grading · %(code)s', code=course.code) }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> / GRADING</p>
-<h1 class="pagetitle">WAITING FOR GRADING</h1>
-<p class="lead2">Short answers, and code until a code runner is set up, are graded by hand. Oldest first.</p>
+<p class="crumbs"><a href="{{ url_for('studio.index') }}">{{ _('STUDIO') }}</a> / <a href="{{ url_for('studio.course', course_id=course.id) }}">{{ course.code }}</a> {{ _('/ GRADING') }}</p>
+<h1 class="pagetitle">{{ _('WAITING FOR GRADING') }}</h1>
+<p class="lead2">{{ _('Short answers, and code until a code runner is set up, are graded by hand. Oldest first.') }}</p>
 </section>
-<section class="section" style="padding-top:8px">
-<h2>EXERCISES</h2>
-{% if exercise_attempts %}<div class="card" style="margin-bottom:28px"><ul class="list">{% for a in exercise_attempts %}<li><span>Exercise {{ a.exercise_id }} · attempt {{ a.attempt_no }} · submitted {{ a.submitted_at.strftime('%d %b %H:%M') if a.submitted_at }}</span><a class="btn xs" href="{{ url_for('studio_tests.grade', kind='exercise', attempt_id=a.id) }}">GRADE »</a></li>{% endfor %}</ul></div>{% else %}<p class="empty" style="margin-bottom:28px">Nothing to grade.</p>{% endif %}
-<h2>EXAMS</h2>
-{% if exam_attempts %}<div class="card"><ul class="list">{% for a in exam_attempts %}<li><span>Exam {{ a.exam_id }} · attempt {{ a.attempt_no }} · submitted {{ a.submitted_at.strftime('%d %b %H:%M') if a.submitted_at }}</span><a class="btn xs" href="{{ url_for('studio_tests.grade', kind='exam', attempt_id=a.id) }}">GRADE »</a></li>{% endfor %}</ul></div>{% else %}<p class="empty">Nothing to grade.</p>{% endif %}
+<section class="section pt-[8px]">
+<h2>{{ _('EXERCISES') }}</h2>
+{% if exercise_attempts %}<div class="card mb-[28px]"><ul class="list">{% for a in exercise_attempts %}<li><span>{{ _('Exercise %(exercise_id)s · attempt %(attempt_no)s · submitted %(value)s', exercise_id=a.exercise_id, attempt_no=a.attempt_no, value=(a.submitted_at|datetimeformat('d MMM, HH:mm')) if a.submitted_at) }}</span><a class="btn xs" href="{{ url_for('studio_tests.grade', kind='exercise', attempt_id=a.id) }}">{{ _('GRADE »') }}</a></li>{% endfor %}</ul></div>{% else %}<p class="empty mb-[28px]">{{ _('Nothing to grade.') }}</p>{% endif %}
+<h2>{{ _('EXAMS') }}</h2>
+{% if exam_attempts %}<div class="card"><ul class="list">{% for a in exam_attempts %}<li><span>{{ _('Exam %(exam_id)s · attempt %(attempt_no)s · submitted %(value)s', exam_id=a.exam_id, attempt_no=a.attempt_no, value=(a.submitted_at|datetimeformat('d MMM, HH:mm')) if a.submitted_at) }}</span><a class="btn xs" href="{{ url_for('studio_tests.grade', kind='exam', attempt_id=a.id) }}">{{ _('GRADE »') }}</a></li>{% endfor %}</ul></div>{% else %}<p class="empty">{{ _('Nothing to grade.') }}</p>{% endif %}
 </section>
 {% endblock %}

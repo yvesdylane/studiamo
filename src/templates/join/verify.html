@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Check your email{% endblock %}
+{% block title %}{{ _('Check your email') }}{% endblock %}
 {% block content %}
-<section class="grid" style="padding:48px 20px 64px">
-<div class="card formcard" style="max-width:620px;margin:0 auto">
-<p class="d" style="font-size:1.1rem;color:var(--accent-text)">ONE STEP LEFT</p>
-<h1 style="font-size:2.6rem;line-height:1.05;color:var(--accent-text);margin:6px 0 12px">ENTER THE CODE WE EMAILED</h1>
-<p style="font-size:1.15rem">We sent a 6-digit code to <strong>{{ email }}</strong>. It works for 15 minutes.</p>
-<form class="form" method="post" style="margin-top:18px" novalidate>{{ csrf_field() }}
+<section class="grid-bg pt-[48px] px-[20px] pb-[64px]">
+<div class="card formcard max-w-[620px] my-0 mx-auto">
+<p class="d text-[1.1rem] text-accent">{{ _('ONE STEP LEFT') }}</p>
+<h1 class="text-[2.6rem] leading-[1.05] text-accent mt-[6px] mx-0 mb-[12px]">{{ _('ENTER THE CODE WE EMAILED') }}</h1>
+<p class="text-[1.15rem]">{{ _('We sent a 6-digit code to') }} <strong>{{ email }}</strong>{{ _('. It works for 15 minutes.') }}</p>
+<form class="form mt-[18px]" method="post" novalidate>{{ csrf_field() }}
 {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
-<div class="field"><label for="f-code" class="lab">6-DIGIT CODE</label><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required placeholder="123456" style="font:2rem ui-monospace,Menlo,monospace;letter-spacing:.3em;max-width:260px"></div>
-<button class="btn" type="submit" style="align-self:flex-start">CHECK »</button>
+<div class="field"><label for="f-code" class="lab">{{ _('6-DIGIT CODE') }}</label><input class="[font:2rem_ui-monospace,Menlo,monospace] tracking-[.3em] max-w-[260px]" id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required placeholder="123456"></div>
+<button class="btn self-start" type="submit">{{ _('CHECK »') }}</button>
 </form>
-<form method="post" action="{{ url_for('join.resend') }}" style="margin-top:16px">{{ csrf_field() }}<button class="linkbtn" type="submit" style="font-size:1rem">Send me a new code</button></form>
-<p class="alt"><a href="{{ url_for('join.join') }}" class="d">Wrong email? Start again</a></p>
+<form class="mt-[16px]" method="post" action="{{ url_for('join.resend') }}">{{ csrf_field() }}<button class="linkbtn text-[1rem]" type="submit">{{ _('Send me a new code') }}</button></form>
+<p class="alt"><a href="{{ url_for('join.join') }}" class="d">{{ _('Wrong email? Start again') }}</a></p>
 </div>
 </section>
 {% endblock %}

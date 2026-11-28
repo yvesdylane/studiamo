@@ -18,6 +18,7 @@ from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from pydantic import ValidationError
 
 from src.attempt.AttemptResultDto import ManualGrade
@@ -147,14 +148,14 @@ def _after_save_target(question_id: int, course_id: int) -> str:
     add_to = request.form.get("add_to") or ""
     if add_to == "new-exam":
         return url_for("studio_tests.new_standalone_exam")
-    kind, _, ident = add_to.partition(":")
+    kind, _unused, ident = add_to.partition(":")
     if kind == "exercise" and ident.isdigit():
-        ex, _, _ = _exercise_and_course(int(ident))   # 404 unless the user may edit it
+        ex, _unused, _unused2 = _exercise_and_course(int(ident))   # 404 unless the user may edit it
         if question_id not in [q.question_id for q in ex.questions]:
             deps.exercises().add_question(ex.id, question_id)
         return url_for("studio_tests.edit_exercise", exercise_id=ex.id) + "#questions"
     if kind == "exam" and ident.isdigit():
-        exam, _ = _exam_and_course(int(ident))   # 404 unless the user may edit it
+        exam, _unused = _exam_and_course(int(ident))   # 404 unless the user may edit it
         if exam.kind == ExamKind.SCHEDULED and question_id not in [q.question_id for q in exam.questions]:
             deps.exams().set_questions(exam.id, [ExamQuestionBase(question_id=q.question_id, points=q.points) for q in exam.questions]
                                        + [ExamQuestionBase(question_id=question_id)])
@@ -182,7 +183,7 @@ def new_question(course_id: int | None):
         except (ValidationError, QuestionInvalidError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         else:
-            flash("Question saved." + _reopened_note(q.id, q.topic_id))
+            flash(_("Question saved.") + _reopened_note(q.id, q.topic_id))
             return redirect(_after_save_target(q.id, course_id))
     return _question_page(course, form, None, error)
 
@@ -223,7 +224,7 @@ def edit_question(question_id: int):
         except (ValidationError, QuestionInvalidError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         else:
-            flash("Question saved." + _reopened_note(question_id, form["topic_id"]))
+            flash(_("Question saved.") + _reopened_note(question_id, form["topic_id"]))
             return redirect(_after_save_target(question_id, course.id if course else None))
     return _question_page(course, form, q, error)
 
@@ -263,10 +264,10 @@ def delete_question(question_id: int):
         course = deps.require_course_editor(deps.topics().get(q.topic_id).course_id)
     try:
         deps.questions().delete(question_id)
-        flash("Question deleted.")
+        flash(_("Question deleted."))
     except QuestionInUseError:
         deps.questions().deactivate(question_id)
-        flash("This question is used in exercises or exams, so it was hidden instead of deleted.")
+        flash(_("This question is used in exercises or exams, so it was hidden instead of deleted."))
     return redirect(url_for("studio_tests.bank", course_id=course.id) if course else url_for("studio.index") + "#my-exams")
 
 
@@ -315,7 +316,7 @@ def edit_exercise(exercise_id: int):
                     deps.exercises().attach_to_note(nid, exercise_id)
                 for nid in current - wanted:
                     deps.exercises().detach_from_note(nid, exercise_id)
-                flash("Exercise saved.")
+                flash(_("Exercise saved."))
             elif action == "add":
                 qid = _int("question_id")
                 if qid:
@@ -334,12 +335,12 @@ def edit_exercise(exercise_id: int):
                     deps.exercises().set_questions(exercise_id, [ExerciseQuestionBase(question_id=q, position=p) for p, q in enumerate(ids)])
             elif action == "delete":
                 deps.exercises().delete(exercise_id)
-                flash("Exercise deleted.")
+                flash(_("Exercise deleted."))
                 return redirect(url_for("studio.course", course_id=course.id) + "#exercises")
             if not deps.is_admin() and deps.review().reopen_after_edit("exercise", exercise_id):
-                flash("It was approved, so it is hidden again until an admin checks your changes.")
+                flash(_("It was approved, so it is hidden again until an admin checks your changes."))
         except (ValidationError, ServiceError) as exc:
-            flash("Not saved: " + _error_text(exc))
+            flash(_("Not saved: ") + _error_text(exc))
         return redirect(url_for("studio_tests.edit_exercise", exercise_id=exercise_id) + ("#questions" if action != "save" else ""))
     ordered = sorted(ex.questions, key=lambda q: q.position)
     qs = {q.id: q for q in deps.questions().get_many([q.question_id for q in ordered])}
@@ -420,7 +421,7 @@ def new_exam(course_id: int | None):
         except (ValidationError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
         else:
-            flash("Exam created as a draft. Publish it when it is ready.")
+            flash(_("Exam created as a draft. Publish it when it is ready."))
             return redirect(url_for("studio_tests.edit_exam", exam_id=exam.id))
     return _exam_page(course, None, kind, error)
 
@@ -439,7 +440,7 @@ def edit_exam(exam_id: int):
                     deps.exams().set_questions(exam_id, _picked_questions())
                 else:
                     deps.exams().set_topics(exam_id, [int(t) for t in request.form.getlist("topic_ids") if t.isdigit()])
-                msg = "Exam saved."
+                msg = _("Exam saved.")
                 if exam.kind == ExamKind.SYSTEM and not deps.is_admin() and deps.review().reopen_after_edit("exam", exam_id):
                     msg += " It was approved, so it is hidden again until an admin checks your changes."
                 flash(msg)
@@ -448,10 +449,10 @@ def edit_exam(exam_id: int):
                     # a lecturer's exam for their own students: no review needed
                     if action == "publish":
                         deps.review().publish_direct("exam", exam_id, published=True)
-                        flash("Published: your students can see this exam.")
+                        flash(_("Published: your students can see this exam."))
                     else:
                         deps.review().hide("exam", exam_id)
-                        flash("Back to draft.")
+                        flash(_("Back to draft."))
                 else:
                     review_action(deps.review(), "exam", exam_id, exam.title, exam.published, exam.review_status)
             elif action == "join":
@@ -459,13 +460,13 @@ def edit_exam(exam_id: int):
                 deps.exams().set_join(exam_id, enabled=request.form.get("join_enabled") == "on",
                                       mode=request.form.get("join_mode", "anyone"),
                                       guest_results=request.form.get("guest_results", "graded"), emails=emails)
-                flash("Join settings saved.")
+                flash(_("Join settings saved."))
             elif action == "new_code":
                 deps.exams().new_code(exam_id)
-                flash("New code made: the old one no longer works.")
+                flash(_("New code made: the old one no longer works."))
             elif action == "delete":
                 deps.exams().delete(exam_id)
-                flash("Exam deleted.")
+                flash(_("Exam deleted."))
                 return redirect(url_for("studio.course", course_id=course.id) + "#exams" if course else url_for("studio.index") + "#my-exams")
         except (ValidationError, ServiceError, ValueError) as exc:
             error = _error_text(exc)
@@ -557,7 +558,7 @@ def email_guest_results(exam_id: int):
     for a in deps.attempts().list_attempts_for_exam(exam_id):
         if a.guest_id and a.status.value == "graded" and send_guest_result(a.id, only_if_unsent=True):
             sent += 1
-    flash(f"Results emailed to {sent} guest{'s' if sent != 1 else ''}." if sent else "No guest result was waiting to be sent.")
+    flash(_('Results emailed to %(sent)s guest%(value)s.', sent=sent, value='s' if sent != 1 else '') if sent else _("No guest result was waiting to be sent."))
     return redirect(url_for("studio_tests.exam_results", exam_id=exam_id))
 
 
@@ -597,15 +598,15 @@ def grade(kind: str, attempt_id: int):
             else:
                 svc.grade_exam_attempt(attempt_id, grade_data, grader_id=g.user.id)
         except (ValueError, ValidationError, ManualGradeInvalidError, AttemptNotAwaitingGradingError) as exc:
-            error = "Enter points for every question: " + _error_text(exc)
+            error = _("Enter points for every question: ") + _error_text(exc)
         else:
             if kind == "exam" and attempt.guest_id and exam_obj.guest_results == "graded":
                 from src.web.join import send_guest_result
 
                 send_guest_result(attempt_id)
-                flash("Graded. The result was emailed to the guest.")
+                flash(_("Graded. The result was emailed to the guest."))
             else:
-                flash("Graded. The student's mark, exp and rank are updated.")
+                flash(_("Graded. The student's mark, exp and rank are updated."))
             if course is None:
                 return redirect(url_for("studio_tests.exam_results", exam_id=attempt.exam_id))
             return redirect(url_for("studio_tests.grading", course_id=course.id))

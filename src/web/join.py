@@ -19,6 +19,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from flask import Blueprint, abort, current_app, flash, g, redirect, render_template, request, session, url_for
+from flask_babel import gettext as _
 from pydantic import ValidationError
 
 from src.attempt.AttemptStatus import AttemptStatus
@@ -81,20 +82,20 @@ def join():
     if request.method == "POST":
         exam = deps.exams().find_by_code(values["code"])
         if exam is None:
-            error = "This code does not work. Check it with your lecturer: it may be wrong or switched off."
+            error = _("This code does not work. Check it with your lecturer: it may be wrong or switched off.")
         elif g.user is not None:
             # logged in: the normal exam page (exp and rank count)
             if g.get("is_admin") or "student" not in g.roles:
-                error = "An admin session cannot take exams. Log in with your password to take it."
+                error = _("An admin session cannot take exams. Log in with your password to take it.")
             elif not deps.exams().may_join(exam, g.user.email):
-                error = "Your email is not on this exam's class list. Ask your lecturer."
+                error = _("Your email is not on this exam's class list. Ask your lecturer.")
             else:
                 session["joined_exams"] = sorted(set(session.get("joined_exams", [])) | {exam.id})[-50:]
                 return redirect(url_for("tests.exam", exam_id=exam.id))
         elif not deps.exams().may_join(exam, values["email"]):
-            error = "This email is not on the exam's class list. Use the email your lecturer has, or ask them."
+            error = _("This email is not on the exam's class list. Use the email your lecturer has, or ask them.")
         elif exam.closes_at is not None and exam.closes_at <= datetime.now(UTC):
-            error = "This exam has closed."
+            error = _("This exam has closed.")
         else:
             try:
                 guest, code = _guests().request_code(exam.id, values["name"], values["email"])
@@ -102,12 +103,13 @@ def join():
                 error = str(exc)
             else:
                 html = render_template("email/join_code.html", name=guest.name, code=code, exam=exam)
-                sent = _send(guest.email, f"Your code for the exam “{exam.title}”",
-                             f"Hello {guest.name},\n\nYour code to join “{exam.title}” on Studiamo: {code}\n\n"
-                             "It works for 15 minutes. If you did not ask for it, ignore this email.\n", html)
+                sent = _send(guest.email, _("Your code for the exam “%(title)s”", title=exam.title),
+                             _("Hello %(name)s,\n\nYour code to join “%(title)s” on Studiamo: %(code)s\n\n"
+                               "It works for 15 minutes. If you did not ask for it, ignore this email.\n",
+                               name=guest.name, title=exam.title, code=code), html)
                 session[PENDING_KEY] = {"exam_id": exam.id, "email": guest.email, "name": guest.name}
                 if not sent:
-                    flash("We could not send the email just now. Ask for a new code in a minute.")
+                    flash(_("We could not send the email just now. Ask for a new code in a minute."))
                 return redirect(url_for("join.verify"))
     return render_template("join/join.html", values=values, error=error), (400 if error else 200)
 
@@ -141,10 +143,10 @@ def resend():
     except GuestError as exc:
         flash(str(exc))
     else:
-        _send(guest.email, f"Your code for the exam “{exam.title}”",
-              f"Hello {guest.name},\n\nYour new code to join “{exam.title}”: {code}\n",
+        _send(guest.email, _("Your code for the exam “%(title)s”", title=exam.title),
+              _("Hello %(name)s,\n\nYour new code to join “%(title)s”: %(code)s\n", name=guest.name, title=exam.title, code=code),
               render_template("email/join_code.html", name=guest.name, code=code, exam=exam))
-        flash("A new code was sent.")
+        flash(_("A new code was sent."))
     return redirect(url_for("join.verify"))
 
 
@@ -167,7 +169,7 @@ def guest_start():
     if guest is None:
         return redirect(url_for("join.join"))
     if not exam.join_enabled:
-        flash("The lecturer switched this exam's code off.")
+        flash(_("The lecturer switched this exam's code off."))
         return redirect(url_for("join.guest_exam"))
     try:
         started = deps.attempts().start_exam(None, exam.id, guest_id=guest.id)
@@ -196,7 +198,7 @@ def guest_attempt(attempt_id: int):
             auto = request.form.get("auto_submit") or None
             result = svc.submit_exam(attempt_id, None, _answers(started.questions), guest_id=guest.id, auto_submitted=auto)
         except ValidationError:
-            flash("Some answers could not be read. Please try again.")
+            flash(_("Some answers could not be read. Please try again."))
         except AttemptAlreadySubmittedError:
             return redirect(url_for("join.done"))
         else:
@@ -215,7 +217,7 @@ def guest_attempt(attempt_id: int):
 def guest_event(attempt_id: int):
     from src.web.tests import _log_event
 
-    guest, _ = _guest_exam()
+    guest, _unused = _guest_exam()
     if guest is None:
         abort(404)
     return _log_event(lambda event: deps.attempts().log_exam_event(attempt_id, None, event, guest_id=guest.id))
@@ -243,11 +245,13 @@ def send_guest_result(attempt_id: int, *, only_if_unsent: bool = False) -> bool:
     if only_if_unsent and guest.results_sent_at is not None:
         return False
     exam = deps.exams().get(attempt.exam_id)
-    text = (f"Hello {guest.name},\n\nYour result for “{exam.title}”: {attempt.score_pct:g}% "
-            f"({attempt.points_earned:g} of {attempt.points_possible:g} points).\n\n"
-            "Create a free Studiamo account with this email to keep your results and earn exp next time.\n")
+    text = _("Hello %(name)s,\n\nYour result for “%(title)s”: %(score)s%% "
+             "(%(earned)s of %(possible)s points).\n\n"
+             "Create a free Studiamo account with this email to keep your results and earn exp next time.\n",
+             name=guest.name, title=exam.title, score=f"{attempt.score_pct:g}",
+             earned=f"{attempt.points_earned:g}", possible=f"{attempt.points_possible:g}")
     html = render_template("email/guest_result.html", guest=guest, exam=exam, attempt=attempt)
-    if _send(guest.email, f"Your result: {exam.title}", text, html):
+    if _send(guest.email, _("Your result: %(title)s", title=exam.title), text, html):
         _guests().mark_results_sent(guest.id)
         return True
     return False

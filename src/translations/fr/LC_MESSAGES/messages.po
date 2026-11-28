@@ -1,0 +1,3381 @@
+# Translations template for Studiamo.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the Studiamo project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Studiamo VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-11-28 12:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Code Alchemists\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.19.0\n"
+
+msgid "Studiamo"
+msgstr "Studiamo"
+
+msgid "· Studiamo"
+msgstr "· Studiamo"
+
+msgid "Close this message"
+msgstr "Fermer ce message"
+
+msgid "Learn, practise, level up"
+msgstr "Apprendre, s’entraîner, progresser"
+
+msgid "LEARN. PRACTISE. LEVEL UP."
+msgstr "APPRENDRE. S’ENTRAÎNER. PROGRESSER."
+
+msgid "KNOWLEDGE AND PRACTICE ALWAYS PAY OFF"
+msgstr "LE SAVOIR ET LA PRATIQUE PAIENT TOUJOURS"
+
+msgid "Notes to read, exercises that stick and exams that show what you really know. Every step earns progress you can see."
+msgstr "Des notes à lire, des exercices qui restent et des examens qui montrent ce que vous savez vraiment. Chaque étape vous fait progresser, et vous le voyez."
+
+msgid "GO TO MY DASHBOARD »"
+msgstr "ALLER À MON TABLEAU DE BORD »"
+
+msgid "START LEARNING »"
+msgstr "COMMENCER À APPRENDRE »"
+
+msgid "LOG IN"
+msgstr "CONNEXION"
+
+msgid "JOIN AN EXAM"
+msgstr "REJOINDRE UN EXAMEN"
+
+msgid "Three students studying together at a library table: one points at a page in a textbook, one takes notes, one works on a laptop"
+msgstr "Trois étudiants qui travaillent ensemble à une table de bibliothèque : l’un montre une page d’un manuel, un autre prend des notes, le troisième travaille sur un ordinateur portable"
+
+msgid "HOW IT WORKS"
+msgstr "COMMENT ÇA MARCHE"
+
+msgid "READ"
+msgstr "LIRE"
+
+msgid "Clear lessons, topic by topic, written for your course."
+msgstr "Des leçons claires, thème par thème, écrites pour votre cours."
+
+msgid "PRACTICE"
+msgstr "S’ENTRAÎNER"
+
+msgid "Exercises after each lesson lock the idea in, and earn you exp."
+msgstr "Des exercices après chaque leçon pour fixer l’idée, et gagner de l’exp."
+
+msgid "EVALUATE"
+msgstr "ÉVALUER"
+
+msgid "Timed exams show what you really know, and move your rank up."
+msgstr "Des examens chronométrés montrent ce que vous savez vraiment et font monter votre rang."
+
+msgid "COURSES"
+msgstr "COURS"
+
+#, python-format
+msgid "%(parts)s open."
+msgstr "%(parts)s ouvert(s)."
+
+msgid "Notes, exercises and exams will be added here."
+msgstr "Notes, exercices et examens seront ajoutés ici."
+
+msgid "AVAILABLE"
+msgstr "DISPONIBLE"
+
+msgid "COMING SOON"
+msgstr "BIENTÔT"
+
+msgid "NO COURSES YET"
+msgstr "PAS ENCORE DE COURS"
+
+msgid "Courses will show up here as soon as a lecturer creates them."
+msgstr "Les cours apparaîtront ici dès qu’un enseignant les crée."
+
+msgid "WHAT YOU'LL FIND HERE"
+msgstr "CE QUE VOUS TROUVEREZ ICI"
+
+msgid "NOTES"
+msgstr "NOTES"
+
+msgid "Lessons to read week by week, topic by topic."
+msgstr "Des leçons à lire semaine après semaine, thème par thème."
+
+msgid "EXERCISES"
+msgstr "EXERCICES"
+
+msgid "Practice questions to check the notes really stuck."
+msgstr "Des questions d’entraînement pour vérifier que les notes sont bien acquises."
+
+msgid "EXAMS"
+msgstr "EXAMENS"
+
+msgid "Timed exams that move your rank."
+msgstr "Des examens chronométrés qui font évoluer votre rang."
+
+msgid "RANKS"
+msgstr "RANGS"
+
+#, python-format
+msgid "Earn exp, level up and climb from %(value)s to %(value2)s."
+msgstr "Gagnez de l’exp, montez de niveau et grimpez de %(value)s à %(value2)s."
+
+msgid "CODE QUESTIONS, TOO"
+msgstr "DES QUESTIONS DE CODE AUSSI"
+
+msgid "Programming courses include code questions: write the program, and it is checked against the expected output."
+msgstr "Les cours de programmation incluent des questions de code : écrivez le programme, il est vérifié avec la sortie attendue."
+
+msgid "CREATE MY ACCOUNT »"
+msgstr "CRÉER MON COMPTE »"
+
+msgid "Example code question"
+msgstr "Exemple de question de code"
+
+msgid "Example · JavaScript"
+msgstr "Exemple · JavaScript"
+
+msgid "EXPECTED OUTPUT"
+msgstr "SORTIE ATTENDUE"
+
+msgid "QUESTIONS?"
+msgstr "DES QUESTIONS ?"
+
+msgid "Who is this platform for?"
+msgstr "À qui s’adresse cette plateforme ?"
+
+msgid "Students of the courses listed above. It follows the HND syllabus."
+msgstr "Aux étudiants des cours ci-dessus. Elle suit le programme du HND."
+
+msgid "Will it be used for CA?"
+msgstr "Sera-t-elle utilisée pour le contrôle continu ?"
+
+msgid "That is the plan, so it is worth getting used to the platform now."
+msgstr "C’est prévu, donc autant s’habituer à la plateforme dès maintenant."
+
+msgid "Do I need to install anything?"
+msgstr "Dois-je installer quelque chose ?"
+
+msgid "No. Everything runs in your browser."
+msgstr "Non. Tout fonctionne dans votre navigateur."
+
+msgid "I teach a course. How do I get a lecturer account?"
+msgstr "J’enseigne un cours. Comment obtenir un compte enseignant ?"
+
+msgid "Request a lecturer account"
+msgstr "Demandez un compte enseignant"
+
+msgid ". It is checked before you can create exams."
+msgstr ". Il est vérifié avant que vous puissiez créer des examens."
+
+msgid "PROFILE"
+msgstr "PROFIL"
+
+#, python-format
+msgid "· here since %(value)s"
+msgstr "· ici depuis %(value)s"
+
+msgid "EDIT SETTINGS"
+msgstr "MODIFIER LES PARAMÈTRES"
+
+msgid "This player keeps their progress private."
+msgstr "Ce joueur garde sa progression privée."
+
+msgid "LEVEL"
+msgstr "NIVEAU"
+
+#, python-format
+msgid "%(total_exp)s exp"
+msgstr "%(total_exp)s exp"
+
+msgid "RANK"
+msgstr "RANG"
+
+#, python-format
+msgid "%(value)s Xexp"
+msgstr "%(value)s Xexp"
+
+msgid "LEADERBOARD"
+msgstr "CLASSEMENT"
+
+msgid "hidden from the ranking"
+msgstr "masqué du classement"
+
+#, python-format
+msgid "(you would be #%(position)s)"
+msgstr "(vous seriez #%(position)s)"
+
+msgid "by exp"
+msgstr "par exp"
+
+msgid ", shown anonymously"
+msgstr ", affiché anonymement"
+
+msgid "WORK"
+msgstr "TRAVAIL"
+
+#, python-format
+msgid "notes read · %(good_marks)s of %(marks)s tests at 75%%+"
+msgstr "notes lues · %(good_marks)s tests sur %(marks)s à 75 %% ou plus"
+
+msgid "TEACHES"
+msgstr "ENSEIGNE"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "YOUR ACCOUNT"
+msgstr "VOTRE COMPTE"
+
+msgid "SETTINGS"
+msgstr "PARAMÈTRES"
+
+msgid "Settings sections"
+msgstr "Sections des paramètres"
+
+msgid "PHOTO"
+msgstr "PHOTO"
+
+msgid "Profile photo"
+msgstr "Photo de profil"
+
+msgid "UPLOAD"
+msgstr "ENVOYER"
+
+msgid "PNG, JPEG, GIF or WebP, up to 2 MB. Without a photo, your initials are shown."
+msgstr "PNG, JPEG, GIF ou WebP, 2 Mo maximum. Sans photo, vos initiales sont affichées."
+
+msgid "REMOVE PHOTO"
+msgstr "SUPPRIMER LA PHOTO"
+
+msgid "FULL NAME"
+msgstr "NOM COMPLET"
+
+msgid "PLAYER NAME (SHOWN ON THE RANKING, OPTIONAL)"
+msgstr "NOM DE JOUEUR (AFFICHÉ SUR LE CLASSEMENT, FACULTATIF)"
+
+msgid "EMAIL"
+msgstr "E-MAIL"
+
+msgid "CLASS"
+msgstr "CLASSE"
+
+msgid "ROLE"
+msgstr "RÔLE"
+
+msgid "An admin changes roles."
+msgstr "Un administrateur change les rôles."
+
+msgid "SAVE PROFILE"
+msgstr "ENREGISTRER LE PROFIL"
+
+msgid "APPEARANCE"
+msgstr "APPARENCE"
+
+msgid "YOUR COLOUR · IT REPLACES THE PURPLE EVERYWHERE"
+msgstr "VOTRE COULEUR · ELLE REMPLACE LE VIOLET PARTOUT"
+
+msgid "Custom"
+msgstr "Personnalisée"
+
+msgid "CUSTOM COLOUR"
+msgstr "COULEUR PERSONNALISÉE"
+
+msgid "Very light colours are refused: white text must stay readable on buttons and tags."
+msgstr "Les couleurs très claires sont refusées : le texte blanc doit rester lisible sur les boutons et les étiquettes."
+
+msgid "SECONDARY COLOUR · COURSE STRIP, FOOTER AND RANK BADGE"
+msgstr "COULEUR SECONDAIRE · BANDE DES COURS, PIED DE PAGE ET BADGE DE RANG"
+
+msgid "Default"
+msgstr "Par défaut"
+
+msgid "CUSTOM"
+msgstr "PERSONNALISÉE"
+
+msgid "FONT"
+msgstr "POLICE"
+
+msgid "Knowledge and practice always pay off. 0123456789"
+msgstr "Le savoir et la pratique paient toujours. 0123456789"
+
+msgid "TEXT SIZE"
+msgstr "TAILLE DU TEXTE"
+
+msgid "THEME"
+msgstr "THÈME"
+
+msgid "The ☀ / ☾ button in the header switches too. These choices are saved on your account and only change what you see."
+msgstr "Le bouton ☀ / ☾ de l’en-tête le change aussi. Ces choix sont enregistrés sur votre compte et ne changent que ce que vous voyez."
+
+msgid "BUTTON"
+msgstr "BOUTON"
+
+msgid "TAG"
+msgstr "ÉTIQUETTE"
+
+msgid "HEADING"
+msgstr "TITRE"
+
+msgid "SAVE APPEARANCE"
+msgstr "ENREGISTRER L’APPARENCE"
+
+msgid "NOTIFICATIONS"
+msgstr "NOTIFICATIONS"
+
+msgid "Messages such as “you are logged in”, a daily task done or a new badge."
+msgstr "Des messages comme « vous êtes connecté », une tâche du jour terminée ou un nouveau badge."
+
+msgid "Show them as pop-ups"
+msgstr "Les afficher en fenêtres surgissantes"
+
+msgid "at the top right"
+msgstr "en haut à droite"
+
+msgid "Otherwise they appear at the top of the page."
+msgstr "Sinon, ils apparaissent en haut de la page."
+
+msgid "POP-UPS STAY FOR"
+msgstr "LES FENÊTRES RESTENT"
+
+msgid "seconds"
+msgstr "secondes"
+
+msgid "Between 3 and 60 seconds. Moving the mouse over a pop-up (or focusing it) keeps it open; ✕ closes it."
+msgstr "Entre 3 et 60 secondes. Survoler une fenêtre avec la souris (ou lui donner le focus) la garde ouverte ; ✕ la ferme."
+
+msgid "SAVE"
+msgstr "ENREGISTRER"
+
+msgid "ON THE RANKING"
+msgstr "SUR LE CLASSEMENT"
+
+msgid "How you appear on the ranking"
+msgstr "Comment vous apparaissez sur le classement"
+
+msgid "YOUR AI ASSISTANT"
+msgstr "VOTRE ASSISTANT IA"
+
+msgid "AI can turn notes you already have (Word, PowerPoint, PDF, text) into Studiamo notes with code boxes, file trees and live diagrams. There are two ways to connect it, and you can use both. Either way the result is a"
+msgstr "L’IA peut transformer les notes que vous avez déjà (Word, PowerPoint, PDF, texte) en notes Studiamo avec des blocs de code, des arborescences de fichiers et des diagrammes interactifs. Il y a deux façons de la connecter, et vous pouvez utiliser les deux. Dans les deux cas, le résultat est un"
+
+msgid "draft"
+msgstr "brouillon"
+
+msgid ": you check it, and an admin reviews it before students see it."
+msgstr " : vous le vérifiez, et un administrateur le relit avant que les étudiants le voient."
+
+msgid "A · API KEY · INSIDE STUDIAMO"
+msgstr "A · CLÉ API · DANS STUDIAMO"
+
+msgid "You paste an"
+msgstr "Vous collez une"
+
+msgid "API key"
+msgstr "clé API"
+
+msgid "here once:"
+msgstr "ici une seule fois :"
+
+msgid "Claude"
+msgstr "Claude"
+
+msgid "(the default),"
+msgstr "(par défaut),"
+
+msgid "Gemini"
+msgstr "Gemini"
+
+msgid "or"
+msgstr "ou"
+
+msgid "OpenAI"
+msgstr "OpenAI"
+
+msgid ", or several and switch whenever you like. Then the note editor's"
+msgstr ", ou plusieurs, et vous changez quand vous voulez. Ensuite, le bouton"
+
+msgid "Import"
+msgstr "Importer"
+
+msgid "button sends your file to that AI and puts the converted note in the editor."
+msgstr "de l’éditeur de notes envoie votre fichier à cette IA et place la note convertie dans l’éditeur."
+
+msgid "Fastest: one click, nothing to install."
+msgstr "Le plus rapide : un clic, rien à installer."
+
+msgid "Works from any computer you log in on."
+msgstr "Fonctionne depuis n’importe quel ordinateur où vous vous connectez."
+
+msgid "You pay the AI company for what you use (your key, your account); Gemini has a free tier. The file you import is sent to them."
+msgstr "Vous payez l’entreprise d’IA pour ce que vous utilisez (votre clé, votre compte) ; Gemini a une offre gratuite. Le fichier importé leur est envoyé."
+
+msgid "A ChatGPT, Gemini or Claude"
+msgstr "Un"
+
+msgid "subscription"
+msgstr "abonnement"
+
+msgid "is not an API key: keys come from the developer consoles linked below."
+msgstr "ChatGPT, Gemini ou Claude n’est pas une clé API : les clés viennent des consoles développeur indiquées ci-dessous."
+
+msgid "Best for: importing notes one by one while you write in the Studio."
+msgstr "Idéal pour : importer des notes une par une pendant que vous écrivez dans le Studio."
+
+msgid "B · MCP · FROM YOUR AI APP"
+msgstr "B · MCP · DEPUIS VOTRE APPLI D’IA"
+
+msgid "You connect the AI app you already use to Studiamo with a"
+msgstr "Vous connectez l’appli d’IA que vous utilisez déjà à Studiamo avec une"
+
+msgid "Studiamo key"
+msgstr "clé Studiamo"
+
+msgid ". MCP is an open standard, so the model does not matter: Claude Code, Claude Desktop, Gemini CLI, and editors like VS Code or Cursor all work. Then you talk to it there: “convert these notes and save them in Week 2”."
+msgstr ". MCP est un standard ouvert, donc le modèle importe peu : Claude Code, Claude Desktop, Gemini CLI et des éditeurs comme VS Code ou Cursor fonctionnent tous. Ensuite, vous lui parlez là-bas : « convertis ces notes et enregistre-les dans la semaine 2 »."
+
+msgid "Uses your AI app's own subscription: no API key needed."
+msgstr "Utilise l’abonnement de votre appli d’IA : pas besoin de clé API."
+
+msgid "It can work on many notes, reorganise topics, and fix notes you already wrote."
+msgstr "Peut travailler sur beaucoup de notes, réorganiser les thèmes et corriger des notes déjà écrites."
+
+msgid "Your app must stay connected; it works where the app is installed."
+msgstr "Votre appli doit rester connectée ; elle fonctionne là où elle est installée."
+
+msgid "Best for: converting a whole course, or longer work with an assistant."
+msgstr "Idéal pour : convertir un cours entier, ou un travail plus long avec un assistant."
+
+msgid "This is for lecturers: it writes into the courses you teach."
+msgstr "C’est pour les enseignants : elle écrit dans les cours que vous enseignez."
+
+msgid "Become a lecturer »"
+msgstr "Devenir enseignant »"
+
+msgid "A · YOUR API KEYS"
+msgstr "A · VOS CLÉS API"
+
+msgid "Connect one or more. Studiamo uses your default AI; in the Import dialog you can pick another one each time."
+msgstr "Connectez-en une ou plusieurs. Studiamo utilise votre IA par défaut ; dans la fenêtre Importer, vous pouvez en choisir une autre à chaque fois."
+
+msgid "USE BY DEFAULT"
+msgstr "UTILISER PAR DÉFAUT"
+
+msgid "CONNECTED"
+msgstr "CONNECTÉE"
+
+msgid "DEFAULT"
+msgstr "PAR DÉFAUT"
+
+msgid "NOT CONNECTED"
+msgstr "NON CONNECTÉE"
+
+msgid "Key"
+msgstr "Clé"
+
+#, python-format
+msgid "last used %(when)s"
+msgstr "dernière utilisation le %(when)s"
+
+msgid "not used yet"
+msgstr "jamais utilisée"
+
+msgid "MODEL"
+msgstr "MODÈLE"
+
+msgid "REFRESH MODEL LIST"
+msgstr "ACTUALISER LA LISTE DES MODÈLES"
+
+#, python-format
+msgid "Remove your %(name)s key from Studiamo?"
+msgstr "Supprimer votre clé %(name)s de Studiamo ?"
+
+msgid "REMOVE KEY"
+msgstr "SUPPRIMER LA CLÉ"
+
+msgid "REPLACE THE KEY"
+msgstr "REMPLACER LA CLÉ"
+
+msgid "API KEY"
+msgstr "CLÉ API"
+
+msgid "Create a key in"
+msgstr "Créez une clé dans"
+
+#, python-format
+msgid ". Studiamo checks it with %(company)s"
+msgstr ". Studiamo la vérifie auprès de %(company)s"
+
+msgid ", asks which models it can use"
+msgstr ", demande quels modèles elle peut utiliser"
+
+msgid ", stores it encrypted, and never shows it again."
+msgstr ", la stocke chiffrée et ne l’affiche plus jamais."
+
+msgid "REPLACE KEY"
+msgstr "REMPLACER LA CLÉ"
+
+msgid "SAVE KEY"
+msgstr "ENREGISTRER LA CLÉ"
+
+msgid "B · CONNECT YOUR AI APP (MCP)"
+msgstr "B · CONNECTER VOTRE APPLI D’IA (MCP)"
+
+msgid "YOUR NEW KEY · COPY IT NOW"
+msgstr "VOTRE NOUVELLE CLÉ · COPIEZ-LA MAINTENANT"
+
+msgid "It is shown only this once. Anyone with it can edit your notes: keep it private."
+msgstr "Elle n’est affichée qu’une seule fois. Toute personne qui l’a peut modifier vos notes : gardez-la privée."
+
+msgid "Your new key"
+msgstr "Votre nouvelle clé"
+
+msgid "COPY"
+msgstr "COPIER"
+
+msgid "1 · CREATE A STUDIAMO KEY"
+msgstr "1 · CRÉER UNE CLÉ STUDIAMO"
+
+msgid "Key name"
+msgstr "Nom de la clé"
+
+msgid "e.g. Claude on my laptop"
+msgstr "ex. Claude sur mon portable"
+
+msgid "CREATE KEY"
+msgstr "CRÉER LA CLÉ"
+
+#, python-format
+msgid "created %(value)s · %(value2)s"
+msgstr "créée le %(value)s · %(value2)s"
+
+msgid "never used"
+msgstr "jamais utilisée"
+
+msgid "REVOKE"
+msgstr "RÉVOQUER"
+
+msgid "2 · CONNECT YOUR APP"
+msgstr "2 · CONNECTER VOTRE APPLI"
+
+msgid "Server address (MCP, HTTP):"
+msgstr "Adresse du serveur (MCP, HTTP) :"
+
+msgid "MCP server address"
+msgstr "Adresse du serveur MCP"
+
+msgid "Claude Code"
+msgstr "Claude Code"
+
+msgid "(terminal):"
+msgstr "(terminal) :"
+
+msgid "Gemini CLI"
+msgstr "Gemini CLI"
+
+msgid "(add to"
+msgstr "(à ajouter dans"
+
+msgid "Claude Desktop and other apps"
+msgstr "Claude Desktop et autres applis"
+
+msgid "(their MCP config file, through"
+msgstr "(leur fichier de configuration MCP, via"
+
+msgid ", needs Node.js):"
+msgstr ", nécessite Node.js) :"
+
+msgid "ChatGPT and other web apps"
+msgstr "ChatGPT et les autres applis web"
+
+msgid "run on their company's servers, so they can only connect once Studiamo is online at a public address, and they expect a “Sign in with Studiamo” login rather than a pasted key. Until then, use one of the apps above."
+msgstr "tournent sur les serveurs de leur entreprise : elles ne peuvent se connecter que lorsque Studiamo est en ligne à une adresse publique, et elles attendent une connexion « Se connecter avec Studiamo » plutôt qu’une clé collée. En attendant, utilisez une des applis ci-dessus."
+
+msgid "3 · ASK IT"
+msgstr "3 · DEMANDEZ-LUI"
+
+msgid "Paste or attach your old notes and say, for example:"
+msgstr "Collez ou joignez vos anciennes notes et dites par exemple :"
+
+msgid "“Convert these notes into a Studiamo note in my course FP101, topic Week 2.”"
+msgstr "« Convertis ces notes en note Studiamo dans mon cours FP101, thème Semaine 2. »"
+
+msgid "Apps that show MCP prompts also offer"
+msgstr "Les applis qui affichent les prompts MCP proposent aussi"
+
+msgid "Convert my notes to Studiamo"
+msgstr "Convertir mes notes pour Studiamo"
+
+msgid ". Then open the draft in the Studio, check it, and submit it for review."
+msgstr ". Ensuite, ouvrez le brouillon dans le Studio, vérifiez-le et envoyez-le en relecture."
+
+msgid "PASSWORD"
+msgstr "MOT DE PASSE"
+
+msgid "CURRENT PASSWORD"
+msgstr "MOT DE PASSE ACTUEL"
+
+msgid "You log in with Google. You can also set a password."
+msgstr "Vous vous connectez avec Google. Vous pouvez aussi définir un mot de passe."
+
+msgid "NEW PASSWORD"
+msgstr "NOUVEAU MOT DE PASSE"
+
+msgid "REPEAT NEW PASSWORD"
+msgstr "RÉPÉTER LE NOUVEAU MOT DE PASSE"
+
+msgid "CHANGE PASSWORD"
+msgstr "CHANGER LE MOT DE PASSE"
+
+msgid "SET PASSWORD"
+msgstr "DÉFINIR UN MOT DE PASSE"
+
+msgid "LINKED ACCOUNTS"
+msgstr "COMPTES ASSOCIÉS"
+
+msgid "UNLINK"
+msgstr "DISSOCIER"
+
+msgid "None. Log out and use “Continue with Google” with the same email to link it."
+msgstr "Aucun. Déconnectez-vous et utilisez « Continuer avec Google » avec le même e-mail pour l’associer."
+
+msgid "BECOME A LECTURER"
+msgstr "DEVENIR ENSEIGNANT"
+
+#, python-format
+msgid "Your request (%(institution)s) is"
+msgstr "Votre demande (%(institution)s) est"
+
+msgid "SCHOOL OR INSTITUTION"
+msgstr "ÉCOLE OU ÉTABLISSEMENT"
+
+msgid "COURSES YOU TEACH"
+msgstr "COURS QUE VOUS ENSEIGNEZ"
+
+msgid "Separate them with commas."
+msgstr "Séparez-les par des virgules."
+
+msgid "SEND REQUEST"
+msgstr "ENVOYER LA DEMANDE"
+
+msgid "DELETE ACCOUNT"
+msgstr "SUPPRIMER LE COMPTE"
+
+msgid "This removes your progress, exp and rank. It cannot be undone."
+msgstr "Cela supprime votre progression, votre exp et votre rang. C’est irréversible."
+
+msgid "TYPE YOUR EMAIL TO CONFIRM"
+msgstr "TAPEZ VOTRE E-MAIL POUR CONFIRMER"
+
+msgid "DELETE MY ACCOUNT"
+msgstr "SUPPRIMER MON COMPTE"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "ADMIN"
+msgstr "ADMIN"
+
+#, python-format
+msgid "%(user_count)s accounts · %(course_count)s courses. You are acting as an admin: no student or lecturer rights in this session."
+msgstr "%(user_count)s comptes · %(course_count)s cours. Vous agissez en tant qu’administrateur : aucun droit étudiant ou enseignant dans cette session."
+
+msgid "Every course is editable in the studio »"
+msgstr "Tous les cours sont modifiables dans le studio »"
+
+msgid "WAITING FOR REVIEW"
+msgstr "EN ATTENTE DE RELECTURE"
+
+#, python-format
+msgid "%(course_code)s · %(course_title)s · %(max_exp)s exp now"
+msgstr "%(course_code)s · %(course_title)s · %(max_exp)s exp actuellement"
+
+#, python-format
+msgid "· sent %(value)s"
+msgstr "· envoyé le %(value)s"
+
+msgid "REVIEW »"
+msgstr "RELIRE »"
+
+msgid "Nothing waiting for review."
+msgstr "Rien en attente de relecture."
+
+msgid "LECTURER REQUESTS"
+msgstr "DEMANDES D’ENSEIGNANT"
+
+msgid "EMAIL NOT VERIFIED"
+msgstr "E-MAIL NON VÉRIFIÉ"
+
+#, python-format
+msgid "%(institution)s · teaches: %(courses_taught)s · asked %(value)s"
+msgstr "%(institution)s · enseigne : %(courses_taught)s · demandé le %(value)s"
+
+msgid "APPROVE"
+msgstr "APPROUVER"
+
+msgid "Reject this request?"
+msgstr "Refuser cette demande ?"
+
+msgid "REJECT"
+msgstr "REFUSER"
+
+msgid "No requests waiting."
+msgstr "Aucune demande en attente."
+
+msgid "USERS"
+msgstr "UTILISATEURS"
+
+msgid "Search users"
+msgstr "Rechercher des utilisateurs"
+
+msgid "Name or email"
+msgstr "Nom ou e-mail"
+
+msgid "SEARCH"
+msgstr "RECHERCHER"
+
+msgid "NAME"
+msgstr "NOM"
+
+msgid "VERIFIED"
+msgstr "VÉRIFIÉ"
+
+msgid "LECTURER"
+msgstr "ENSEIGNANT"
+
+msgid "REMOVE LECTURER"
+msgstr "RETIRER LE RÔLE ENSEIGNANT"
+
+msgid "MAKE LECTURER"
+msgstr "NOMMER ENSEIGNANT"
+
+msgid "No users found."
+msgstr "Aucun utilisateur trouvé."
+
+#, python-format
+msgid "Review · %(title)s"
+msgstr "Relecture · %(title)s"
+
+msgid "ADMIN · REVIEW"
+msgstr "ADMIN · RELECTURE"
+
+#, python-format
+msgid "· submitted %(value)s"
+msgstr "· envoyé le %(value)s"
+
+msgid "Scheduled exam"
+msgstr "Examen programmé"
+
+#, python-format
+msgid "%(value)s questions per attempt, from a pool of %(questions)s"
+msgstr "%(value)s questions par tentative, parmi %(questions)s"
+
+#, python-format
+msgid "· %(duration_minutes)s minutes"
+msgstr "· %(duration_minutes)s minutes"
+
+#, python-format
+msgid "· %(max_attempts)s attempts"
+msgstr "· %(max_attempts)s tentatives"
+
+#, python-format
+msgid "QUESTION %(index)s · %(value)s · %(value2)s PT"
+msgstr "QUESTION %(index)s · %(value)s · %(value2)s PT"
+
+#, python-format
+msgid "%(test_cases)s test(s), %(test_cases2)s hidden"
+msgstr "%(test_cases)s test(s), %(test_cases2)s masqué(s)"
+
+msgid "No questions: it cannot be approved like this."
+msgstr "Aucune question : elle ne peut pas être approuvée ainsi."
+
+msgid "DECISION"
+msgstr "DÉCISION"
+
+msgid "EXP IT GIVES"
+msgstr "EXP DONNÉE"
+
+#, python-format
+msgid "Students get it in full for a note, and by score for exercises and exams. 75%% or more also gives Xexp."
+msgstr "Les étudiants la reçoivent entièrement pour une note, et selon le score pour les exercices et les examens. 75 %% ou plus donne aussi des Xexp."
+
+msgid "APPROVE AND PUBLISH »"
+msgstr "APPROUVER ET PUBLIER »"
+
+msgid "OR SEND IT BACK WITH A COMMENT"
+msgstr "OU LE RENVOYER AVEC UN COMMENTAIRE"
+
+msgid "SEND BACK"
+msgstr "RENVOYER"
+
+msgid "Log in"
+msgstr "Connexion"
+
+msgid "TURN STUDYING INTO PROGRESS YOU CAN SEE"
+msgstr "TRANSFORMEZ VOS RÉVISIONS EN PROGRÈS VISIBLES"
+
+msgid "CLIMB THE RANKS"
+msgstr "GRIMPEZ LES RANGS"
+
+msgid "Pick up exactly where you left off."
+msgstr "Reprenez exactement là où vous vous êtes arrêté."
+
+msgid "See your reading, practice and exam progress."
+msgstr "Suivez vos progrès en lecture, en entraînement et aux examens."
+
+msgid "Earn exp and level up with every lesson."
+msgstr "Gagnez de l’exp et montez de niveau à chaque leçon."
+
+msgid "Account"
+msgstr "Compte"
+
+msgid "CREATE ACCOUNT"
+msgstr "CRÉER UN COMPTE"
+
+msgid "WELCOME BACK"
+msgstr "BON RETOUR"
+
+msgid "Log in to pick up where you left off."
+msgstr "Connectez-vous pour reprendre là où vous vous êtes arrêté."
+
+msgid "CONTINUE WITH GOOGLE"
+msgstr "CONTINUER AVEC GOOGLE"
+
+msgid "OR WITH YOUR EMAIL"
+msgstr "OU AVEC VOTRE E-MAIL"
+
+msgid "Your password"
+msgstr "Votre mot de passe"
+
+msgid "Keep me logged in on this device"
+msgstr "Rester connecté sur cet appareil"
+
+msgid "LOG IN »"
+msgstr "CONNEXION »"
+
+msgid "SEND THE LINK AGAIN"
+msgstr "RENVOYER LE LIEN"
+
+msgid "New here?"
+msgstr "Nouveau ici ?"
+
+msgid "Create an account"
+msgstr "Créer un compte"
+
+msgid "Lecturer?"
+msgstr "Enseignant ?"
+
+msgid "Register here"
+msgstr "Inscrivez-vous ici"
+
+msgid "Create your account"
+msgstr "Créez votre compte"
+
+msgid "CREATE AN ACCOUNT"
+msgstr "CRÉER UN COMPTE"
+
+msgid "START LEVELLING UP TODAY"
+msgstr "COMMENCEZ À PROGRESSER DÈS AUJOURD’HUI"
+
+msgid "Students: read, practise and sit exams that move your rank."
+msgstr "Étudiants : lisez, entraînez-vous et passez des examens qui font évoluer votre rang."
+
+msgid "Lecturers: write the course and build its exams."
+msgstr "Enseignants : rédigez le cours et créez ses examens."
+
+msgid "JOIN AS A STUDENT"
+msgstr "REJOINDRE EN TANT QU’ÉTUDIANT"
+
+msgid "Read lessons topic by topic."
+msgstr "Lisez les leçons thème par thème."
+
+msgid "Practise, then sit exams that move your rank."
+msgstr "Entraînez-vous, puis passez des examens qui font évoluer votre rang."
+
+msgid "Earn exp and level up as you go."
+msgstr "Gagnez de l’exp et montez de niveau au fil du temps."
+
+msgid "JOIN AS A LECTURER"
+msgstr "REJOINDRE EN TANT QU’ENSEIGNANT"
+
+msgid "CREATE EXAMS FOR YOUR CLASSES"
+msgstr "CRÉEZ DES EXAMENS POUR VOS CLASSES"
+
+msgid "Build exams with multiple choice, short answer and code questions."
+msgstr "Créez des examens avec des QCM, des réponses courtes et des questions de code."
+
+msgid "Write notes and exercises for each topic of your course."
+msgstr "Rédigez des notes et des exercices pour chaque thème de votre cours."
+
+msgid "Grade short answers and see every student's scores."
+msgstr "Corrigez les réponses courtes et voyez les notes de chaque étudiant."
+
+msgid "CREATE YOUR ACCOUNT"
+msgstr "CRÉEZ VOTRE COMPTE"
+
+msgid "I AM A"
+msgstr "JE SUIS"
+
+msgid "STUDENT"
+msgstr "ÉTUDIANT"
+
+msgid "Free. Ready at once."
+msgstr "Gratuit. Prêt tout de suite."
+
+msgid "Checked before you can create exams."
+msgstr "Vérifié avant que vous puissiez créer des examens."
+
+msgid "Choose student or lecturer to start."
+msgstr "Choisissez étudiant ou enseignant pour commencer."
+
+msgid "1 · YOUR ACCOUNT"
+msgstr "1 · VOTRE COMPTE"
+
+msgid "YOUR CLASS"
+msgstr "VOTRE CLASSE"
+
+msgid "YOUR TEACHING"
+msgstr "VOTRE ENSEIGNEMENT"
+
+msgid "Please fix the fields marked below."
+msgstr "Corrigez les champs indiqués ci-dessous."
+
+msgid "Signing up with Google as"
+msgstr "Inscription avec Google en tant que"
+
+msgid ". No password needed."
+msgstr ". Aucun mot de passe nécessaire."
+
+msgid "Use another account"
+msgstr "Utiliser un autre compte"
+
+msgid "SIGN UP WITH GOOGLE"
+msgstr "S’INSCRIRE AVEC GOOGLE"
+
+msgid "Amina Tchoua"
+msgstr "Amina Tchoua"
+
+msgid "At least 8 characters"
+msgstr "Au moins 8 caractères"
+
+msgid "NEXT »"
+msgstr "SUIVANT »"
+
+msgid "Choose your class"
+msgstr "Choisissez votre classe"
+
+msgid "Name of your institution"
+msgstr "Nom de votre établissement"
+
+msgid "Factual Programming, HCI"
+msgstr "Programmation factuelle, IHM"
+
+msgid "I agree to the terms and to being recorded during supervised exams."
+msgstr "J’accepte les conditions et d’être enregistré pendant les examens surveillés."
+
+msgid "I agree to the terms and I will tell students when exams are recorded."
+msgstr "J’accepte les conditions et je préviendrai les étudiants quand les examens sont enregistrés."
+
+msgid "Lecturer accounts are checked before they can create exams. Until then, your account works as a student account."
+msgstr "Les comptes enseignants sont vérifiés avant de pouvoir créer des examens. En attendant, votre compte fonctionne comme un compte étudiant."
+
+msgid "« BACK"
+msgstr "« RETOUR"
+
+msgid "REQUEST MY ACCOUNT »"
+msgstr "DEMANDER MON COMPTE »"
+
+msgid "Already have an account?"
+msgstr "Vous avez déjà un compte ?"
+
+msgid "Verify your email"
+msgstr "Vérifiez votre e-mail"
+
+msgid "ONE LAST STEP"
+msgstr "UNE DERNIÈRE ÉTAPE"
+
+msgid "CHECK YOUR INBOX"
+msgstr "CONSULTEZ VOTRE BOÎTE DE RÉCEPTION"
+
+msgid "We sent a link to"
+msgstr "Nous avons envoyé un lien à"
+
+msgid "your email address"
+msgstr "votre adresse e-mail"
+
+msgid ". Open it to verify your email and log in. It works for 24 hours."
+msgstr ". Ouvrez-le pour vérifier votre e-mail et vous connecter. Il est valable 24 heures."
+
+msgid "Nothing there? Look in your spam folder, or get a new link."
+msgstr "Rien reçu ? Regardez dans vos spams, ou demandez un nouveau lien."
+
+msgid "THIS LINK HAS EXPIRED"
+msgstr "CE LIEN A EXPIRÉ"
+
+msgid "Verification links work for 24 hours. Enter your email to get a new one."
+msgstr "Les liens de vérification sont valables 24 heures. Entrez votre e-mail pour en recevoir un nouveau."
+
+msgid "THIS LINK DOES NOT WORK"
+msgstr "CE LIEN NE FONCTIONNE PAS"
+
+msgid "It may be incomplete, or already replaced by a newer one. Enter your email to get a new link."
+msgstr "Il est peut-être incomplet, ou déjà remplacé par un plus récent. Entrez votre e-mail pour recevoir un nouveau lien."
+
+msgid "SEND A NEW LINK"
+msgstr "ENVOYER UN NOUVEAU LIEN"
+
+msgid "Already verified?"
+msgstr "Déjà vérifié ?"
+
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Bonjour %(name)s,"
+
+#, python-format
+msgid "Your result for <strong>%(title)s</strong>:"
+msgstr "Votre résultat pour <strong>%(title)s</strong> :"
+
+#, python-format
+msgid "%(earned)s of %(possible)s points"
+msgstr "%(earned)s points sur %(possible)s"
+
+msgid "Create a free Studiamo account with this email to keep your results and earn exp next time."
+msgstr "Créez un compte Studiamo gratuit avec cet e-mail pour garder vos résultats et gagner de l’exp la prochaine fois."
+
+#, python-format
+msgid "Your code to join the exam <strong>%(title)s</strong>:"
+msgstr "Votre code pour rejoindre l’examen <strong>%(title)s</strong> :"
+
+msgid "It works for 15 minutes. If you did not ask for it, ignore this email."
+msgstr "Il est valable 15 minutes. Si vous ne l’avez pas demandé, ignorez cet e-mail."
+
+msgid "Confirm your email address to finish creating your Studiamo account."
+msgstr "Confirmez votre adresse e-mail pour terminer la création de votre compte Studiamo."
+
+msgid "VERIFY MY EMAIL"
+msgstr "VÉRIFIER MON E-MAIL"
+
+#, python-format
+msgid "The link works for %(hours)s hours. If the button does not work, copy this address into your browser:"
+msgstr "Le lien est valable %(hours)s heures. Si le bouton ne fonctionne pas, copiez cette adresse dans votre navigateur :"
+
+msgid "Did not sign up? Ignore this email: the account stays locked."
+msgstr "Vous ne vous êtes pas inscrit ? Ignorez cet e-mail : le compte reste verrouillé."
+
+msgid "Submitted"
+msgstr "Envoyé"
+
+msgid "TIME WAS UP"
+msgstr "TEMPS ÉCOULÉ"
+
+msgid "SUBMITTED"
+msgstr "ENVOYÉ"
+
+msgid "Your answers arrived after the time was up, so they could not be counted."
+msgstr "Vos réponses sont arrivées après la fin du temps, elles n’ont donc pas pu être comptées."
+
+msgid "Your result for"
+msgstr "Votre résultat pour"
+
+msgid "will be emailed to"
+msgstr "sera envoyé par e-mail à"
+
+msgid "when your lecturer sends the results"
+msgstr "quand votre enseignant enverra les résultats"
+
+msgid "as soon as it is graded"
+msgstr "dès qu’il sera corrigé"
+
+msgid "Want to keep your results and earn exp?"
+msgstr "Vous voulez garder vos résultats et gagner de l’exp ?"
+
+msgid "Create a free account"
+msgstr "Créez un compte gratuit"
+
+msgid "with this email."
+msgstr "avec cet e-mail."
+
+msgid "EXAM · AS A GUEST"
+msgstr "EXAMEN · EN INVITÉ"
+
+#, python-format
+msgid "Hello %(name)s (%(email)s). Your result will be emailed to you."
+msgstr "Bonjour %(name)s (%(email)s). Votre résultat vous sera envoyé par e-mail."
+
+msgid "OPEN"
+msgstr "OUVERT"
+
+msgid "NOT OPEN NOW"
+msgstr "FERMÉ POUR LE MOMENT"
+
+#, python-format
+msgid "%(value)s questions"
+msgstr "%(value)s questions"
+
+#, python-format
+msgid "· %(max_attempts)s attempt%(value)s"
+msgstr "· %(max_attempts)s tentative%(value)s"
+
+#, python-format
+msgid "Open from %(value)s to %(value2)s (UTC)"
+msgstr "Ouvert du %(value)s au %(value2)s (UTC)"
+
+msgid "The timer starts when you press Start and keeps running if you leave the page."
+msgstr "Le chronomètre démarre quand vous appuyez sur Commencer et continue si vous quittez la page."
+
+msgid "Reloading the page keeps your attempt; answers are saved when you submit."
+msgstr "Recharger la page conserve votre tentative ; les réponses sont enregistrées à l’envoi."
+
+msgid "CONTINUE YOUR ATTEMPT »"
+msgstr "CONTINUER VOTRE TENTATIVE »"
+
+msgid "This exam is not open right now. Come back when it opens."
+msgstr "Cet examen n’est pas ouvert pour le moment. Revenez à son ouverture."
+
+msgid "You have already taken this exam. Your result is emailed to you."
+msgstr "Vous avez déjà passé cet examen. Votre résultat vous est envoyé par e-mail."
+
+msgid "START EXAM »"
+msgstr "COMMENCER L’EXAMEN »"
+
+msgid "Join an exam"
+msgstr "Rejoindre un examen"
+
+msgid "HAVE AN EXAM CODE?"
+msgstr "VOUS AVEZ UN CODE D’EXAMEN ?"
+
+msgid "JOIN YOUR EXAM"
+msgstr "REJOIGNEZ VOTRE EXAMEN"
+
+msgid "Your lecturer gives you the code, like"
+msgstr "Votre enseignant vous donne le code, par exemple"
+
+msgid "K7P-4QX"
+msgstr "K7P-4QX"
+
+msgid "No account needed: give your name and email, and we send you a 6-digit code to check it is yours."
+msgstr "Pas besoin de compte : donnez votre nom et votre e-mail, et nous vous envoyons un code à 6 chiffres pour vérifier qu’il est à vous."
+
+msgid "Your result is emailed to you."
+msgstr "Votre résultat vous est envoyé par e-mail."
+
+msgid "Have an account?"
+msgstr "Vous avez un compte ?"
+
+msgid "first: your result then counts for your exp and rank."
+msgstr "d’abord : votre résultat compte alors pour votre exp et votre rang."
+
+msgid "You are logged in: the exam counts for your exp and rank."
+msgstr "Vous êtes connecté : l’examen compte pour votre exp et votre rang."
+
+msgid "ENTER THE CODE"
+msgstr "ENTREZ LE CODE"
+
+msgid "EXAM CODE"
+msgstr "CODE D’EXAMEN"
+
+msgid "YOUR FULL NAME"
+msgstr "VOTRE NOM COMPLET"
+
+msgid "YOUR EMAIL"
+msgstr "VOTRE E-MAIL"
+
+msgid "Use the email your lecturer has: some exams only accept the class list."
+msgstr "Utilisez l’e-mail que votre enseignant connaît : certains examens n’acceptent que la liste de la classe."
+
+msgid "Check your email"
+msgstr "Vérifiez votre e-mail"
+
+msgid "ONE STEP LEFT"
+msgstr "PLUS QU’UNE ÉTAPE"
+
+msgid "ENTER THE CODE WE EMAILED"
+msgstr "ENTREZ LE CODE REÇU PAR E-MAIL"
+
+msgid "We sent a 6-digit code to"
+msgstr "Nous avons envoyé un code à 6 chiffres à"
+
+msgid ". It works for 15 minutes."
+msgstr ". Il est valable 15 minutes."
+
+msgid "6-DIGIT CODE"
+msgstr "CODE À 6 CHIFFRES"
+
+msgid "CHECK »"
+msgstr "VÉRIFIER »"
+
+msgid "Send me a new code"
+msgstr "M’envoyer un nouveau code"
+
+msgid "Wrong email? Start again"
+msgstr "Mauvais e-mail ? Recommencer"
+
+msgid "EDIT IN STUDIO »"
+msgstr "MODIFIER DANS LE STUDIO »"
+
+msgid "COURSE PROGRESS"
+msgstr "PROGRESSION DU COURS"
+
+#, python-format
+msgid "%(completion_pct)s%% of notes and exercises done"
+msgstr "%(completion_pct)s %% des notes et exercices faits"
+
+msgid "notes read"
+msgstr "notes lues"
+
+msgid "exercises done"
+msgstr "exercices faits"
+
+msgid "exp earned here"
+msgstr "exp gagnée ici"
+
+msgid "DRAFT"
+msgstr "BROUILLON"
+
+msgid "READ ✓"
+msgstr "LU ✓"
+
+#, python-format
+msgid "%(max_exp)s exp"
+msgstr "%(max_exp)s exp"
+
+msgid "No notes yet."
+msgstr "Pas encore de notes."
+
+msgid "No exercises yet."
+msgstr "Pas encore d’exercices."
+
+msgid "No exams yet."
+msgstr "Pas encore d’examens."
+
+msgid "Courses"
+msgstr "Cours"
+
+msgid "Every course on Studiamo. Open one to read its notes, practise and take its exams."
+msgstr "Tous les cours de Studiamo. Ouvrez-en un pour lire ses notes, vous entraîner et passer ses examens."
+
+#, python-format
+msgid "%(published_notes)s notes · %(published_exercises)s exercises · %(published_exams)s exams"
+msgstr "%(published_notes)s notes · %(published_exercises)s exercices · %(published_exams)s examens"
+
+msgid "No courses yet."
+msgstr "Pas encore de cours."
+
+msgid "Exams"
+msgstr "Examens"
+
+msgid "JOIN AN EXAM WITH A CODE »"
+msgstr "REJOINDRE UN EXAMEN AVEC UN CODE »"
+
+msgid "Exams show what you really know and move your rank. Your best score for each exam is the one that counts."
+msgstr "Les examens montrent ce que vous savez vraiment et font évoluer votre rang. Votre meilleur score à chaque examen est celui qui compte."
+
+msgid "to take them."
+msgstr "pour les passer."
+
+msgid "SCHEDULED"
+msgstr "PROGRAMMÉ"
+
+msgid "CLOSED"
+msgstr "FERMÉ"
+
+#, python-format
+msgid "BEST %(value)s%%"
+msgstr "MEILLEUR %(value)s %%"
+
+#, python-format
+msgid "%(duration_minutes)s min ·"
+msgstr "%(duration_minutes)s min ·"
+
+#, python-format
+msgid "· %(value)s – %(value2)s UTC"
+msgstr "· %(value)s – %(value2)s UTC"
+
+msgid "No exams are open yet."
+msgstr "Aucun examen n’est encore ouvert."
+
+msgid "Exercises"
+msgstr "Exercices"
+
+msgid "Practice for every course. Retry as often as you like: each retry gives less exp, but your best score counts for Xexp."
+msgstr "De l’entraînement pour chaque cours. Recommencez autant que vous voulez : chaque nouvel essai donne moins d’exp, mais votre meilleur score compte pour les Xexp."
+
+msgid "to save your answers and earn exp."
+msgstr "pour enregistrer vos réponses et gagner de l’exp."
+
+#, python-format
+msgid "%(questions)s question%(value)s · %(max_exp)s exp"
+msgstr "%(questions)s question%(value)s · %(max_exp)s exp"
+
+msgid "No exercises are open yet."
+msgstr "Aucun exercice n’est encore ouvert."
+
+msgid "Leaderboard"
+msgstr "Classement"
+
+msgid "Ordered by exp. The rank (F1 to S5) comes from Xexp: the quality of the work."
+msgstr "Classé par exp. Le rang (F1 à S5) vient des Xexp : la qualité du travail."
+
+msgid "You are hidden from the ranking."
+msgstr "Vous êtes masqué du classement."
+
+msgid "You appear as “Anonymous player”."
+msgstr "Vous apparaissez comme « Joueur anonyme »."
+
+msgid "You appear as"
+msgstr "Vous apparaissez comme"
+
+msgid "Change how you appear »"
+msgstr "Changer votre affichage »"
+
+msgid "PLAYER"
+msgstr "JOUEUR"
+
+msgid "EXP"
+msgstr "EXP"
+
+msgid "XEXP"
+msgstr "XEXP"
+
+msgid "Anonymous player"
+msgstr "Joueur anonyme"
+
+msgid "YOU"
+msgstr "VOUS"
+
+msgid "Nobody has earned exp yet."
+msgstr "Personne n’a encore gagné d’exp."
+
+#, python-format
+msgid "here since %(value)s"
+msgstr "ici depuis %(value)s"
+
+#, python-format
+msgid "%(exp_in_level)s / %(exp_to_next_level)s exp · %(total_exp)s in total"
+msgstr "%(exp_in_level)s / %(exp_to_next_level)s exp · %(total_exp)s au total"
+
+msgid "0 exp"
+msgstr "0 exp"
+
+#, python-format
+msgid "%(value)s / %(value2)s Xexp to the next rank"
+msgstr "%(value)s / %(value2)s Xexp jusqu’au rang suivant"
+
+msgid "Top rank"
+msgstr "Rang maximum"
+
+msgid "STREAK"
+msgstr "SÉRIE"
+
+#, python-format
+msgid "day%(value)s"
+msgstr "jour%(value)s"
+
+msgid "Today counts. Come back tomorrow."
+msgstr "Aujourd’hui compte. Revenez demain."
+
+msgid "Do a daily task today to keep it."
+msgstr "Faites une tâche du jour aujourd’hui pour la garder."
+
+msgid "See the ranking"
+msgstr "Voir le classement"
+
+msgid "· shown anonymously"
+msgstr "· affiché anonymement"
+
+msgid "Hidden"
+msgstr "Masqué"
+
+#, python-format
+msgid "(you would be #%(hidden_position)s)"
+msgstr "(vous seriez #%(hidden_position)s)"
+
+msgid "change"
+msgstr "changer"
+
+msgid "CONTINUE"
+msgstr "CONTINUER"
+
+msgid "START HERE"
+msgstr "COMMENCER ICI"
+
+msgid "STUDIO"
+msgstr "STUDIO"
+
+msgid "SKILL GRAPH"
+msgstr "GRAPHE DES COMPÉTENCES"
+
+msgid "What is measured?"
+msgstr "Qu’est-ce qui est mesuré ?"
+
+msgid "AS A STUDENT"
+msgstr "EN TANT QU’ÉTUDIANT"
+
+msgid "CONTINUE WHERE YOU LEFT OFF"
+msgstr "REPRENDRE LÀ OÙ VOUS EN ÉTIEZ"
+
+msgid "START LEARNING"
+msgstr "COMMENCER À APPRENDRE"
+
+#, python-format
+msgid "%(pct)s%% of %(title)s done"
+msgstr "%(pct)s %% de %(title)s fait"
+
+#, python-format
+msgid "About %(value)s min · +%(max_exp)s exp when you finish it"
+msgstr "Environ %(value)s min · +%(max_exp)s exp quand vous la terminez"
+
+msgid "START"
+msgstr "COMMENCER"
+
+msgid "You have read everything that is open. Try an"
+msgstr "Vous avez tout lu de ce qui est ouvert. Essayez un"
+
+msgid "exercise"
+msgstr "exercice"
+
+msgid "or an"
+msgstr "ou un"
+
+msgid "exam"
+msgstr "examen"
+
+msgid "TODAY'S TASKS"
+msgstr "TÂCHES DU JOUR"
+
+#, python-format
+msgid "%(tasks)s/%(tasks2)s DONE"
+msgstr "%(tasks)s/%(tasks2)s FAITES"
+
+#, python-format
+msgid "Each: +%(value)s exp, +%(value2)s Xexp · all of them: +%(value3)s exp, +%(value4)s Xexp more"
+msgstr "Chacune : +%(value)s exp, +%(value2)s Xexp · toutes : +%(value3)s exp, +%(value4)s Xexp en plus"
+
+msgid "(done)"
+msgstr "(fait)"
+
+#, python-format
+msgid "%(value)s / %(value2)s min"
+msgstr "%(value)s / %(value2)s min"
+
+msgid "ACHIEVEMENTS"
+msgstr "SUCCÈS"
+
+#, python-format
+msgid "Earned %(value)s"
+msgstr "Obtenu le %(value)s"
+
+msgid "Locked · +25 exp, +5 Xexp"
+msgstr "Verrouillé · +25 exp, +5 Xexp"
+
+msgid "YOUR COURSES"
+msgstr "VOS COURS"
+
+msgid "STARTED"
+msgstr "COMMENCÉ"
+
+msgid "NOT STARTED"
+msgstr "PAS COMMENCÉ"
+
+msgid "DONE"
+msgstr "TERMINÉ"
+
+#, python-format
+msgid "%(completion_pct)s%% · %(notes_completed)s/%(notes_total)s notes · %(exercises_done)s/%(exercises_total)s exercises · %(exp_earned)s exp"
+msgstr "%(completion_pct)s %% · %(notes_completed)s/%(notes_total)s notes · %(exercises_done)s/%(exercises_total)s exercices · %(exp_earned)s exp"
+
+msgid "No course has material yet."
+msgstr "Aucun cours n’a encore de contenu."
+
+msgid "RECENT EXP"
+msgstr "EXP RÉCENTE"
+
+msgid "exp"
+msgstr "exp"
+
+#, python-format
+msgid "· +%(value)s Xexp"
+msgstr "· +%(value)s Xexp"
+
+msgid "Nothing yet: read a note or do a daily task to earn your first exp."
+msgstr "Rien pour l’instant : lisez une note ou faites une tâche du jour pour gagner votre première exp."
+
+msgid "WHAT THE SKILL GRAPH MEASURES"
+msgstr "CE QUE MESURE LE GRAPHE DES COMPÉTENCES"
+
+msgid "Reading"
+msgstr "Lecture"
+
+#, python-format
+msgid "· full when you spent 3× each note's reading time on it (%(minutes)s min so far)"
+msgstr "· complète quand vous avez passé 3× le temps de lecture de chaque note (%(minutes)s min jusqu’ici)"
+
+msgid "Practice"
+msgstr "Entraînement"
+
+#, python-format
+msgid "· your best score on each exercise (%(exercises)s taken)"
+msgstr "· votre meilleur score à chaque exercice (%(exercises)s faits)"
+
+#, python-format
+msgid "· your best score on each exam (%(exams)s taken)"
+msgstr "· votre meilleur score à chaque examen (%(exams)s passés)"
+
+msgid "Subjects"
+msgstr "Matières"
+
+#, python-format
+msgid "· how far you are in each course you started (%(courses)s)"
+msgstr "· votre avancement dans chaque cours commencé (%(courses)s)"
+
+msgid "Streak"
+msgstr "Série"
+
+#, python-format
+msgid "· full at 45 days in a row with a daily task done (%(streak)s)"
+msgstr "· complète à 45 jours d’affilée avec une tâche du jour faite (%(streak)s)"
+
+msgid "Time"
+msgstr "Temps"
+
+#, python-format
+msgid "· full at 100 hours on notes, exercises and exams (%(hours)s h)"
+msgstr "· complet à 100 heures sur les notes, exercices et examens (%(hours)s h)"
+
+msgid "Badges"
+msgstr "Badges"
+
+#, python-format
+msgid "· badges collected (%(badges)s/%(badges_total)s)"
+msgstr "· badges obtenus (%(badges)s/%(badges_total)s)"
+
+msgid "AS A LECTURER"
+msgstr "EN TANT QU’ENSEIGNANT"
+
+msgid "STUDIO »"
+msgstr "STUDIO »"
+
+#, python-format
+msgid "%(value)s notes · %(value2)s exercises · %(value3)s exams · %(value4)s students"
+msgstr "%(value)s notes · %(value2)s exercices · %(value3)s examens · %(value4)s étudiants"
+
+msgid "No course yet."
+msgstr "Pas encore de cours."
+
+msgid "Create one in the Studio"
+msgstr "Créez-en un dans le Studio"
+
+#, python-format
+msgid "%(standalone)s exam%(value)s without a course"
+msgstr "%(standalone)s examen%(value)s sans cours"
+
+msgid "· codes on:"
+msgstr "· codes actifs :"
+
+msgid "new exam"
+msgstr "nouvel examen"
+
+msgid "TO DO"
+msgstr "À FAIRE"
+
+#, python-format
+msgid "answer%(value)s waiting for you to grade"
+msgstr "réponse%(value)s en attente de correction"
+
+msgid "grade them"
+msgstr "les corriger"
+
+msgid "IN REVIEW OR SENT BACK"
+msgstr "EN RELECTURE OU RENVOYÉ"
+
+msgid "SENT BACK"
+msgstr "RENVOYÉ"
+
+msgid "IN REVIEW"
+msgstr "EN RELECTURE"
+
+msgid "Nothing waiting for an admin."
+msgstr "Rien en attente d’un administrateur."
+
+msgid "AS AN ADMIN"
+msgstr "EN TANT QU’ADMIN"
+
+#, python-format
+msgid "note%(value)s, exercise%(value2)s or exam%(value3)s waiting for review"
+msgstr "note%(value)s, exercice%(value2)s ou examen%(value3)s en attente de relecture"
+
+#, python-format
+msgid "lecturer request%(value)s"
+msgstr "demande%(value)s d’enseignant"
+
+msgid "You are acting as an admin in this session."
+msgstr "Vous agissez en tant qu’administrateur dans cette session."
+
+msgid "OPEN ADMIN »"
+msgstr "OUVRIR L’ADMIN »"
+
+msgid "To act as an admin, log out and log in with"
+msgstr "Pour agir en administrateur, déconnectez-vous et connectez-vous avec"
+
+msgid "Continue with Google"
+msgstr "Continuer avec Google"
+
+msgid "using your admin email."
+msgstr "en utilisant votre e-mail d’administrateur."
+
+msgid "An admin session cannot take exams or earn exp; log in with your password to study."
+msgstr "Une session administrateur ne peut pas passer d’examens ni gagner d’exp ; connectez-vous avec votre mot de passe pour étudier."
+
+msgid "« Course page"
+msgstr "« Page du cours"
+
+msgid "Draft: students cannot see this note yet."
+msgstr "Brouillon : les étudiants ne voient pas encore cette note."
+
+msgid "EDIT THIS NOTE"
+msgstr "MODIFIER CETTE NOTE"
+
+msgid "This note is empty."
+msgstr "Cette note est vide."
+
+msgid "PRACTISE THIS"
+msgstr "S’ENTRAÎNER SUR CE THÈME"
+
+#, python-format
+msgid "MARK AS READ (+%(max_exp)s EXP)"
+msgstr "MARQUER COMME LU (+%(max_exp)s EXP)"
+
+msgid "· NEXT »"
+msgstr "· SUIVANT »"
+
+#, python-format
+msgid "LOG IN TO EARN %(max_exp)s EXP"
+msgstr "CONNECTEZ-VOUS POUR GAGNER %(max_exp)s EXP"
+
+msgid "On this page"
+msgstr "Sur cette page"
+
+msgid "ON THIS PAGE"
+msgstr "SUR CETTE PAGE"
+
+#, python-format
+msgid "About %(value)s min to read. Coming back to it counts: your Reading skill is full at 3× that time."
+msgstr "Environ %(value)s min de lecture. Revenir dessus compte : votre compétence Lecture est complète à 3× ce temps."
+
+msgid "ALL YOUR MATERIAL IN ONE PLACE"
+msgstr "TOUT VOTRE CONTENU AU MÊME ENDROIT"
+
+msgid "Notes, exercises and exams to help students learn by reading, practising and testing themselves."
+msgstr "Des notes, des exercices et des examens pour aider les étudiants à apprendre en lisant, en s’entraînant et en se testant."
+
+msgid "Explore"
+msgstr "Explorer"
+
+msgid "EXPLORE"
+msgstr "EXPLORER"
+
+msgid "Tutorials"
+msgstr "Tutoriels"
+
+msgid "Exercise"
+msgstr "Exercices"
+
+msgid "Courses will appear here."
+msgstr "Les cours apparaîtront ici."
+
+msgid "© 2026 Knowledge and practice always pay off · Built by"
+msgstr "© 2026 Le savoir et la pratique paient toujours · Conçu par"
+
+msgid "Code Alchemists"
+msgstr "Code Alchemists"
+
+msgid "BACK TO TOP ↑"
+msgstr "HAUT DE PAGE ↑"
+
+msgid "Studiamo home page"
+msgstr "Page d’accueil de Studiamo"
+
+msgid "Studiamo, home"
+msgstr "Studiamo, accueil"
+
+msgid "STUDIAMO"
+msgstr "STUDIAMO"
+
+msgid "Main"
+msgstr "Principal"
+
+msgid "Switch to French"
+msgstr "Passer en français"
+
+msgid "Switch to English"
+msgstr "Passer en anglais"
+
+msgid "Dark mode"
+msgstr "Mode sombre"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Studio"
+msgstr "Studio"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Log out"
+msgstr "Déconnexion"
+
+msgid "SIGN UP"
+msgstr "INSCRIPTION"
+
+msgid "Courses: open the first lesson"
+msgstr "Cours : ouvrir la première leçon"
+
+msgid "PUBLISHED"
+msgstr "PUBLIÉ"
+
+msgid "UNPUBLISH"
+msgstr "DÉPUBLIER"
+
+msgid "PUBLISH"
+msgstr "PUBLIER"
+
+msgid "WITHDRAW"
+msgstr "RETIRER"
+
+msgid "HIDE"
+msgstr "MASQUER"
+
+msgid "SUBMIT FOR REVIEW"
+msgstr "ENVOYER EN RELECTURE"
+
+msgid ", admin"
+msgstr ", admin"
+
+msgid "not started"
+msgstr "pas commencé"
+
+msgid "Example skill graph"
+msgstr "Exemple de graphe des compétences"
+
+msgid "Your skill graph"
+msgstr "Votre graphe des compétences"
+
+msgid "not started yet"
+msgstr "pas encore commencé"
+
+msgid "SHOW AS TABLE"
+msgstr "AFFICHER EN TABLEAU"
+
+msgid "Axis"
+msgstr "Axe"
+
+msgid "Score"
+msgstr "Score"
+
+#, python-format
+msgid "100%% means"
+msgstr "100 %% signifie"
+
+msgid "← BACK TO HOME"
+msgstr "← RETOUR À L’ACCUEIL"
+
+#, python-format
+msgid "Question bank · %(code)s"
+msgstr "Banque de questions · %(code)s"
+
+msgid "/ QUESTION BANK"
+msgstr "/ BANQUE DE QUESTIONS"
+
+msgid "QUESTION BANK"
+msgstr "BANQUE DE QUESTIONS"
+
+msgid "+ MULTIPLE CHOICE"
+msgstr "+ CHOIX MULTIPLE"
+
+msgid "+ SHORT ANSWER"
+msgstr "+ RÉPONSE COURTE"
+
+msgid "+ CODE"
+msgstr "+ CODE"
+
+msgid "Questions are reused by exercises and exams. Practice exams draw at random from the questions of their topics."
+msgstr "Les questions sont réutilisées par les exercices et les examens. Les examens d’entraînement tirent au hasard parmi les questions de leurs thèmes."
+
+#, python-format
+msgid "%(value)s · %(value2)s pt · %(value3)s"
+msgstr "%(value)s · %(value2)s pt · %(value3)s"
+
+msgid "multiple choice"
+msgstr "choix multiple"
+
+msgid "short answer"
+msgstr "réponse courte"
+
+msgid "code"
+msgstr "code"
+
+msgid "no topic"
+msgstr "aucun thème"
+
+msgid "· hidden"
+msgstr "· masquée"
+
+msgid "Delete this question?"
+msgstr "Supprimer cette question ?"
+
+msgid "Delete question"
+msgstr "Supprimer la question"
+
+msgid "No questions yet."
+msgstr "Pas encore de questions."
+
+#, python-format
+msgid "%(title)s · Studio"
+msgstr "%(title)s · Studio"
+
+msgid "VIEW AS STUDENT"
+msgstr "VOIR EN ÉTUDIANT"
+
+msgid "TOPICS AND NOTES"
+msgstr "THÈMES ET NOTES"
+
+msgid "Notes, exercises and practice exams are published by an admin after review, who also sets the exp. Your scheduled exams you publish yourself."
+msgstr "Les notes, exercices et examens d’entraînement sont publiés par un administrateur après relecture, qui fixe aussi l’exp. Vos examens programmés, vous les publiez vous-même."
+
+#, python-format
+msgid "TOPIC %(index)s"
+msgstr "THÈME %(index)s"
+
+msgid "RENAME"
+msgstr "RENOMMER"
+
+msgid "Move topic up"
+msgstr "Monter le thème"
+
+msgid "Move topic down"
+msgstr "Descendre le thème"
+
+msgid "Delete this topic, its notes and its exercises?"
+msgstr "Supprimer ce thème, ses notes et ses exercices ?"
+
+msgid "DELETE"
+msgstr "SUPPRIMER"
+
+msgid "Move note up"
+msgstr "Monter la note"
+
+msgid "Move note down"
+msgstr "Descendre la note"
+
+msgid "EDIT"
+msgstr "MODIFIER"
+
+msgid "Delete this note?"
+msgstr "Supprimer cette note ?"
+
+msgid "No notes in this topic yet."
+msgstr "Pas encore de notes dans ce thème."
+
+msgid "New note title"
+msgstr "Titre de la nouvelle note"
+
+msgid "+ ADD NOTE"
+msgstr "+ AJOUTER UNE NOTE"
+
+msgid "IMPORT A NOTE…"
+msgstr "IMPORTER UNE NOTE…"
+
+msgid "No topics yet. A topic is a week or a chapter: it groups notes and exercises."
+msgstr "Pas encore de thèmes. Un thème est une semaine ou un chapitre : il regroupe des notes et des exercices."
+
+msgid "NEW TOPIC"
+msgstr "NOUVEAU THÈME"
+
+msgid "Week 1: Introduction"
+msgstr "Semaine 1 : Introduction"
+
+msgid "+ ADD TOPIC"
+msgstr "+ AJOUTER UN THÈME"
+
+msgid "Exercise title"
+msgstr "Titre de l’exercice"
+
+msgid "Topic"
+msgstr "Thème"
+
+msgid "+ NEW EXERCISE"
+msgstr "+ NOUVEL EXERCICE"
+
+msgid "Add a topic first."
+msgstr "Ajoutez d’abord un thème."
+
+msgid "RESULTS"
+msgstr "RÉSULTATS"
+
+msgid "+ NEW EXAM"
+msgstr "+ NOUVEL EXAMEN"
+
+msgid "DETAILS"
+msgstr "DÉTAILS"
+
+msgid "CODE"
+msgstr "CODE"
+
+msgid "TITLE"
+msgstr "TITRE"
+
+msgid "DESCRIPTION"
+msgstr "DESCRIPTION"
+
+msgid "SAVE DETAILS"
+msgstr "ENREGISTRER LES DÉTAILS"
+
+msgid "DELETE COURSE"
+msgstr "SUPPRIMER LE COURS"
+
+msgid "Removes every topic, note, exercise and exam of this course, and students' progress in it."
+msgstr "Supprime tous les thèmes, notes, exercices et examens de ce cours, ainsi que la progression des étudiants."
+
+#, python-format
+msgid "TYPE %(code)s TO CONFIRM"
+msgstr "TAPEZ %(code)s POUR CONFIRMER"
+
+msgid "DELETE FOREVER"
+msgstr "SUPPRIMER DÉFINITIVEMENT"
+
+msgid "New exam"
+msgstr "Nouvel examen"
+
+msgid "/ EXAMS"
+msgstr "/ EXAMENS"
+
+msgid "EXAMS WITHOUT A COURSE"
+msgstr "EXAMENS SANS COURS"
+
+msgid "CREATE"
+msgstr "CRÉER"
+
+msgid "NEW EXAM"
+msgstr "NOUVEL EXAMEN"
+
+#, python-format
+msgid "%(pool)s question%(value)s in the pool · %(max_exp)s exp"
+msgstr "%(pool)s question%(value)s dans la banque · %(max_exp)s exp"
+
+msgid "Sent back:"
+msgstr "Renvoyé :"
+
+msgid "WITHDRAW FROM REVIEW"
+msgstr "RETIRER DE LA RELECTURE"
+
+msgid "An exam on its own, for your students: not part of any course. After you publish it, switch on its code below; students (with or without an account) join it from"
+msgstr "Un examen à part, pour vos étudiants : il ne fait partie d’aucun cours. Après l’avoir publié, activez son code ci-dessous ; les étudiants (avec ou sans compte) le rejoignent depuis"
+
+msgid "Exam type"
+msgstr "Type d’examen"
+
+msgid "PRACTICE (SYSTEM)"
+msgstr "ENTRAÎNEMENT (SYSTÈME)"
+
+msgid "One attempt, open between two dates, with the questions you pick. You publish it yourself."
+msgstr "Une seule tentative, ouverte entre deux dates, avec les questions que vous choisissez. Vous le publiez vous-même."
+
+msgid "Open to everyone any time, questions drawn at random from the chosen topics, retakes allowed. An admin reviews it before it is published."
+msgstr "Ouvert à tous à tout moment, questions tirées au hasard dans les thèmes choisis, nouvelles tentatives autorisées. Un administrateur le relit avant publication."
+
+#, python-format
+msgid "Not saved: %(error)s"
+msgstr "Non enregistré : %(error)s"
+
+#, python-format
+msgid "OPENS (%(tzname)s)"
+msgstr "OUVERTURE (%(tzname)s)"
+
+#, python-format
+msgid "CLOSES (%(tzname)s)"
+msgstr "FERMETURE (%(tzname)s)"
+
+msgid "MINUTES"
+msgstr "MINUTES"
+
+msgid "none"
+msgstr "aucune"
+
+msgid "QUESTIONS EACH"
+msgstr "QUESTIONS PAR TENTATIVE"
+
+msgid "all"
+msgstr "toutes"
+
+msgid "ATTEMPTS"
+msgstr "TENTATIVES"
+
+msgid "unlimited"
+msgstr "illimitées"
+
+msgid "Shuffle questions"
+msgstr "Mélanger les questions"
+
+msgid "Shuffle answers"
+msgstr "Mélanger les réponses"
+
+msgid "CREATE DRAFT"
+msgstr "CRÉER LE BROUILLON"
+
+msgid "Delete this exam and every attempt at it?"
+msgstr "Supprimer cet examen et toutes ses tentatives ?"
+
+msgid "DELETE EXAM"
+msgstr "SUPPRIMER L’EXAMEN"
+
+msgid "QUESTIONS"
+msgstr "QUESTIONS"
+
+msgid "Tick the questions of the exam. Leave points empty to use the question's own."
+msgstr "Cochez les questions de l’examen. Laissez les points vides pour utiliser ceux de la question."
+
+msgid "Points"
+msgstr "Points"
+
+msgid "The question bank is empty."
+msgstr "La banque de questions est vide."
+
+msgid "MULTIPLE CHOICE"
+msgstr "CHOIX MULTIPLE"
+
+msgid "SHORT ANSWER"
+msgstr "RÉPONSE COURTE"
+
+#, python-format
+msgid "+ NEW %(label)s"
+msgstr "+ %(label)s"
+
+msgid "Add questions to the bank"
+msgstr "Ajoutez des questions à la banque"
+
+msgid "first if it is empty."
+msgstr "d’abord si elle est vide."
+
+msgid "Write its questions first; you come back here after each one."
+msgstr "Écrivez d’abord ses questions ; vous revenez ici après chacune."
+
+msgid "TOPICS"
+msgstr "THÈMES"
+
+msgid "Each attempt draws its questions at random from the active questions of these topics."
+msgstr "Chaque tentative tire ses questions au hasard parmi les questions actives de ces thèmes."
+
+msgid "Add topics to the course first."
+msgstr "Ajoutez d’abord des thèmes au cours."
+
+msgid "JOIN WITH A CODE"
+msgstr "REJOINDRE AVEC UN CODE"
+
+msgid "Students type the code in"
+msgstr "Les étudiants tapent le code sur"
+
+msgid ". Without an account they give their name and email, confirm it with a 6-digit code we email them, and get their result by email. They earn no exp."
+msgstr ". Sans compte, ils donnent leur nom et leur e-mail, le confirment avec un code à 6 chiffres envoyé par e-mail, et reçoivent leur résultat par e-mail. Ils ne gagnent pas d’exp."
+
+msgid "ON"
+msgstr "ACTIVÉ"
+
+msgid "OFF"
+msgstr "DÉSACTIVÉ"
+
+msgid "Make a new code? The old one stops working."
+msgstr "Créer un nouveau code ? L’ancien ne fonctionnera plus."
+
+msgid "NEW CODE"
+msgstr "NOUVEAU CODE"
+
+msgid "Link:"
+msgstr "Lien :"
+
+msgid "Publish the exam first: the code only works for published exams."
+msgstr "Publiez d’abord l’examen : le code ne fonctionne que pour les examens publiés."
+
+msgid "The code works (switch it off to stop new people joining)"
+msgstr "Le code fonctionne (désactivez-le pour empêcher de nouvelles personnes de rejoindre)"
+
+msgid "WHO CAN JOIN"
+msgstr "QUI PEUT REJOINDRE"
+
+msgid "Anyone with the code"
+msgstr "Toute personne ayant le code"
+
+msgid "Only the emails on the class list"
+msgstr "Seulement les e-mails de la liste de classe"
+
+msgid "CLASS LIST (ONE EMAIL PER LINE, OR SEPARATED BY COMMAS)"
+msgstr "LISTE DE CLASSE (UN E-MAIL PAR LIGNE, OU SÉPARÉS PAR DES VIRGULES)"
+
+#, python-format
+msgid "%(allowed_emails)s email%(value)s on the list. Logged-in students are checked by their account email."
+msgstr "%(allowed_emails)s e-mail%(value)s dans la liste. Les étudiants connectés sont vérifiés par l’e-mail de leur compte."
+
+msgid "GUESTS' RESULTS BY EMAIL"
+msgstr "RÉSULTATS DES INVITÉS PAR E-MAIL"
+
+msgid "Send each result as soon as it is graded"
+msgstr "Envoyer chaque résultat dès qu’il est corrigé"
+
+msgid "I send them myself (button on the Results page)"
+msgstr "Je les envoie moi-même (bouton sur la page Résultats)"
+
+msgid "SAVE JOIN SETTINGS »"
+msgstr "ENREGISTRER LES RÉGLAGES »"
+
+#, python-format
+msgid "Results · %(title)s"
+msgstr "Résultats · %(title)s"
+
+msgid "/ RESULTS"
+msgstr "/ RÉSULTATS"
+
+msgid "“During the exam” is what the exam page saw: leaving the tab or app, leaving full screen, going back, copy and paste. Point at it to see the times. A page cannot stop these, only notice them."
+msgstr "« Pendant l’examen » est ce que la page d’examen a vu : quitter l’onglet ou l’appli, quitter le plein écran, revenir en arrière, copier-coller. Survolez pour voir les heures. Une page ne peut pas empêcher cela, seulement le remarquer."
+
+#, python-format
+msgid "%(marks)s student%(value)s"
+msgstr "%(marks)s étudiant%(value)s"
+
+#, python-format
+msgid "and %(guests)s guest%(value)s"
+msgstr "et %(guests)s invité%(value)s"
+
+msgid "took this exam."
+msgstr "ont passé cet examen."
+
+msgid "Answers waiting for grading »"
+msgstr "Réponses en attente de correction »"
+
+#, python-format
+msgid "EMAIL RESULTS TO GUESTS (%(unsent)s)"
+msgstr "ENVOYER LES RÉSULTATS AUX INVITÉS (%(unsent)s)"
+
+#, python-format
+msgid "Sends each graded guest their score, once. %(value)s"
+msgstr "Envoie à chaque invité corrigé son score, une seule fois. %(value)s"
+
+msgid "Results are also sent as soon as they are graded."
+msgstr "Les résultats sont aussi envoyés dès qu’ils sont corrigés."
+
+msgid "Guests get nothing until you press this."
+msgstr "Les invités ne reçoivent rien tant que vous n’appuyez pas ici."
+
+msgid "ATTEMPT"
+msgstr "TENTATIVE"
+
+msgid "STATUS"
+msgstr "STATUT"
+
+msgid "SCORE"
+msgstr "SCORE"
+
+msgid "TIME"
+msgstr "TEMPS"
+
+msgid "DURING THE EXAM"
+msgstr "PENDANT L’EXAMEN"
+
+msgid "GUEST"
+msgstr "INVITÉ"
+
+msgid "emailed"
+msgstr "envoyé"
+
+msgid "CHECK"
+msgstr "VÉRIFIER"
+
+msgid "GRADE"
+msgstr "CORRIGER"
+
+msgid "ANSWERS"
+msgstr "RÉPONSES"
+
+msgid "Nobody has taken this exam yet."
+msgstr "Personne n’a encore passé cet examen."
+
+#, python-format
+msgid "Exercise · %(title)s"
+msgstr "Exercice · %(title)s"
+
+#, python-format
+msgid "/ %(title)s / EXERCISE"
+msgstr "/ %(title)s / EXERCICE"
+
+#, python-format
+msgid "%(value)s · %(value2)s pt"
+msgstr "%(value)s · %(value2)s pt"
+
+#, python-format
+msgid "(question %(question_id)s)"
+msgstr "(question %(question_id)s)"
+
+msgid "Move up"
+msgstr "Monter"
+
+msgid "Move down"
+msgstr "Descendre"
+
+msgid "Remove from exercise"
+msgstr "Retirer de l’exercice"
+
+msgid "No questions yet: students cannot start it."
+msgstr "Pas encore de questions : les étudiants ne peuvent pas le commencer."
+
+msgid "Question from the bank"
+msgstr "Question de la banque"
+
+msgid "+ ADD FROM BANK"
+msgstr "+ AJOUTER DEPUIS LA BANQUE"
+
+#, python-format
+msgid "%(max_exp)s exp (set by an admin)"
+msgstr "%(max_exp)s exp (fixée par un administrateur)"
+
+msgid "RETRY ×"
+msgstr "NOUVEL ESSAI ×"
+
+msgid "exp multiplier for each retry"
+msgstr "multiplicateur d’exp à chaque nouvel essai"
+
+msgid "Retry ×0.5: the 2nd attempt gives half the exp, the 3rd a quarter…"
+msgstr "Nouvel essai ×0,5 : la 2e tentative donne la moitié de l’exp, la 3e un quart…"
+
+msgid "SHOW UNDER THESE NOTES"
+msgstr "AFFICHER SOUS CES NOTES"
+
+msgid "No notes in this course yet."
+msgstr "Pas encore de notes dans ce cours."
+
+msgid "SAVE »"
+msgstr "ENREGISTRER »"
+
+msgid "HIDE FROM STUDENTS"
+msgstr "MASQUER AUX ÉTUDIANTS"
+
+msgid "SUBMIT FOR REVIEW »"
+msgstr "ENVOYER EN RELECTURE »"
+
+msgid "Delete this exercise and its attempts?"
+msgstr "Supprimer cet exercice et ses tentatives ?"
+
+msgid "DELETE EXERCISE"
+msgstr "SUPPRIMER L’EXERCICE"
+
+msgid "Grade attempt"
+msgstr "Corriger la tentative"
+
+#, python-format
+msgid "%(code)s GRADING"
+msgstr "CORRECTION %(code)s"
+
+#, python-format
+msgid "/ %(kind)s ATTEMPT %(id)s"
+msgstr "/ TENTATIVE %(kind)s %(id)s"
+
+msgid "GRADE BY HAND"
+msgstr "CORRIGER À LA MAIN"
+
+msgid "POINTS"
+msgstr "POINTS"
+
+#, python-format
+msgid "QUESTION ID %(qid)s"
+msgstr "QUESTION N° %(qid)s"
+
+msgid "The maximum for each question is shown in its heading on the left."
+msgstr "Le maximum de chaque question est indiqué dans son titre à gauche."
+
+msgid "COMMENT FOR THE STUDENT (OPTIONAL)"
+msgstr "COMMENTAIRE POUR L’ÉTUDIANT (FACULTATIF)"
+
+msgid "SAVE GRADES »"
+msgstr "ENREGISTRER LES NOTES »"
+
+msgid "Nothing is waiting for grading in this attempt."
+msgstr "Rien n’attend de correction dans cette tentative."
+
+#, python-format
+msgid "Grading · %(code)s"
+msgstr "Correction · %(code)s"
+
+msgid "/ GRADING"
+msgstr "/ CORRECTION"
+
+msgid "WAITING FOR GRADING"
+msgstr "EN ATTENTE DE CORRECTION"
+
+msgid "Short answers, and code until a code runner is set up, are graded by hand. Oldest first."
+msgstr "Les réponses courtes, et le code tant qu’aucun exécuteur n’est configuré, sont corrigés à la main. Les plus anciennes d’abord."
+
+#, python-format
+msgid "Exercise %(exercise_id)s · attempt %(attempt_no)s · submitted %(value)s"
+msgstr "Exercice %(exercise_id)s · tentative %(attempt_no)s · envoyée le %(value)s"
+
+msgid "GRADE »"
+msgstr "CORRIGER »"
+
+msgid "Nothing to grade."
+msgstr "Rien à corriger."
+
+#, python-format
+msgid "Exam %(exam_id)s · attempt %(attempt_no)s · submitted %(value)s"
+msgstr "Examen %(exam_id)s · tentative %(attempt_no)s · envoyée le %(value)s"
+
+msgid "Studiamo Markdown guide"
+msgstr "Guide du Markdown Studiamo"
+
+msgid "/ GUIDE"
+msgstr "/ GUIDE"
+
+msgid "Write notes, build exercises and exams."
+msgstr "Rédigez des notes, créez des exercices et des examens."
+
+msgid "As an admin you can edit every course."
+msgstr "En tant qu’administrateur, vous pouvez modifier tous les cours."
+
+msgid "You can edit the courses you created."
+msgstr "Vous pouvez modifier les cours que vous avez créés."
+
+msgid "How to write notes »"
+msgstr "Comment rédiger des notes »"
+
+msgid "EDIT »"
+msgstr "MODIFIER »"
+
+msgid "No courses yet. Create the first one."
+msgstr "Pas encore de cours. Créez le premier."
+
+msgid "For your own students: share the code, they join from"
+msgstr "Pour vos propres étudiants : partagez le code, ils rejoignent depuis"
+
+msgid ", with or without an account."
+msgstr ", avec ou sans compte."
+
+msgid "CODE OFF"
+msgstr "CODE DÉSACTIVÉ"
+
+msgid "None yet."
+msgstr "Aucun pour l’instant."
+
+msgid "NEW COURSE"
+msgstr "NOUVEAU COURS"
+
+msgid "FP101"
+msgstr "FP101"
+
+msgid "Factual Programming"
+msgstr "Programmation factuelle"
+
+msgid "DESCRIPTION (OPTIONAL)"
+msgstr "DESCRIPTION (FACULTATIVE)"
+
+msgid "CREATE COURSE »"
+msgstr "CRÉER LE COURS »"
+
+#, python-format
+msgid "Edit: %(title)s"
+msgstr "Modifier : %(title)s"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Published"
+msgstr "Publiée"
+
+msgid "OPEN AS READER"
+msgstr "OUVRIR EN LECTURE"
+
+msgid "SAVE AND SUBMIT FOR REVIEW »"
+msgstr "ENREGISTRER ET ENVOYER EN RELECTURE »"
+
+msgid "Sent back by an admin:"
+msgstr "Renvoyée par un administrateur :"
+
+msgid "IMPORT NOTES…"
+msgstr "IMPORTER DES NOTES…"
+
+msgid "IMPORT NOTES"
+msgstr "IMPORTER DES NOTES"
+
+msgid "Word (.docx), PowerPoint (.pptx), PDF, Markdown, text or HTML."
+msgstr "Word (.docx), PowerPoint (.pptx), PDF, Markdown, texte ou HTML."
+
+msgid "FILE"
+msgstr "FICHIER"
+
+msgid "OR PASTE THE TEXT"
+msgstr "OU COLLEZ LE TEXTE"
+
+msgid "Convert it with my AI: code boxes, diagrams, file trees."
+msgstr "Le convertir avec mon IA : blocs de code, diagrammes, arborescences."
+
+msgid "Takes up to a minute or two; billed to your own account with that AI."
+msgstr "Prend jusqu’à une ou deux minutes ; facturé sur votre propre compte chez cette IA."
+
+msgid "AI"
+msgstr "IA"
+
+msgid "change models"
+msgstr "changer de modèle"
+
+msgid "Without AI, headings, lists, tables and code are kept, but nothing is made interactive, and PDFs cannot be read."
+msgstr "Sans IA, les titres, listes, tableaux et le code sont conservés, mais rien n’est rendu interactif, et les PDF ne peuvent pas être lus."
+
+msgid "Add an API key (Claude, Gemini or OpenAI)"
+msgstr "Ajoutez une clé API (Claude, Gemini ou OpenAI)"
+
+msgid "to convert with AI, or use your AI app (MCP)."
+msgstr "pour convertir avec l’IA, ou utilisez votre appli d’IA (MCP)."
+
+msgid "PUT IT"
+msgstr "LA METTRE"
+
+msgid "instead of the current text"
+msgstr "à la place du texte actuel"
+
+msgid "at the end"
+msgstr "à la fin"
+
+msgid "IMPORT »"
+msgstr "IMPORTER »"
+
+msgid "CANCEL"
+msgstr "ANNULER"
+
+msgid "View"
+msgstr "Affichage"
+
+msgid "MARKDOWN"
+msgstr "MARKDOWN"
+
+msgid "SIDE BY SIDE"
+msgstr "CÔTE À CÔTE"
+
+msgid "PREVIEW"
+msgstr "APERÇU"
+
+msgid "Format"
+msgstr "Mise en forme"
+
+msgid "Bold (Ctrl+B)"
+msgstr "Gras (Ctrl+B)"
+
+msgid "Italic (Ctrl+I)"
+msgstr "Italique (Ctrl+I)"
+
+msgid "Strike through"
+msgstr "Barré"
+
+msgid "Inline code"
+msgstr "Code en ligne"
+
+msgid "Link"
+msgstr "Lien"
+
+msgid "Bulleted list"
+msgstr "Liste à puces"
+
+msgid "• List"
+msgstr "• Liste"
+
+msgid "Numbered list"
+msgstr "Liste numérotée"
+
+msgid "1. List"
+msgstr "1. Liste"
+
+msgid "Quote"
+msgstr "Citation"
+
+msgid "Guide ↗"
+msgstr "Guide ↗"
+
+msgid "Blocks: click to add, or drag where you want them"
+msgstr "Blocs : cliquez pour ajouter, ou glissez-les où vous voulez"
+
+msgid "ADD · DRAG OR CLICK"
+msgstr "AJOUTER · GLISSER OU CLIQUER"
+
+msgid "Drop or paste images too (PNG, JPEG, GIF, WebP · 5 MB)."
+msgstr "Déposez ou collez aussi des images (PNG, JPEG, GIF, WebP · 5 Mo)."
+
+msgid "Note text (Studiamo Markdown)"
+msgstr "Texte de la note (Markdown Studiamo)"
+
+msgid "Ctrl+Z undo · Ctrl+Shift+Z redo · Ctrl+S save. Code box:"
+msgstr "Ctrl+Z annuler · Ctrl+Maj+Z rétablir · Ctrl+S enregistrer. Bloc de code :"
+
+msgid "Preview: you can write here too"
+msgstr "Aperçu : vous pouvez aussi écrire ici"
+
+msgid "Edit question"
+msgstr "Modifier la question"
+
+msgid "New question"
+msgstr "Nouvelle question"
+
+msgid "/ QUESTION"
+msgstr "/ QUESTION"
+
+msgid "NEW"
+msgstr "NOUVEAU"
+
+msgid "MULTIPLE CHOICE QUESTION"
+msgstr "QUESTION À CHOIX MULTIPLE"
+
+msgid "SHORT ANSWER QUESTION"
+msgstr "QUESTION À RÉPONSE COURTE"
+
+msgid "CODE QUESTION"
+msgstr "QUESTION DE CODE"
+
+msgid "QUESTION (STUDIAMO MARKDOWN: CODE, DIAGRAMS…)"
+msgstr "QUESTION (MARKDOWN STUDIAMO : CODE, DIAGRAMMES…)"
+
+msgid "ANSWERS · TICK EVERY CORRECT ONE"
+msgstr "RÉPONSES · COCHEZ TOUTES LES BONNES"
+
+msgid "Correct"
+msgstr "Correcte"
+
+msgid "Remove answer"
+msgstr "Supprimer la réponse"
+
+msgid "+ ADD ANSWER"
+msgstr "+ AJOUTER UNE RÉPONSE"
+
+msgid "Several ticks make it a \"choose every correct answer\" question. Scoring is all or nothing."
+msgstr "Plusieurs cases cochées en font une question « choisissez toutes les bonnes réponses ». La notation est tout ou rien."
+
+msgid "LANGUAGE"
+msgstr "LANGAGE"
+
+msgid "STARTER CODE (OPTIONAL)"
+msgstr "CODE DE DÉPART (FACULTATIF)"
+
+msgid "TESTS · INPUT → EXPECTED OUTPUT"
+msgstr "TESTS · ENTRÉE → SORTIE ATTENDUE"
+
+msgid "hidden"
+msgstr "masqué"
+
+msgid "Weight"
+msgstr "Poids"
+
+msgid "weight"
+msgstr "poids"
+
+msgid "Remove test"
+msgstr "Supprimer le test"
+
+msgid "+ ADD TEST"
+msgstr "+ AJOUTER UN TEST"
+
+msgid "Visible tests are shown to students as examples. Until a code runner is set up on the server, code answers are graded by hand."
+msgstr "Les tests visibles sont montrés aux étudiants comme exemples. Tant qu’aucun exécuteur de code n’est configuré sur le serveur, les réponses de code sont corrigées à la main."
+
+msgid "DIFFICULTY"
+msgstr "DIFFICULTÉ"
+
+msgid "TOPIC"
+msgstr "THÈME"
+
+msgid "EXPLANATION, SHOWN AFTER ANSWERING (OPTIONAL)"
+msgstr "EXPLICATION, AFFICHÉE APRÈS LA RÉPONSE (FACULTATIVE)"
+
+msgid "Active (can be used in new exercises and exams)"
+msgstr "Active (peut être utilisée dans de nouveaux exercices et examens)"
+
+msgid "SAVE QUESTION »"
+msgstr "ENREGISTRER LA QUESTION »"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "/ EXAM"
+msgstr "/ EXAMEN"
+
+msgid "Draft: students cannot see this exam yet."
+msgstr "Brouillon : les étudiants ne voient pas encore cet examen."
+
+msgid "· unlimited attempts"
+msgstr "· tentatives illimitées"
+
+#, python-format
+msgid "Up to %(max_exp)s exp for your best score; 75%% or more also earns Xexp."
+msgstr "Jusqu’à %(max_exp)s exp pour votre meilleur score ; 75 %% ou plus rapporte aussi des Xexp."
+
+msgid "BEFORE YOU START"
+msgstr "AVANT DE COMMENCER"
+
+msgid "Reloading the page keeps your attempt, but answers are only saved when you submit."
+msgstr "Recharger la page conserve votre tentative, mais les réponses ne sont enregistrées qu’à l’envoi."
+
+msgid "Unanswered questions score zero. You can submit early."
+msgstr "Les questions sans réponse valent zéro. Vous pouvez envoyer avant la fin."
+
+msgid "This exam is not open right now."
+msgstr "Cet examen n’est pas ouvert pour le moment."
+
+msgid "You have used every attempt."
+msgstr "Vous avez utilisé toutes vos tentatives."
+
+msgid "LOG IN TO TAKE IT »"
+msgstr "CONNECTEZ-VOUS POUR LE PASSER »"
+
+msgid "EDIT IN STUDIO"
+msgstr "MODIFIER DANS LE STUDIO"
+
+msgid "YOUR BEST SCORE"
+msgstr "VOTRE MEILLEUR SCORE"
+
+#, python-format
+msgid "%(exp_earned)s exp · %(value)s Xexp"
+msgstr "%(exp_earned)s exp · %(value)s Xexp"
+
+#, python-format
+msgid "%(left)s attempt%(value)s left"
+msgstr "%(left)s tentative%(value)s restante%(value)s"
+
+#, python-format
+msgid "Attempt %(attempt_no)s"
+msgstr "Tentative %(attempt_no)s"
+
+msgid "IN PROGRESS"
+msgstr "EN COURS"
+
+msgid "waiting for grading"
+msgstr "en attente de correction"
+
+msgid "Draft: students cannot see this exercise yet."
+msgstr "Brouillon : les étudiants ne voient pas encore cet exercice."
+
+#, python-format
+msgid "%(questions)s question%(value)s · up to"
+msgstr "%(questions)s question%(value)s · jusqu’à"
+
+#, python-format
+msgid ". Each retry gives %(value)s%% of the exp of the one before. A best score of 75%% or more also earns Xexp, which moves your rank."
+msgstr ". Chaque nouvel essai donne %(value)s %% de l’exp du précédent. Un meilleur score de 75 %% ou plus rapporte aussi des Xexp, qui font évoluer votre rang."
+
+msgid "TRY AGAIN"
+msgstr "RÉESSAYER"
+
+msgid "LOG IN TO START »"
+msgstr "CONNECTEZ-VOUS POUR COMMENCER »"
+
+msgid "YOUR BEST"
+msgstr "VOTRE MEILLEUR"
+
+#, python-format
+msgid "%(attempts_count)s attempt%(value)s · %(exp_earned)s exp · %(value2)s Xexp"
+msgstr "%(attempts_count)s tentative%(value)s · %(exp_earned)s exp · %(value2)s Xexp"
+
+#, python-format
+msgid "Result · %(title)s"
+msgstr "Résultat · %(title)s"
+
+msgid "/ RESULT"
+msgstr "/ RÉSULTAT"
+
+msgid "WELL DONE"
+msgstr "BRAVO"
+
+msgid "RESULT"
+msgstr "RÉSULTAT"
+
+#, python-format
+msgid "%(value)s of %(value2)s points"
+msgstr "%(value)s points sur %(value2)s"
+
+msgid "Waiting for your lecturer to grade some answers."
+msgstr "En attente de la correction de certaines réponses par votre enseignant."
+
+#, python-format
+msgid "%(value)s min %(value2)s s"
+msgstr "%(value)s min %(value2)s s"
+
+msgid "This score earns Xexp for your rank."
+msgstr "Ce score rapporte des Xexp pour votre rang."
+
+#, python-format
+msgid "Score 75%% or more to earn Xexp."
+msgstr "Obtenez 75 %% ou plus pour gagner des Xexp."
+
+msgid "Decided after grading."
+msgstr "Décidé après la correction."
+
+msgid "BACK »"
+msgstr "RETOUR »"
+
+msgid "DASHBOARD"
+msgstr "TABLEAU DE BORD"
+
+msgid "REVIEW YOUR ANSWERS"
+msgstr "REVOIR VOS RÉPONSES"
+
+msgid "The correct answers are shown once the exam has closed for everyone."
+msgstr "Les bonnes réponses sont affichées une fois l’examen fermé pour tout le monde."
+
+msgid "No review available."
+msgstr "Aucune correction disponible."
+
+#, python-format
+msgid "EXAM · ATTEMPT %(attempt_no)s"
+msgstr "EXAMEN · TENTATIVE %(attempt_no)s"
+
+msgid "The exam opens in full screen. Before you start:"
+msgstr "L’examen s’ouvre en plein écran. Avant de commencer :"
+
+msgid "Stay in the exam until you submit."
+msgstr "Restez dans l’examen jusqu’à l’envoi."
+
+msgid "Leaving it"
+msgstr "Le quitter"
+
+msgid "(another tab, another app, minimising) is recorded: the first time you get a warning, the second time"
+msgstr "(un autre onglet, une autre appli, réduire la fenêtre) est enregistré : la première fois vous recevez un avertissement, la deuxième fois"
+
+msgid "your exam is submitted automatically"
+msgstr "votre examen est envoyé automatiquement"
+
+msgid "Going back"
+msgstr "Revenir en arrière"
+
+msgid "or leaving the page submits your exam."
+msgstr "ou quitter la page envoie votre examen."
+
+msgid "Copy, paste and right-click are switched off."
+msgstr "Copier, coller et le clic droit sont désactivés."
+
+msgid "Your lecturer sees what happened during your attempt."
+msgstr "Votre enseignant voit ce qui s’est passé pendant votre tentative."
+
+msgid "The timer keeps running whatever you do."
+msgstr "Le chronomètre continue quoi que vous fassiez."
+
+msgid "START IN FULL SCREEN »"
+msgstr "COMMENCER EN PLEIN ÉCRAN »"
+
+#, python-format
+msgid "EXERCISE · ATTEMPT %(attempt_no)s"
+msgstr "EXERCICE · TENTATIVE %(attempt_no)s"
+
+msgid "TIME LEFT"
+msgstr "TEMPS RESTANT"
+
+msgid "SUBMIT »"
+msgstr "ENVOYER »"
+
+msgid "You are continuing an attempt you started earlier."
+msgstr "Vous reprenez une tentative commencée plus tôt."
+
+#, python-format
+msgid "QUESTION %(index)s OF %(questions)s · %(value)s POINT%(value2)s"
+msgstr "QUESTION %(index)s SUR %(questions)s · %(value)s POINT%(value2)s"
+
+msgid "Choose every correct answer."
+msgstr "Choisissez toutes les bonnes réponses."
+
+msgid "Choose one answer."
+msgstr "Choisissez une réponse."
+
+msgid "YOUR ANSWER"
+msgstr "VOTRE RÉPONSE"
+
+#, python-format
+msgid "YOUR CODE · %(value)s"
+msgstr "VOTRE CODE · %(value)s"
+
+#, python-format
+msgid "EXAMPLES (%(test_cases)s)"
+msgstr "EXEMPLES (%(test_cases)s)"
+
+msgid "Input"
+msgstr "Entrée"
+
+msgid "Expected output"
+msgstr "Sortie attendue"
+
+msgid "Your program reads the input and prints the output. Hidden tests are also used."
+msgstr "Votre programme lit l’entrée et affiche la sortie. Des tests masqués sont aussi utilisés."
+
+msgid "« Leave (the attempt stays open)"
+msgstr "« Quitter (la tentative reste ouverte)"
+
+msgid "SUBMIT EXAM »"
+msgstr "ENVOYER L’EXAMEN »"
+
+msgid "SUBMIT ANSWERS »"
+msgstr "ENVOYER LES RÉPONSES »"
+
+msgid "Profile saved."
+msgstr "Profil enregistré."
+
+msgid "Someone already uses this player name."
+msgstr "Quelqu’un utilise déjà ce nom de joueur."
+
+msgid "Choose a darker colour: white text must stay readable on it (contrast 4.5:1)."
+msgstr "Choisissez une couleur plus foncée : le texte blanc doit rester lisible dessus (contraste 4,5:1)."
+
+msgid "That is not a colour."
+msgstr "Ce n’est pas une couleur."
+
+msgid "Appearance saved."
+msgstr "Apparence enregistrée."
+
+#, python-format
+msgid "Your %(name)s key was removed from Studiamo."
+msgstr "Votre clé %(name)s a été supprimée de Studiamo."
+
+#, python-format
+msgid "%(name)s model saved."
+msgstr "Modèle %(name)s enregistré."
+
+#, python-format
+msgid "%(name)s is now the AI Studiamo uses by default."
+msgstr "%(name)s est maintenant l’IA utilisée par défaut par Studiamo."
+
+#, python-format
+msgid "%(name)s: %(n)s model%(value)s available to your key."
+msgstr "%(name)s : %(n)s modèle%(value)s disponible%(value)s avec votre clé."
+
+#, python-format
+msgid "%(name)s key checked with %(company)s and saved (encrypted)."
+msgstr "Clé %(name)s vérifiée auprès de %(company)s et enregistrée (chiffrée)."
+
+msgid "Key revoked: apps using it are disconnected."
+msgstr "Clé révoquée : les applis qui l’utilisent sont déconnectées."
+
+msgid "That key does not exist."
+msgstr "Cette clé n’existe pas."
+
+msgid "Choose a picture."
+msgstr "Choisissez une image."
+
+msgid "The picture can be at most 2 MB."
+msgstr "L’image peut faire au maximum 2 Mo."
+
+msgid "Use a PNG, JPEG, GIF or WebP picture."
+msgstr "Utilisez une image PNG, JPEG, GIF ou WebP."
+
+msgid "Profile photo updated."
+msgstr "Photo de profil mise à jour."
+
+msgid "Profile photo removed."
+msgstr "Photo de profil supprimée."
+
+msgid "Notification settings saved."
+msgstr "Paramètres de notification enregistrés."
+
+msgid "Your name is shown on the ranking."
+msgstr "Votre nom est affiché sur le classement."
+
+msgid "You now appear on the ranking as “Anonymous player”."
+msgstr "Vous apparaissez maintenant sur le classement comme « Joueur anonyme »."
+
+msgid "You are no longer on the ranking."
+msgstr "Vous n’êtes plus sur le classement."
+
+msgid "The two new passwords are different."
+msgstr "Les deux nouveaux mots de passe sont différents."
+
+msgid "Use at least 8 characters."
+msgstr "Utilisez au moins 8 caractères."
+
+msgid "Password changed."
+msgstr "Mot de passe changé."
+
+msgid "That is not your current password."
+msgstr "Ce n’est pas votre mot de passe actuel."
+
+msgid "Google is no longer linked."
+msgstr "Google n’est plus associé."
+
+msgid "Set a password first: otherwise you could not log in any more."
+msgstr "Définissez d’abord un mot de passe : sinon vous ne pourriez plus vous connecter."
+
+msgid "Request sent. An admin will check it."
+msgstr "Demande envoyée. Un administrateur va la vérifier."
+
+msgid "You already sent a request."
+msgstr "Vous avez déjà envoyé une demande."
+
+msgid "Type your email exactly to confirm."
+msgstr "Tapez votre e-mail exactement pour confirmer."
+
+msgid "You wrote courses, questions or exams. Ask an admin to move them before deleting your account."
+msgstr "Vous avez rédigé des cours, des questions ou des examens. Demandez à un administrateur de les déplacer avant de supprimer votre compte."
+
+msgid "Your account was deleted."
+msgstr "Votre compte a été supprimé."
+
+msgid "Approved and published."
+msgstr "Approuvé et publié."
+
+msgid "Sent back to the lecturer with your comment."
+msgstr "Renvoyé à l’enseignant avec votre commentaire."
+
+msgid "Exp must be a whole number."
+msgstr "L’exp doit être un nombre entier."
+
+msgid "Approved: the account is now a lecturer."
+msgstr "Approuvé : le compte est maintenant enseignant."
+
+msgid "Request rejected."
+msgstr "Demande refusée."
+
+#, python-format
+msgid "%(name)s is now: %(value)s."
+msgstr "%(name)s est maintenant : %(value)s."
+
+msgid "You need to accept the terms to create an account."
+msgstr "Vous devez accepter les conditions pour créer un compte."
+
+msgid "An account with this email already exists. Log in instead."
+msgstr "Un compte existe déjà avec cet e-mail. Connectez-vous plutôt."
+
+msgid "Your lecturer request was sent. Until it is approved, your account works as a student account."
+msgstr "Votre demande de compte enseignant a été envoyée. En attendant son approbation, votre compte fonctionne comme un compte étudiant."
+
+msgid "Enter your email and password."
+msgstr "Entrez votre e-mail et votre mot de passe."
+
+msgid "Wrong email or password."
+msgstr "E-mail ou mot de passe incorrect."
+
+msgid "Your email is not verified yet. Open the link we emailed you, or get a new one below."
+msgstr "Votre e-mail n’est pas encore vérifié. Ouvrez le lien que nous vous avons envoyé, ou demandez-en un nouveau ci-dessous."
+
+#, python-format
+msgid "Welcome back, %(name)s."
+msgstr "Bon retour, %(name)s."
+
+msgid " Your daily tasks are on your dashboard."
+msgstr " Vos tâches du jour sont sur votre tableau de bord."
+
+msgid "Admin access needs Google: log out and use 'Continue with Google'."
+msgstr "L’accès administrateur passe par Google : déconnectez-vous et utilisez « Continuer avec Google »."
+
+msgid "You are logged out."
+msgstr "Vous êtes déconnecté."
+
+msgid "Choose whether you are a student or a lecturer."
+msgstr "Indiquez si vous êtes étudiant ou enseignant."
+
+msgid "This Google account already has an account here. Log in with Google."
+msgstr "Ce compte Google a déjà un compte ici. Connectez-vous avec Google."
+
+#, python-format
+msgid "Welcome to Studiamo, %(name)s. Your account is ready."
+msgstr "Bienvenue sur Studiamo, %(name)s. Votre compte est prêt."
+
+msgid "Pick your class."
+msgstr "Choisissez votre classe."
+
+msgid "This field is required."
+msgstr "Ce champ est obligatoire."
+
+msgid "Enter a valid email address."
+msgstr "Entrez une adresse e-mail valide."
+
+#, python-format
+msgid "Too long: at most %(value)s characters."
+msgstr "Trop long : %(value)s caractères maximum."
+
+msgid "Google sign-in was cancelled."
+msgstr "La connexion Google a été annulée."
+
+msgid "Google sign-in did not work. Please try again."
+msgstr "La connexion Google n’a pas fonctionné. Réessayez."
+
+msgid "Your Google account's email is not verified, so it cannot be used here."
+msgstr "L’e-mail de votre compte Google n’est pas vérifié, il ne peut donc pas être utilisé ici."
+
+msgid "An account with this email already exists. Log in with your password."
+msgstr "Un compte existe déjà avec cet e-mail. Connectez-vous avec votre mot de passe."
+
+msgid "You are logged in as an admin."
+msgstr "Vous êtes connecté en tant qu’administrateur."
+
+#, python-format
+msgid "You already have an account with %(email)s, so you are now logged in."
+msgstr "Vous avez déjà un compte avec %(email)s, vous êtes donc maintenant connecté."
+
+#, python-format
+msgid "No account uses %(email)s yet. Choose student or lecturer to create one."
+msgstr "Aucun compte n’utilise encore %(email)s. Choisissez étudiant ou enseignant pour en créer un."
+
+msgid "This code does not work. Check it with your lecturer: it may be wrong or switched off."
+msgstr "Ce code ne fonctionne pas. Vérifiez-le avec votre enseignant : il est peut-être faux ou désactivé."
+
+msgid "An admin session cannot take exams. Log in with your password to take it."
+msgstr "Une session administrateur ne peut pas passer d’examens. Connectez-vous avec votre mot de passe pour le passer."
+
+msgid "Your email is not on this exam's class list. Ask your lecturer."
+msgstr "Votre e-mail n’est pas dans la liste de classe de cet examen. Demandez à votre enseignant."
+
+msgid "This email is not on the exam's class list. Use the email your lecturer has, or ask them."
+msgstr "Cet e-mail n’est pas dans la liste de classe de l’examen. Utilisez l’e-mail que votre enseignant connaît, ou demandez-lui."
+
+msgid "This exam has closed."
+msgstr "Cet examen est fermé."
+
+#, python-format
+msgid "Your code for the exam “%(title)s”"
+msgstr "Votre code pour l’examen « %(title)s »"
+
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your code to join “%(title)s” on Studiamo: %(code)s\n"
+"\n"
+"It works for 15 minutes. If you did not ask for it, ignore this email.\n"
+msgstr ""
+"Bonjour %(name)s,\n"
+"\n"
+"Votre code pour rejoindre « %(title)s » sur Studiamo : %(code)s\n"
+"\n"
+"Il est valable 15 minutes. Si vous ne l’avez pas demandé, ignorez cet e-mail.\n"
+
+msgid "We could not send the email just now. Ask for a new code in a minute."
+msgstr "Nous n’avons pas pu envoyer l’e-mail pour le moment. Demandez un nouveau code dans une minute."
+
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your new code to join “%(title)s”: %(code)s\n"
+msgstr ""
+"Bonjour %(name)s,\n"
+"\n"
+"Votre nouveau code pour rejoindre « %(title)s » : %(code)s\n"
+
+msgid "A new code was sent."
+msgstr "Un nouveau code a été envoyé."
+
+msgid "The lecturer switched this exam's code off."
+msgstr "L’enseignant a désactivé le code de cet examen."
+
+msgid "Some answers could not be read. Please try again."
+msgstr "Certaines réponses n’ont pas pu être lues. Réessayez."
+
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your result for “%(title)s”: %(score)s%% (%(earned)s of %(possible)s points).\n"
+"\n"
+"Create a free Studiamo account with this email to keep your results and earn exp next time.\n"
+msgstr ""
+"Bonjour %(name)s,\n"
+"\n"
+"Votre résultat pour « %(title)s » : %(score)s %% (%(earned)s points sur %(possible)s).\n"
+"\n"
+"Créez un compte Studiamo gratuit avec cet e-mail pour garder vos résultats et gagner de l’exp la prochaine fois.\n"
+
+#, python-format
+msgid "Your result: %(title)s"
+msgstr "Votre résultat : %(title)s"
+
+msgid "LEAVE THE EXAM?"
+msgstr "QUITTER L’EXAMEN ?"
+
+msgid "Going back or leaving this page submits your exam now, with the answers you have given so far. You cannot come back to it."
+msgstr "Revenir en arrière ou quitter cette page envoie votre examen maintenant, avec les réponses données jusqu’ici. Vous ne pourrez pas y revenir."
+
+msgid "SUBMIT AND LEAVE"
+msgstr "ENVOYER ET QUITTER"
+
+msgid "STAY IN THE EXAM"
+msgstr "RESTER DANS L’EXAMEN"
+
+msgid "Your browser did not allow full screen. Press the button again, or allow full screen for this site."
+msgstr "Votre navigateur n’a pas autorisé le plein écran. Appuyez à nouveau sur le bouton, ou autorisez le plein écran pour ce site."
+
+msgid "You left full screen. The questions are hidden until you go back to full screen."
+msgstr "Vous avez quitté le plein écran. Les questions sont masquées jusqu’à ce que vous y reveniez."
+
+msgid "YOU LEFT THE EXAM"
+msgstr "VOUS AVEZ QUITTÉ L’EXAMEN"
+
+msgid "Leaving the exam (another tab, another app, or minimising) is recorded and your lecturer sees it."
+msgstr "Quitter l’examen (un autre onglet, une autre appli, réduire la fenêtre) est enregistré et votre enseignant le voit."
+
+msgid "If you leave once more, your exam is submitted automatically."
+msgstr "Si vous partez encore une fois, votre examen est envoyé automatiquement."
+
+#, python-format
+msgid "After %(n)s more times, your exam is submitted automatically."
+msgstr "Après %(n)s départs de plus, votre examen est envoyé automatiquement."
+
+msgid "BACK TO THE EXAM"
+msgstr "RETOUR À L’EXAMEN"
+
+msgid "START THE EXAM »"
+msgstr "COMMENCER L’EXAMEN »"
+
+msgid "This device cannot show the exam in full screen. Stay on this page: leaving it is still detected."
+msgstr "Cet appareil ne peut pas afficher l’examen en plein écran. Restez sur cette page : la quitter est quand même détecté."
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Delete block"
+msgstr "Supprimer le bloc"
+
+msgid "Source of this block"
+msgstr "Source de ce bloc"
+
+msgid "APPLY"
+msgstr "APPLIQUER"
+
+msgid "Link address (https://…)"
+msgstr "Adresse du lien (https://…)"
+
+msgid "Upload failed"
+msgstr "L’envoi a échoué"
+
+msgid "Choose a file or paste some text."
+msgstr "Choisissez un fichier ou collez du texte."
+
+msgid "Converting with your AI… this can take a minute or two."
+msgstr "Conversion avec votre IA… cela peut prendre une ou deux minutes."
+
+msgid "Importing…"
+msgstr "Import en cours…"
+
+msgid "Import failed"
+msgstr "L’import a échoué"
+
+#, python-format
+msgid "Converted by %(model)s."
+msgstr "Converti par %(model)s."
+
+msgid "Imported without AI."
+msgstr "Importé sans IA."
+
+#, python-format
+msgid "Check the %(n)s problem(s) shown above the preview."
+msgstr "Vérifiez le(s) %(n)s problème(s) affiché(s) au-dessus de l’aperçu."
+
+msgid "Ctrl+Z undoes it. Save when it looks right."
+msgstr "Ctrl+Z l’annule. Enregistrez quand le résultat vous convient."
+
+#, python-format
+msgid "Stopped: the program ran for more than %(n)s s."
+msgstr "Arrêté : le programme a tourné plus de %(n)s s."
+
+msgid "Loading Python (the first run takes a few seconds)…"
+msgstr "Chargement de Python (la première exécution prend quelques secondes)…"
+
+msgid "Python did not load. Check your connection and try again."
+msgstr "Python ne s’est pas chargé. Vérifiez votre connexion et réessayez."
+
+msgid "Running…"
+msgstr "Exécution…"
+
+#, python-format
+msgid "%(n)s question(s) have no answer. Submit anyway?"
+msgstr "%(n)s question(s) sans réponse. Envoyer quand même ?"
+
+#, python-format
+msgid "Marked as read: +%(exp_awarded)s exp, +%(xexp_awarded)s Xexp."
+msgstr "Marqué comme lu : +%(exp_awarded)s exp, +%(xexp_awarded)s Xexp."
+
+msgid "No file was sent."
+msgstr "Aucun fichier n’a été envoyé."
+
+#, python-format
+msgid "Images can be at most %(value)s MB."
+msgstr "Les images peuvent faire au maximum %(value)s Mo."
+
+msgid "Only PNG, JPEG, GIF and WebP images can be added."
+msgstr "Seules les images PNG, JPEG, GIF et WebP peuvent être ajoutées."
+
+msgid "The form expired. Go back, reload the page and try again."
+msgstr "Le formulaire a expiré. Revenez en arrière, rechargez la page et réessayez."
+
+msgid "Another course already uses this code."
+msgstr "Un autre cours utilise déjà ce code."
+
+#, python-format
+msgid "Course %(code)s created. Add its first topic below."
+msgstr "Cours %(code)s créé. Ajoutez son premier thème ci-dessous."
+
+msgid "Course details saved."
+msgstr "Détails du cours enregistrés."
+
+msgid "Type the course code to confirm. Nothing was deleted."
+msgstr "Tapez le code du cours pour confirmer. Rien n’a été supprimé."
+
+#, python-format
+msgid "Course %(code)s deleted."
+msgstr "Cours %(code)s supprimé."
+
+msgid "Give the topic a title (up to 200 characters)."
+msgstr "Donnez un titre au thème (200 caractères maximum)."
+
+msgid "A topic needs a title."
+msgstr "Un thème a besoin d’un titre."
+
+#, python-format
+msgid "Topic “%(title)s” deleted with its notes and exercises."
+msgstr "Thème « %(title)s » supprimé avec ses notes et exercices."
+
+msgid "A note needs a title."
+msgstr "Une note a besoin d’un titre."
+
+#, python-format
+msgid "The note is too long (at most %(MAX_NOTE_CHARS)s characters)."
+msgstr "La note est trop longue (%(MAX_NOTE_CHARS)s caractères maximum)."
+
+msgid "Enter a whole number."
+msgstr "Entrez un nombre entier."
+
+msgid "Saved."
+msgstr "Enregistré."
+
+#, python-format
+msgid "“%(title)s” is now hidden."
+msgstr "« %(title)s » est maintenant masqué."
+
+#, python-format
+msgid "“%(title)s” is now published."
+msgstr "« %(title)s » est maintenant publié."
+
+#, python-format
+msgid "“%(title)s” was taken out of the review queue."
+msgstr "« %(title)s » a été retiré de la file de relecture."
+
+#, python-format
+msgid "“%(title)s” is hidden from students. Submit it again to publish it."
+msgstr "« %(title)s » est masqué aux étudiants. Renvoyez-le pour le publier."
+
+#, python-format
+msgid "“%(title)s” was sent to an admin for review."
+msgstr "« %(title)s » a été envoyé à un administrateur pour relecture."
+
+#, python-format
+msgid "Note “%(title)s” deleted."
+msgstr "Note « %(title)s » supprimée."
+
+msgid "PDF files need the AI: add an API key (Claude, Gemini or OpenAI) in Settings > AI assistant, or copy the text out of the PDF and paste it."
+msgstr "Les fichiers PDF nécessitent l’IA : ajoutez une clé API (Claude, Gemini ou OpenAI) dans Paramètres > Assistant IA, ou copiez le texte du PDF et collez-le."
+
+msgid "Question saved."
+msgstr "Question enregistrée."
+
+msgid "Question deleted."
+msgstr "Question supprimée."
+
+msgid "This question is used in exercises or exams, so it was hidden instead of deleted."
+msgstr "Cette question est utilisée dans des exercices ou des examens, elle a donc été masquée au lieu d’être supprimée."
+
+msgid "Exercise saved."
+msgstr "Exercice enregistré."
+
+msgid "Exercise deleted."
+msgstr "Exercice supprimé."
+
+msgid "It was approved, so it is hidden again until an admin checks your changes."
+msgstr "Il était approuvé, il est donc de nouveau masqué jusqu’à ce qu’un administrateur vérifie vos modifications."
+
+msgid "Not saved: "
+msgstr "Non enregistré :"
+
+msgid "Exam created as a draft. Publish it when it is ready."
+msgstr "Examen créé en brouillon. Publiez-le quand il est prêt."
+
+msgid "Exam saved."
+msgstr "Examen enregistré."
+
+msgid "Published: your students can see this exam."
+msgstr "Publié : vos étudiants peuvent voir cet examen."
+
+msgid "Back to draft."
+msgstr "Retour au brouillon."
+
+msgid "Join settings saved."
+msgstr "Réglages d’accès enregistrés."
+
+msgid "New code made: the old one no longer works."
+msgstr "Nouveau code créé : l’ancien ne fonctionne plus."
+
+msgid "Exam deleted."
+msgstr "Examen supprimé."
+
+#, python-format
+msgid "Results emailed to %(sent)s guest%(value)s."
+msgstr "Résultats envoyés par e-mail à %(sent)s invité%(value)s."
+
+msgid "No guest result was waiting to be sent."
+msgstr "Aucun résultat d’invité n’attendait d’être envoyé."
+
+msgid "Enter points for every question: "
+msgstr "Entrez des points pour chaque question :"
+
+msgid "Graded. The result was emailed to the guest."
+msgstr "Corrigé. Le résultat a été envoyé par e-mail à l’invité."
+
+msgid "Graded. The student's mark, exp and rank are updated."
+msgstr "Corrigé. La note, l’exp et le rang de l’étudiant sont mis à jour."
+
+msgid "Submitted after the time was up: the answers could not be counted."
+msgstr "Envoyé après la fin du temps : les réponses n’ont pas pu être comptées."
+
+msgid "Submitted. Some answers are graded by your lecturer; your score and exp follow then."
+msgstr "Envoyé. Certaines réponses sont corrigées par votre enseignant ; votre score et votre exp suivront."
+
+#, python-format
+msgid "Submitted: %(score_pct)s%% · +%(exp_awarded)s exp."
+msgstr "Envoyé : %(score_pct)s %% · +%(exp_awarded)s exp."
+
+msgid "This exam needs its code: use Join an exam."
+msgstr "Cet examen nécessite son code : utilisez Rejoindre un examen."
+
+msgid "Your exam was submitted automatically because you left it again after the warning."
+msgstr "Votre examen a été envoyé automatiquement parce que vous l’avez quitté à nouveau après l’avertissement."
+
+msgid "Your exam was submitted because you chose to leave it."
+msgstr "Votre examen a été envoyé parce que vous avez choisi de le quitter."
+
+msgid "Confirm your email for Studiamo"
+msgstr "Confirmez votre e-mail pour Studiamo"
+
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Confirm your email address to finish creating your Studiamo account:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"The link works for %(hours)s hours. If you did not sign up, ignore this email: the account stays locked and is removed when the real owner signs up.\n"
+msgstr ""
+"Bonjour %(name)s,\n"
+"\n"
+"Confirmez votre adresse e-mail pour terminer la création de votre compte Studiamo :\n"
+"\n"
+"%(link)s\n"
+"\n"
+"Le lien est valable %(hours)s heures. Si vous ne vous êtes pas inscrit, ignorez cet e-mail : le compte reste verrouillé et sera supprimé quand le vrai propriétaire s’inscrira.\n"
+
+msgid "We could not send the email just now. Use the button below to try again."
+msgstr "Nous n’avons pas pu envoyer l’e-mail pour le moment. Utilisez le bouton ci-dessous pour réessayer."
+
+msgid "Your email is verified. Welcome to Studiamo!"
+msgstr "Votre e-mail est vérifié. Bienvenue sur Studiamo !"
+
+msgid "If that email has an account waiting for verification, a new link is on its way. You can ask again after a minute."
+msgstr "Si cet e-mail a un compte en attente de vérification, un nouveau lien est en route. Vous pouvez redemander après une minute."
+

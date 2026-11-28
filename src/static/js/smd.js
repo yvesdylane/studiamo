@@ -123,14 +123,14 @@
         py = new Worker(blobURL(PY_WORKER));
         py.onmessage = function (e) {
           var m = e.data;
-          if (m.kind === "ready") { pyReady = true; if (current[m.id]) { clearTimeout(current[m.id].timer); current[m.id].timer = setTimeout(function () { stop(m.id, "Stopped: the program ran for more than " + RUN_TIMEOUT_MS / 1000 + " s."); }, RUN_TIMEOUT_MS); } return; }
+          if (m.kind === "ready") { pyReady = true; if (current[m.id]) { clearTimeout(current[m.id].timer); current[m.id].timer = setTimeout(function () { stop(m.id, tr("Stopped: the program ran for more than %(n)s s.", {n: RUN_TIMEOUT_MS / 1000})); }, RUN_TIMEOUT_MS); } return; }
           if (m.kind === "done") { if (current[m.id]) { clearTimeout(current[m.id].timer); delete current[m.id]; } send(m); return; }
           send(m);
         };
       }
-      if (!pyReady) send({id: d.id, kind: "info", text: "Loading Python (the first run takes a few seconds)…"});
+      if (!pyReady) send({id: d.id, kind: "info", text: tr("Loading Python (the first run takes a few seconds)…")});
       // the timer starts when Python is loaded ("ready"); until then allow a long load
-      current[d.id] = {kind: "python", worker: py, timer: setTimeout(function () { stop(d.id, "Python did not load. Check your connection and try again."); }, 60000)};
+      current[d.id] = {kind: "python", worker: py, timer: setTimeout(function () { stop(d.id, tr("Python did not load. Check your connection and try again.")); }, 60000)};
       py.postMessage(d);
     }
 
@@ -149,7 +149,7 @@
         return;
       }
       var c = current[d.id] = {kind: "js", worker: worker};
-      c.timer = setTimeout(function () { stop(d.id, "Stopped: the program ran for more than " + RUN_TIMEOUT_MS / 1000 + " s."); }, RUN_TIMEOUT_MS);
+      c.timer = setTimeout(function () { stop(d.id, tr("Stopped: the program ran for more than %(n)s s.", {n: RUN_TIMEOUT_MS / 1000})); }, RUN_TIMEOUT_MS);
       // after the code has run, wait for timers/promises to go quiet, then finish
       function quiet() { if (c.idle) clearTimeout(c.idle); if (c.loaded) c.idle = setTimeout(function () { stop(d.id); }, 800); }
       worker.onmessage = function (e) {
@@ -234,7 +234,7 @@
     pre.classList.remove("smd-has-err");
     var info = document.createElement("span");
     info.className = "smd-info";
-    info.textContent = "Running…";
+    info.textContent = tr("Running…");
     pre.appendChild(info);
     play.disabled = true;
     var any = false;

@@ -14,6 +14,7 @@ or a deleted and re-created account, makes old links useless.
 from __future__ import annotations
 
 from flask import Blueprint, Flask, current_app, flash, g, redirect, render_template, request, session, url_for
+from flask_babel import gettext as _
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
 from src.mail import Mailer as mail
@@ -42,12 +43,13 @@ def send_link(user: UserRead) -> bool:
     hours = VERIFY_MAX_AGE // 3600
     email = mail.Email(
         to=user.email,
-        subject="Confirm your email for Studiamo",
-        text=(
-            f"Hello {user.name},\n\n"
-            f"Confirm your email address to finish creating your Studiamo account:\n\n{link}\n\n"
-            f"The link works for {hours} hours. If you did not sign up, ignore this email: "
-            "the account stays locked and is removed when the real owner signs up.\n"
+        subject=_("Confirm your email for Studiamo"),
+        text=_(
+            "Hello %(name)s,\n\n"
+            "Confirm your email address to finish creating your Studiamo account:\n\n%(link)s\n\n"
+            "The link works for %(hours)s hours. If you did not sign up, ignore this email: "
+            "the account stays locked and is removed when the real owner signs up.\n",
+            name=user.name, link=link, hours=hours,
         ),
         html=render_template("email/verify.html", user=user, link=link, hours=hours),
     )
@@ -65,7 +67,7 @@ def after_signup(user: UserRead):
     sent = send_link(user)
     session[PENDING_EMAIL_KEY] = user.email
     if not sent:
-        flash("We could not send the email just now. Use the button below to try again.")
+        flash(_("We could not send the email just now. Use the button below to try again."))
     return redirect(url_for("verify.sent"))
 
 
@@ -86,7 +88,7 @@ def confirm(token: str):
     session.pop(PENDING_EMAIL_KEY, None)
     if g.user is None or g.user.id != user.id:
         login_user(user)
-    flash("Your email is verified. Welcome to Studiamo!")
+    flash(_("Your email is verified. Welcome to Studiamo!"))
     return redirect(url_for("pages.home"))
 
 
@@ -99,8 +101,8 @@ def resend():
             send_link(user)
         session[PENDING_EMAIL_KEY] = email
     # same answer either way, so this does not reveal which emails have accounts
-    flash("If that email has an account waiting for verification, a new link is on its way. "
-          "You can ask again after a minute.")
+    flash(_("If that email has an account waiting for verification, a new link is on its way. "
+          "You can ask again after a minute."))
     return redirect(url_for("verify.sent"))
 
 

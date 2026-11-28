@@ -2,23 +2,23 @@
 {% block title %}{{ exam.title }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs">EXAM · AS A GUEST</p>
+<p class="crumbs">{{ _('EXAM · AS A GUEST') }}</p>
 <h1 class="pagetitle">{{ exam.title|upper }}</h1>
-<p class="lead2">Hello {{ guest.name }} ({{ guest.email }}). Your result will be emailed to you.</p>
+<p class="lead2">{{ _('Hello %(name)s (%(email)s). Your result will be emailed to you.', name=guest.name, email=guest.email) }}</p>
 </section>
-<section class="section" style="padding-top:8px">
-<div class="card" style="max-width:860px">
-<p class="row" style="gap:10px;margin-bottom:12px">{% if is_open %}<span class="tag ok">OPEN</span>{% else %}<span class="tag g">NOT OPEN NOW</span>{% endif %}</p>
-<ul style="font-size:1.15rem;line-height:1.7;margin:0 0 16px;padding-left:22px">
-<li>{{ exam.questions_per_attempt or pool }} questions{% if exam.duration_minutes %} · {{ exam.duration_minutes }} minutes{% endif %}{% if exam.max_attempts %} · {{ exam.max_attempts }} attempt{{ 's' if exam.max_attempts != 1 }}{% endif %}</li>
-{% if exam.opens_at %}<li>Open from {{ exam.opens_at.strftime('%d %b %Y, %H:%M') }} to {{ exam.closes_at.strftime('%d %b %Y, %H:%M') }} (UTC)</li>{% endif %}
-{% if exam.duration_minutes %}<li>The timer starts when you press Start and keeps running if you leave the page.</li>{% endif %}
-<li>Reloading the page keeps your attempt; answers are saved when you submit.</li></ul>
+<section class="section pt-[8px]">
+<div class="card max-w-[860px]">
+<p class="row gap-[10px] mb-[12px]">{% if is_open %}<span class="tag ok">{{ _('OPEN') }}</span>{% else %}<span class="tag g">{{ _('NOT OPEN NOW') }}</span>{% endif %}</p>
+<ul class="text-[1.15rem] leading-[1.7] mt-0 mx-0 mb-[16px] pl-[22px]">
+<li>{{ _('%(value)s questions', value=exam.questions_per_attempt or pool) }}{% if exam.duration_minutes %} {{ _('· %(duration_minutes)s minutes', duration_minutes=exam.duration_minutes) }}{% endif %}{% if exam.max_attempts %} {{ _('· %(max_attempts)s attempt%(value)s', max_attempts=exam.max_attempts, value='s' if exam.max_attempts != 1) }}{% endif %}</li>
+{% if exam.opens_at %}<li>{{ _('Open from %(value)s to %(value2)s (UTC)', value=(exam.opens_at|datetimeformat('d MMM y, HH:mm')), value2=(exam.closes_at|datetimeformat('d MMM y, HH:mm'))) }}</li>{% endif %}
+{% if exam.duration_minutes %}<li>{{ _('The timer starts when you press Start and keeps running if you leave the page.') }}</li>{% endif %}
+<li>{{ _('Reloading the page keeps your attempt; answers are saved when you submit.') }}</li></ul>
 <div class="row">
-{% if open_attempt %}<a class="btn" href="{{ url_for('join.guest_attempt', attempt_id=open_attempt.id) }}">CONTINUE YOUR ATTEMPT »</a>
-{% elif not is_open %}<p class="muted">This exam is not open right now. Come back when it opens.</p>
-{% elif left is not none and left == 0 %}<p class="muted">You have already taken this exam. Your result is emailed to you.</p>
-{% else %}<form method="post" action="{{ url_for('join.guest_start') }}" style="margin:0">{{ csrf_field() }}<button class="btn" type="submit">START EXAM »</button></form>{% endif %}
+{% if open_attempt %}<a class="btn" href="{{ url_for('join.guest_attempt', attempt_id=open_attempt.id) }}">{{ _('CONTINUE YOUR ATTEMPT »') }}</a>
+{% elif not is_open %}<p class="muted">{{ _('This exam is not open right now. Come back when it opens.') }}</p>
+{% elif left is not none and left == 0 %}<p class="muted">{{ _('You have already taken this exam. Your result is emailed to you.') }}</p>
+{% else %}<form class="m-0" method="post" action="{{ url_for('join.guest_start') }}">{{ csrf_field() }}<button class="btn" type="submit">{{ _('START EXAM »') }}</button></form>{% endif %}
 </div>
 </div>
 </section>

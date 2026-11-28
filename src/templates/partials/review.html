@@ -1,10 +1,10 @@
-{% macro review_tag(item) %}{% if item.published %}<span class="tag ok">PUBLISHED</span>{% elif item.review_status == 'pending' %}<span class="tag" style="background:#1d4ed8">IN REVIEW</span>{% elif item.review_status == 'rejected' %}<span class="tag danger" style="background:var(--danger)">SENT BACK</span>{% else %}<span class="tag draft">DRAFT</span>{% endif %}{% endmacro %}
+{% macro review_tag(item) %}{% if item.published %}<span class="tag ok">{{ _('PUBLISHED') }}</span>{% elif item.review_status == 'pending' %}<span class="tag bg-[#1d4ed8]">{{ _('IN REVIEW') }}</span>{% elif item.review_status == 'rejected' %}<span class="tag danger bg-danger">{{ _('SENT BACK') }}</span>{% else %}<span class="tag draft">{{ _('DRAFT') }}</span>{% endif %}{% endmacro %}
 {# the publish button for one item; post to `action`, needs kind and item #}
 {% macro publish_button(item, action, scheduled=false) %}
 <form class="inline-form" method="post" action="{{ action }}">{{ csrf_field() }}<input type="hidden" name="action" value="publish">
-{% if acting_as('admin') or scheduled %}<button class="btn xs ghost" type="submit">{{ 'UNPUBLISH' if item.published else 'PUBLISH' }}</button>
-{% elif item.review_status == 'pending' %}<button class="btn xs ghost" type="submit">WITHDRAW</button>
-{% elif item.published %}<button class="btn xs ghost" type="submit">HIDE</button>
-{% else %}<button class="btn xs" type="submit">SUBMIT FOR REVIEW</button>{% endif %}
+{% if acting_as('admin') or scheduled %}<button class="btn xs ghost" type="submit">{{ _('UNPUBLISH') if item.published else _('PUBLISH') }}</button>
+{% elif item.review_status == 'pending' %}<button class="btn xs ghost" type="submit">{{ _('WITHDRAW') }}</button>
+{% elif item.published %}<button class="btn xs ghost" type="submit">{{ _('HIDE') }}</button>
+{% else %}<button class="btn xs" type="submit">{{ _('SUBMIT FOR REVIEW') }}</button>{% endif %}
 </form>
 {% endmacro %}

@@ -15,6 +15,7 @@ from __future__ import annotations
 import uuid
 
 from flask import Blueprint, abort, flash, g, jsonify, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from pydantic import ValidationError
 
 from src.content.StudiamoMarkdown import render
@@ -92,9 +93,9 @@ def create_course():
         try:
             course = deps.courses().create(data, created_by=g.user.id)
         except CourseCodeTakenError:
-            errors["code"] = "Another course already uses this code."
+            errors["code"] = _("Another course already uses this code.")
         else:
-            flash(f"Course {course.code} created. Add its first topic below.")
+            flash(_('Course %(code)s created. Add its first topic below.', code=course.code))
             return redirect(url_for("studio.course", course_id=course.id))
     mine = [c for c in deps.courses().list(limit=100) if deps.can_edit_course(c)]
     return render_template("studio/index.html", courses=mine, errors=errors, values=values, standalone=_standalone()), 400
@@ -109,12 +110,12 @@ def course(course_id: int):
         try:
             data = CourseUpdate(code=values["code"], title=values["title"], description=values["description"] or None)
             course = deps.courses().update(course_id, data)
-            flash("Course details saved.")
+            flash(_("Course details saved."))
             return redirect(url_for("studio.course", course_id=course_id))
         except ValidationError as exc:
             errors = field_errors(exc)
         except CourseCodeTakenError:
-            errors["code"] = "Another course already uses this code."
+            errors["code"] = _("Another course already uses this code.")
     parts = []
     notes = deps.notes().list_for_course(course_id)
     for t in deps.topics().list_for_course(course_id):
@@ -130,10 +131,10 @@ def course(course_id: int):
 def delete_course(course_id: int):
     course = deps.require_course_editor(course_id)
     if request.form.get("confirm_code", "").strip() != course.code:
-        flash("Type the course code to confirm. Nothing was deleted.")
+        flash(_("Type the course code to confirm. Nothing was deleted."))
         return redirect(url_for("studio.course", course_id=course_id))
     deps.courses().delete(course_id)
-    flash(f"Course {course.code} deleted.")
+    flash(_('Course %(code)s deleted.', code=course.code))
     return redirect(url_for("studio.index"))
 
 
@@ -154,7 +155,7 @@ def add_topic(course_id: int):
     try:
         deps.topics().create(TopicCreate(course_id=course_id, title=title, position=len(existing)))
     except ValidationError:
-        flash("Give the topic a title (up to 200 characters).")
+        flash(_("Give the topic a title (up to 200 characters)."))
     return redirect(url_for("studio.course", course_id=course_id) + "#topics")
 
 
@@ -164,7 +165,7 @@ def rename_topic(topic_id: int):
     try:
         deps.topics().update(topic_id, TopicUpdate(title=request.form.get("title", "").strip()))
     except ValidationError:
-        flash("A topic needs a title.")
+        flash(_("A topic needs a title."))
     return redirect(url_for("studio.course", course_id=course.id) + f"#topic-{topic_id}")
 
 
@@ -184,7 +185,7 @@ def move_topic(topic_id: int):
 def delete_topic(topic_id: int):
     topic, course = _topic_and_course(topic_id)
     deps.topics().delete(topic_id)
-    flash(f"Topic “{topic.title}” deleted with its notes and exercises.")
+    flash(_('Topic “%(title)s” deleted with its notes and exercises.', title=topic.title))
     return redirect(url_for("studio.course", course_id=course.id) + "#topics")
 
 
@@ -209,7 +210,7 @@ def add_note(topic_id: int):
             md_path=f"notes/{course.id}/{uuid.uuid4().hex}.md", max_exp=DEFAULT_EXP["note"],
         ))
     except ValidationError:
-        flash("A note needs a title.")
+        flash(_("A note needs a title."))
         return redirect(url_for("studio.course", course_id=course.id))
     if request.form.get("then") == "import":   # an empty note, and the import dialog opens
         deps.notes().save_content(note.id, "")
@@ -225,7 +226,7 @@ def edit_note(note_id: int):
     if request.method == "POST":
         body = request.form.get("body", "").replace("\r\n", "\n")
         if len(body) > MAX_NOTE_CHARS:
-            errors["body"] = f"The note is too long (at most {MAX_NOTE_CHARS:,} characters)."
+            errors["body"] = _('The note is too long (at most %(MAX_NOTE_CHARS)s characters).', MAX_NOTE_CHARS=f'{MAX_NOTE_CHARS:,}')
         admin = deps.is_admin()
         try:
             fields = {"title": request.form.get("title", "").strip()}
@@ -233,12 +234,12 @@ def edit_note(note_id: int):
                 fields["max_exp"] = int(request.form.get("max_exp") or 0)
             update = NoteUpdate(**fields)
         except (ValidationError, ValueError) as exc:
-            errors.update(field_errors(exc) if isinstance(exc, ValidationError) else {"max_exp": "Enter a whole number."})
+            errors.update(field_errors(exc) if isinstance(exc, ValidationError) else {"max_exp": _("Enter a whole number.")})
         if not errors:
             changed = body != _read(note_id) or update.title != note.title
             deps.notes().save_content(note_id, body)
             note = deps.notes().update(note_id, update)
-            msg = "Saved."
+            msg = _("Saved.")
             if admin:
                 deps.review().publish_direct("note", note_id, published=request.form.get("published") == "on")
             elif changed and deps.review().reopen_after_edit("note", note_id):
@@ -311,16 +312,16 @@ def review_action(review, kind: str, item_id: int, title: str, published: bool, 
     try:
         if deps.is_admin():
             review.publish_direct(kind, item_id, published=not published)
-            flash(f"“{title}” is now {'hidden' if published else 'published'}.")
+            flash(_('“%(title)s” is now hidden.', title=title) if published else _('“%(title)s” is now published.', title=title))
         elif action == "withdraw" or status == "pending":
             review.withdraw(kind, item_id)
-            flash(f"“{title}” was taken out of the review queue.")
+            flash(_('“%(title)s” was taken out of the review queue.', title=title))
         elif published:
             review.hide(kind, item_id)
-            flash(f"“{title}” is hidden from students. Submit it again to publish it.")
+            flash(_('“%(title)s” is hidden from students. Submit it again to publish it.', title=title))
         else:
             review.submit(kind, item_id)
-            flash(f"“{title}” was sent to an admin for review.")
+            flash(_('“%(title)s” was sent to an admin for review.', title=title))
     except (ReviewStateError, ServiceError) as exc:
         flash(str(exc))
 
@@ -329,7 +330,7 @@ def review_action(review, kind: str, item_id: int, title: str, published: bool, 
 def delete_note(note_id: int):
     note, topic, course = _note_and_course(note_id)
     deps.notes().delete(note_id, delete_content=True)
-    flash(f"Note “{note.title}” deleted.")
+    flash(_('Note “%(title)s” deleted.', title=note.title))
     return redirect(url_for("studio.course", course_id=course.id) + f"#topic-{topic.id}")
 
 
@@ -353,7 +354,7 @@ def import_note(note_id: int):
         elif (request.form.get("text") or "").strip():
             doc = from_pasted(request.form["text"])
         else:
-            return jsonify(error="Choose a file or paste some text."), 400
+            return jsonify(error=_("Choose a file or paste some text.")), 400
     except ImportError_ as exc:
         return jsonify(error=str(exc)), 400
     use_ai = request.form.get("use_ai") == "1"
@@ -366,8 +367,8 @@ def import_note(note_id: int):
         return jsonify(markdown=result.markdown, problems=result.problems, used_ai=True, model=result.model,
                        provider=result.provider)
     if doc.kind == "pdf":
-        return jsonify(error="PDF files need the AI: add an API key (Claude, Gemini or OpenAI) in Settings > AI assistant, "
-                             "or copy the text out of the PDF and paste it."), 400
+        return jsonify(error=_("PDF files need the AI: add an API key (Claude, Gemini or OpenAI) in Settings > AI assistant, "
+                             "or copy the text out of the PDF and paste it.")), 400
     return jsonify(markdown=doc.markdown, problems=render(doc.markdown).problems, used_ai=False, model=None)
 
 

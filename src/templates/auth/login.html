@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Log in{% endblock %}
+{% block title %}{{ _('Log in') }}{% endblock %}
 {% block content %}
-<section class="grid auth center">
-<div class="panel"><p class="d" style="font-size:1.25rem">LEARN. PRACTISE. LEVEL UP.</p><h1>TURN STUDYING INTO PROGRESS YOU CAN SEE</h1>
-<p class="d" style="font-size:1.25rem;margin-bottom:8px">CLIMB THE RANKS</p>
+<section class="grid-bg auth center">
+<div class="panel"><p class="d text-[1.25rem]">{{ _('LEARN. PRACTISE. LEVEL UP.') }}</p><h1>{{ _('TURN STUDYING INTO PROGRESS YOU CAN SEE') }}</h1>
+<p class="d text-[1.25rem] mb-[8px]">{{ _('CLIMB THE RANKS') }}</p>
 <div class="ranks">{% for r in ranks %}<span{% if loop.last %} class="top"{% endif %}>{{ r }}</span>{% endfor %}</div>
-<ul><li>Pick up exactly where you left off.</li><li>See your reading, practice and exam progress.</li><li>Earn exp and level up with every lesson.</li></ul></div>
+<ul><li>{{ _('Pick up exactly where you left off.') }}</li><li>{{ _('See your reading, practice and exam progress.') }}</li><li>{{ _('Earn exp and level up with every lesson.') }}</li></ul></div>
 <div class="card formcard">
-<nav class="seg" aria-label="Account"><a href="{{ url_for('auth.login') }}" aria-current="page">LOG IN</a><a href="{{ url_for('auth.register') }}">CREATE ACCOUNT</a></nav>
-<h2 style="font-size:3rem">WELCOME BACK</h2><p class="lead">Log in to pick up where you left off.</p>
-{% if google_enabled() %}{% with g_href=url_for('google.start', intent='login', next=next), g_label='CONTINUE WITH GOOGLE' %}{% include "partials/google_button.html" %}{% endwith %}<p class="or">OR WITH YOUR EMAIL</p>{% endif %}
+<nav class="seg" aria-label="{{ _('Account') }}"><a href="{{ url_for('auth.login') }}" aria-current="page">{{ _('LOG IN') }}</a><a href="{{ url_for('auth.register') }}">{{ _('CREATE ACCOUNT') }}</a></nav>
+<h2 class="text-[3rem]">{{ _('WELCOME BACK') }}</h2><p class="lead">{{ _('Log in to pick up where you left off.') }}</p>
+{% if google_enabled() %}{% with g_href=url_for('google.start', intent='login', next=next), g_label=_('CONTINUE WITH GOOGLE') %}{% include "partials/google_button.html" %}{% endwith %}<p class="or">{{ _('OR WITH YOUR EMAIL') }}</p>{% endif %}
 <form class="form" method="post" action="{{ url_for('auth.login') }}" novalidate>
 {{ csrf_field() }}<input type="hidden" name="next" value="{{ next }}">
 {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
-{% with name="email", label="EMAIL", type="email", placeholder="you@example.com", autocomplete="email", errors=None %}{% include "auth/_field.html" %}{% endwith %}
-{% with name="password", label="PASSWORD", type="password", placeholder="Your password", autocomplete="current-password", errors=None %}{% include "auth/_field.html" %}{% endwith %}
-<label class="check" style="font-size:1.1875rem;align-items:center"><input type="checkbox" name="remember"{% if request.form.get('remember') %} checked{% endif %}>Keep me logged in on this device</label>
-<button class="btn block" type="submit">LOG IN »</button>
+{% with name="email", label=_("EMAIL"), type="email", placeholder="you@example.com", autocomplete="email", errors=None %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="password", label=_("PASSWORD"), type="password", placeholder=_("Your password"), autocomplete="current-password", errors=None %}{% include "auth/_field.html" %}{% endwith %}
+<label class="check text-[1.1875rem] items-center"><input type="checkbox" name="remember"{% if request.form.get('remember') %} checked{% endif %}>{{ _('Keep me logged in on this device') }}</label>
+<button class="btn btn-block" type="submit">{{ _('LOG IN »') }}</button>
 </form>
-{% if unverified %}<form method="post" action="{{ url_for('verify.resend') }}" style="margin-top:14px">{{ csrf_field() }}<input type="hidden" name="email" value="{{ values.email }}"><button class="btn o block" type="submit">SEND THE LINK AGAIN</button></form>{% endif %}
-<p class="alt">New here? <a href="{{ url_for('auth.register') }}" class="d">Create an account</a></p>
-<p class="alt">Lecturer? <a href="{{ url_for('auth.register', role='lecturer') }}" class="d">Register here</a></p>
+{% if unverified %}<form class="mt-[14px]" method="post" action="{{ url_for('verify.resend') }}">{{ csrf_field() }}<input type="hidden" name="email" value="{{ values.email }}"><button class="btn o btn-block" type="submit">{{ _('SEND THE LINK AGAIN') }}</button></form>{% endif %}
+<p class="alt">{{ _('New here?') }} <a href="{{ url_for('auth.register') }}" class="d">{{ _('Create an account') }}</a></p>
+<p class="alt">{{ _('Lecturer?') }} <a href="{{ url_for('auth.register', role='lecturer') }}" class="d">{{ _('Register here') }}</a></p>
 </div>
 </section>
 {% endblock %}

@@ -1,78 +1,78 @@
 {% extends "base.html" %}
-{% block title %}Create your account{% endblock %}
+{% block title %}{{ _('Create your account') }}{% endblock %}
 {% block content %}
-<section class="grid auth reg">
+<section class="grid-bg auth reg">
 {# left panel: follows the role box that is checked (CSS :has) #}
-<div class="panel only-none"><p class="d" style="font-size:1.25rem">CREATE AN ACCOUNT</p><h1>START LEVELLING UP TODAY</h1>
-<p class="d" style="font-size:1.25rem;margin-bottom:8px">CLIMB THE RANKS</p>
+<div class="panel only-none"><p class="d text-[1.25rem]">{{ _('CREATE AN ACCOUNT') }}</p><h1>{{ _('START LEVELLING UP TODAY') }}</h1>
+<p class="d text-[1.25rem] mb-[8px]">{{ _('CLIMB THE RANKS') }}</p>
 <div class="ranks">{% for r in ranks %}<span{% if loop.last %} class="top"{% endif %}>{{ r }}</span>{% endfor %}</div>
-<ul><li>Students: read, practise and sit exams that move your rank.</li><li>Lecturers: write the course and build its exams.</li></ul></div>
-<div class="panel only-student"><p class="d" style="font-size:1.25rem">JOIN AS A STUDENT</p><h1>START LEVELLING UP TODAY</h1>
-<p class="d" style="font-size:1.25rem;margin-bottom:8px">CLIMB THE RANKS</p>
+<ul><li>{{ _('Students: read, practise and sit exams that move your rank.') }}</li><li>{{ _('Lecturers: write the course and build its exams.') }}</li></ul></div>
+<div class="panel only-student"><p class="d text-[1.25rem]">{{ _('JOIN AS A STUDENT') }}</p><h1>{{ _('START LEVELLING UP TODAY') }}</h1>
+<p class="d text-[1.25rem] mb-[8px]">{{ _('CLIMB THE RANKS') }}</p>
 <div class="ranks">{% for r in ranks %}<span{% if loop.last %} class="top"{% endif %}>{{ r }}</span>{% endfor %}</div>
-<ul><li>Read lessons topic by topic.</li><li>Practise, then sit exams that move your rank.</li><li>Earn exp and level up as you go.</li></ul></div>
-<div class="panel only-lecturer"><p class="d" style="font-size:1.25rem">JOIN AS A LECTURER</p><h1>CREATE EXAMS FOR YOUR CLASSES</h1>
-<ul style="margin-top:0"><li>Build exams with multiple choice, short answer and code questions.</li><li>Write notes and exercises for each topic of your course.</li><li>Grade short answers and see every student's scores.</li></ul></div>
+<ul><li>{{ _('Read lessons topic by topic.') }}</li><li>{{ _('Practise, then sit exams that move your rank.') }}</li><li>{{ _('Earn exp and level up as you go.') }}</li></ul></div>
+<div class="panel only-lecturer"><p class="d text-[1.25rem]">{{ _('JOIN AS A LECTURER') }}</p><h1>{{ _('CREATE EXAMS FOR YOUR CLASSES') }}</h1>
+<ul class="mt-0"><li>{{ _('Build exams with multiple choice, short answer and code questions.') }}</li><li>{{ _('Write notes and exercises for each topic of your course.') }}</li><li>{{ _("Grade short answers and see every student's scores.") }}</li></ul></div>
 
 <div class="card formcard">
-<h2 style="margin-top:0">CREATE YOUR ACCOUNT</h2>
+<h2 class="mt-0">{{ _('CREATE YOUR ACCOUNT') }}</h2>
 <form id="signup" class="form" method="post" action="{{ url_for('auth.register') }}" data-step="{{ step }}" novalidate>
 {{ csrf_field() }}
 <fieldset class="roles"{% if errors.get('role') %} aria-describedby="e-role"{% endif %}>
-<legend>I AM A</legend>
-<label class="rolebox"><input type="radio" id="role-student" name="role" value="student"{% if role == 'student' %} checked{% endif %}><strong>STUDENT</strong><span>Free. Ready at once.</span></label>
-<label class="rolebox"><input type="radio" id="role-lecturer" name="role" value="lecturer"{% if role == 'lecturer' %} checked{% endif %}><strong>LECTURER</strong><span>Checked before you can create exams.</span></label>
+<legend>{{ _('I AM A') }}</legend>
+<label class="rolebox"><input type="radio" id="role-student" name="role" value="student"{% if role == 'student' %} checked{% endif %}><strong>{{ _('STUDENT') }}</strong><span>{{ _('Free. Ready at once.') }}</span></label>
+<label class="rolebox"><input type="radio" id="role-lecturer" name="role" value="lecturer"{% if role == 'lecturer' %} checked{% endif %}><strong>{{ _('LECTURER') }}</strong><span>{{ _('Checked before you can create exams.') }}</span></label>
 </fieldset>
 {% if errors.get('role') %}<p class="err" id="e-role">{{ errors.role }}</p>{% endif %}
-<p class="pick-first">Choose student or lecturer to start.</p>
+<p class="pick-first">{{ _('Choose student or lecturer to start.') }}</p>
 
 <div class="formbody">
-<div class="steps js-only" aria-hidden="true"><span data-step="1">1 · YOUR ACCOUNT</span><span data-step="2">2 · <b class="only-student inl" style="font-weight:400">YOUR CLASS</b><b class="only-lecturer inl" style="font-weight:400">YOUR TEACHING</b></span></div>
-{% if errors and not errors.get('role') %}<p class="alert" role="alert">Please fix the fields marked below.</p>{% endif %}
+<div class="steps js-only" aria-hidden="true"><span data-step="1">{{ _('1 · YOUR ACCOUNT') }}</span><span data-step="2">2 · <b class="only-student inl font-normal">{{ _('YOUR CLASS') }}</b><b class="only-lecturer inl font-normal">{{ _('YOUR TEACHING') }}</b></span></div>
+{% if errors and not errors.get('role') %}<p class="alert" role="alert">{{ _('Please fix the fields marked below.') }}</p>{% endif %}
 
 {# ------------------------------------------------------------ step 1 #}
 <div class="step form" data-step="1">
 {% if google_profile %}
-<div class="gfrom">{% include "partials/google_g.html" %}<span>Signing up with Google as <strong>{{ google_profile.email }}</strong>. No password needed.</span></div>
-<button class="linkbtn" type="submit" formaction="{{ url_for('auth.register_google_cancel') }}" formnovalidate style="align-self:flex-start;font-size:1.0625rem;padding:0">Use another account</button>
+<div class="gfrom">{% include "partials/google_g.html" %}<span>{{ _('Signing up with Google as') }} <strong>{{ google_profile.email }}</strong>{{ _('. No password needed.') }}</span></div>
+<button class="linkbtn self-start text-[1.0625rem] p-0" type="submit" formaction="{{ url_for('auth.register_google_cancel') }}" formnovalidate>{{ _('Use another account') }}</button>
 {% elif google_enabled() %}
-{% with g_href=(url_for('google.start', intent='register', role=role) if role else url_for('google.start', intent='register')), g_label='SIGN UP WITH GOOGLE', g_id='google-signup', g_base=url_for('google.start', intent='register') %}{% include "partials/google_button.html" %}{% endwith %}
-<p class="or" style="margin:4px 0">OR WITH YOUR EMAIL</p>
+{% with g_href=(url_for('google.start', intent='register', role=role) if role else url_for('google.start', intent='register')), g_label=_('SIGN UP WITH GOOGLE'), g_id='google-signup', g_base=url_for('google.start', intent='register') %}{% include "partials/google_button.html" %}{% endwith %}
+<p class="or my-[4px] mx-0">{{ _('OR WITH YOUR EMAIL') }}</p>
 {% endif %}
-{% with name="name", label="FULL NAME", placeholder="Amina Tchoua", autocomplete="name", maxlength=100 %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="name", label=_("FULL NAME"), placeholder=_("Amina Tchoua"), autocomplete="name", maxlength=100 %}{% include "auth/_field.html" %}{% endwith %}
 {% if not google_profile %}
-{% with name="email", label="EMAIL", type="email", placeholder="you@example.com", autocomplete="email", maxlength=255 %}{% include "auth/_field.html" %}{% endwith %}
-{% with name="password", label="PASSWORD", type="password", placeholder="At least 8 characters", autocomplete="new-password", minlength=8, maxlength=128 %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="email", label=_("EMAIL"), type="email", placeholder="you@example.com", autocomplete="email", maxlength=255 %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="password", label=_("PASSWORD"), type="password", placeholder=_("At least 8 characters"), autocomplete="new-password", minlength=8, maxlength=128 %}{% include "auth/_field.html" %}{% endwith %}
 {% endif %}
-<div class="stepnav js-only"><button class="btn block" type="button" id="step-next">NEXT »</button></div>
+<div class="stepnav js-only"><button class="btn btn-block" type="button" id="step-next">{{ _('NEXT »') }}</button></div>
 </div>
 
 {# ------------------------------------------------------------ step 2 #}
 <div class="step form" data-step="2">
 <div class="only-student">
-<div class="field"><label for="f-class_name" class="lab">YOUR CLASS</label>
+<div class="field"><label for="f-class_name" class="lab">{{ _('YOUR CLASS') }}</label>
 <select id="f-class_name" name="class_name"{% if errors.get('class_name') %} aria-invalid="true" aria-describedby="e-class_name"{% endif %}>
-<option value=""{% if not values.class_name %} selected{% endif %}>Choose your class</option>
+<option value=""{% if not values.class_name %} selected{% endif %}>{{ _('Choose your class') }}</option>
 {% for c in classes %}<option{% if values.class_name == c %} selected{% endif %}>{{ c }}</option>{% endfor %}
 </select>{% if errors.get('class_name') %}<p class="err" id="e-class_name">{{ errors.class_name }}</p>{% endif %}</div>
 </div>
 <div class="only-lecturer">
 <div class="form">
-{% with name="institution", label="SCHOOL OR INSTITUTION", placeholder="Name of your institution", autocomplete="organization", maxlength=200, required=False %}{% include "auth/_field.html" %}{% endwith %}
-{% with name="courses_taught", label="COURSES YOU TEACH", placeholder="Factual Programming, HCI", hint="Separate them with commas.", maxlength=2000, required=False %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="institution", label=_("SCHOOL OR INSTITUTION"), placeholder=_("Name of your institution"), autocomplete="organization", maxlength=200, required=False %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="courses_taught", label=_("COURSES YOU TEACH"), placeholder=_("Factual Programming, HCI"), hint=_("Separate them with commas."), maxlength=2000, required=False %}{% include "auth/_field.html" %}{% endwith %}
 </div>
 </div>
-<div><label class="check"><input type="checkbox" name="terms"{% if request.form.get('terms') %} checked{% endif %}{% if errors.get('terms') %} aria-invalid="true" aria-describedby="e-terms"{% endif %}><span><span class="only-student inl">I agree to the terms and to being recorded during supervised exams.</span><span class="only-lecturer inl">I agree to the terms and I will tell students when exams are recorded.</span></span></label>
+<div><label class="check"><input type="checkbox" name="terms"{% if request.form.get('terms') %} checked{% endif %}{% if errors.get('terms') %} aria-invalid="true" aria-describedby="e-terms"{% endif %}><span><span class="only-student inl">{{ _('I agree to the terms and to being recorded during supervised exams.') }}</span><span class="only-lecturer inl">{{ _('I agree to the terms and I will tell students when exams are recorded.') }}</span></span></label>
 {% if errors.get('terms') %}<p class="err" id="e-terms">{{ errors.terms }}</p>{% endif %}</div>
-<p class="notice only-lecturer">Lecturer accounts are checked before they can create exams. Until then, your account works as a student account.</p>
+<p class="notice only-lecturer">{{ _('Lecturer accounts are checked before they can create exams. Until then, your account works as a student account.') }}</p>
 <div class="stepnav">
-<button class="btn o js-only" type="button" id="step-back" style="flex:0 0 auto">« BACK</button>
-<button class="btn" type="submit"><span class="only-student inl">CREATE MY ACCOUNT »</span><span class="only-lecturer inl">REQUEST MY ACCOUNT »</span></button>
+<button class="btn o js-only [flex:0_0_auto]" type="button" id="step-back">{{ _('« BACK') }}</button>
+<button class="btn" type="submit"><span class="only-student inl">{{ _('CREATE MY ACCOUNT »') }}</span><span class="only-lecturer inl">{{ _('REQUEST MY ACCOUNT »') }}</span></button>
 </div>
 </div>
 </div>
 </form>
-<p class="alt">Already have an account? <a href="{{ url_for('auth.login') }}" class="d">Log in</a></p>
+<p class="alt">{{ _('Already have an account?') }} <a href="{{ url_for('auth.login') }}" class="d">{{ _('Log in') }}</a></p>
 </div>
 </section>
 <script src="{{ url_for('static', filename='js/register.js') }}"></script>

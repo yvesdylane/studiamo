@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Courses{% endblock %}
+{% block title %}{{ _('Courses') }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<h1 class="pagetitle">COURSES</h1>
-<p class="lead2">Every course on Studiamo. Open one to read its notes, practise and take its exams.</p>
+<h1 class="pagetitle">{{ _('COURSES') }}</h1>
+<p class="lead2">{{ _('Every course on Studiamo. Open one to read its notes, practise and take its exams.') }}</p>
 {% if courses %}
 <div class="cols-4">
 {% for c in courses %}
-<article class="card{% if not c.available %} dim{% endif %}" style="padding:20px;position:relative">
-<span class="d" style="font-size:2.5rem;color:{{ 'var(--purple)' if c.available else 'var(--muted)' }}">{{ '%02d' % loop.index }}</span>
-<h2 style="font-size:1.5rem;margin:6px 0"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h2>
-<p style="font-size:1.0625rem;color:var(--muted);min-height:46px">{% if c.available %}{{ c.published_notes }} notes · {{ c.published_exercises }} exercises · {{ c.published_exams }} exams{% else %}{{ c.description or 'Material is being written.' }}{% endif %}</p>
-<span class="tag{% if not c.available %} g{% endif %}">{{ 'AVAILABLE' if c.available else 'COMING SOON' }}</span>
-<p class="d muted" style="font-size:0.9375rem;margin-top:8px">{{ c.code }}</p>
+<article class="card{% if not c.available %} dim{% endif %} p-[20px] relative">
+<span class="d text-[2.5rem]" style="color:{{ 'var(--purple)' if c.available else 'var(--muted)' }}">{{ '%02d' % loop.index }}</span>
+<h2 class="text-[1.5rem] my-[6px] mx-0"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h2>
+<p class="text-[1.0625rem] text-muted min-h-[46px]">{% if c.available %}{{ _('%(published_notes)s notes · %(published_exercises)s exercises · %(published_exams)s exams', published_notes=c.published_notes, published_exercises=c.published_exercises, published_exams=c.published_exams) }}{% else %}{{ c.description or 'Material is being written.' }}{% endif %}</p>
+<span class="tag{% if not c.available %} g{% endif %}">{{ _('AVAILABLE') if c.available else _('COMING SOON') }}</span>
+<p class="d muted text-[0.9375rem] mt-[8px]">{{ c.code }}</p>
 </article>
 {% endfor %}
 </div>
-{% else %}<p class="empty">No courses yet.</p>{% endif %}
+{% else %}<p class="empty">{{ _('No courses yet.') }}</p>{% endif %}
 </section>
 {% endblock %}

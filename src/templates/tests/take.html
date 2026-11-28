@@ -1,68 +1,68 @@
 {% extends "base.html" %}
 {% block title %}{{ title }}{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+
 {% block header %}{% include "partials/topbar.html" %}{% endblock %}
 {% block content %}
 {% set guarded = kind == 'exam' and event_url %}
 {% if guarded %}
 <div id="guard-gate" class="guard-layer" role="dialog" aria-modal="true" aria-labelledby="gate-title">
 <div class="card guard-card">
-<p class="crumbs" style="margin:0">EXAM · ATTEMPT {{ started.attempt.attempt_no }}</p>
-<h1 id="gate-title" style="font-size:2.2rem;line-height:1.1;color:var(--accent-text);margin:6px 0 12px">{{ title|upper }}</h1>
-<p data-gate-text style="font-size:1.15rem;line-height:1.5">The exam opens in full screen. Before you start:</p>
+<p class="crumbs m-0">{{ _('EXAM · ATTEMPT %(attempt_no)s', attempt_no=started.attempt.attempt_no) }}</p>
+<h1 class="text-[2.2rem] leading-[1.1] text-accent mt-[6px] mx-0 mb-[12px]" id="gate-title">{{ title|upper }}</h1>
+<p class="text-[1.15rem] leading-[1.5]" data-gate-text>{{ _('The exam opens in full screen. Before you start:') }}</p>
 <ul class="guard-rules">
-<li>Stay in the exam until you submit. <strong>Leaving it</strong> (another tab, another app, minimising) is recorded: the first time you get a warning, the second time <strong>your exam is submitted automatically</strong>.</li>
-<li><strong>Going back</strong> or leaving the page submits your exam.</li>
-<li>Copy, paste and right-click are switched off.</li>
-<li>Your lecturer sees what happened during your attempt.</li>
-{% if deadline %}<li>The timer keeps running whatever you do.</li>{% endif %}
+<li>{{ _('Stay in the exam until you submit.') }} <strong>{{ _('Leaving it') }}</strong> {{ _('(another tab, another app, minimising) is recorded: the first time you get a warning, the second time') }} <strong>{{ _('your exam is submitted automatically') }}</strong>.</li>
+<li><strong>{{ _('Going back') }}</strong> {{ _('or leaving the page submits your exam.') }}</li>
+<li>{{ _('Copy, paste and right-click are switched off.') }}</li>
+<li>{{ _('Your lecturer sees what happened during your attempt.') }}</li>
+{% if deadline %}<li>{{ _('The timer keeps running whatever you do.') }}</li>{% endif %}
 </ul>
-<p data-gate-note class="muted" style="font-size:0.95rem"></p>
-<button type="button" class="btn" data-gate-start>START IN FULL SCREEN »</button>
+<p data-gate-note class="muted text-[0.95rem]"></p>
+<button type="button" class="btn" data-gate-start>{{ _('START IN FULL SCREEN »') }}</button>
 </div></div>
 <div id="guard-modal" class="guard-layer" role="alertdialog" aria-modal="true" aria-labelledby="guard-modal-title" hidden>
-<div class="card guard-card"><h2 id="guard-modal-title" style="font-size:1.8rem;color:var(--accent-text);margin:0 0 10px"></h2>
-<p style="font-size:1.15rem;line-height:1.5"></p><div class="row guard-buttons" style="margin-top:16px"></div></div></div>
+<div class="card guard-card"><h2 class="text-[1.8rem] text-accent mt-0 mx-0 mb-[10px]" id="guard-modal-title"></h2>
+<p class="text-[1.15rem] leading-[1.5]"></p><div class="row guard-buttons mt-[16px]"></div></div></div>
 {% endif %}
-<form id="take" method="post" action="{{ action }}" class="section" style="padding-top:28px" novalidate{% if guarded %} data-guard-url="{{ event_url }}" data-guard-strikes="2"{% endif %}>
+<form id="take" method="post" action="{{ action }}" class="section pt-[28px]" novalidate{% if guarded %} data-guard-url="{{ event_url }}" data-guard-strikes="2"{% endif %}>
 {{ csrf_field() }}<input type="hidden" name="attempt_id" value="{{ started.attempt.id }}">
-<div class="row" style="justify-content:space-between;position:sticky;top:var(--header-h);background:var(--bg);z-index:5;padding:10px 0;border-bottom:3px solid var(--purple);margin-bottom:24px">
-<div><p class="crumbs" style="margin:0">{{ 'EXAM' if kind == 'exam' else 'EXERCISE' }} · ATTEMPT {{ started.attempt.attempt_no }}</p><h1 style="font-size:2.125rem;color:var(--accent-text)">{{ title|upper }}</h1></div>
+<div class="row justify-between sticky top-[var(--header-h)] bg-bg z-[5] py-[10px] px-0 border-b-[3px] border-solid border-b-purple mb-[24px] border-t-0 border-r-0 border-l-0">
+<div><p class="crumbs m-0">{{ _('EXAM · ATTEMPT %(attempt_no)s', attempt_no=started.attempt.attempt_no) if kind == 'exam' else _('EXERCISE · ATTEMPT %(attempt_no)s', attempt_no=started.attempt.attempt_no) }}</p><h1 class="text-[2.125rem] text-accent">{{ title|upper }}</h1></div>
 <div class="row">
-{% if deadline %}<p class="d" style="font-size:1.25rem;margin:0">TIME LEFT <span id="timer" data-deadline="{{ deadline.isoformat() }}" style="font-size:1.875rem;color:var(--accent-text)" role="timer" aria-live="off">--:--</span></p>{% endif %}
-<button class="btn s" type="submit">SUBMIT »</button>
+{% if deadline %}<p class="d text-[1.25rem] m-0">{{ _('TIME LEFT') }} <span class="text-[1.875rem] text-accent" id="timer" data-deadline="{{ deadline.isoformat() }}" role="timer" aria-live="off">--:--</span></p>{% endif %}
+<button class="btn s" type="submit">{{ _('SUBMIT »') }}</button>
 </div>
 </div>
-{% if started.resumed %}<p class="notice" style="margin-bottom:18px">You are continuing an attempt you started earlier.</p>{% endif %}
-<ol style="list-style:none;padding:0;margin:0;max-width:900px">
+{% if started.resumed %}<p class="notice mb-[18px]">{{ _('You are continuing an attempt you started earlier.') }}</p>{% endif %}
+<ol class="list-none p-0 m-0 max-w-[900px]">
 {% for q in questions %}
-<li class="card" style="margin-bottom:24px" id="q-{{ q.id }}">
-<fieldset style="border:0;margin:0;padding:0">
-<legend class="d" style="font-size:1.125rem;color:var(--accent-text);padding:0;margin-bottom:6px">QUESTION {{ loop.index }} OF {{ questions|length }} · {{ '%g' % q.points }} POINT{{ 'S' if q.points != 1 }}</legend>
-<div class="prose" style="max-width:none">{{ bodies[q.id]|safe }}</div>
+<li class="card mb-[24px]" id="q-{{ q.id }}">
+<fieldset class="[border:0] m-0 p-0">
+<legend class="d text-[1.125rem] text-accent p-0 mb-[6px]">{{ _('QUESTION %(index)s OF %(questions)s · %(value)s POINT%(value2)s', index=loop.index, questions=questions|length, value='%g' % q.points, value2='S' if q.points != 1) }}</legend>
+<div class="prose max-w-none">{{ bodies[q.id]|safe }}</div>
 {% if q.type.value == 'mcq' %}
-<p class="muted" style="font-size:1rem;margin:6px 0 10px">{{ 'Choose every correct answer.' if q.allow_multiple else 'Choose one answer.' }}</p>
-<div class="form" style="gap:10px">
+<p class="muted text-[1rem] mt-[6px] mx-0 mb-[10px]">{{ _('Choose every correct answer.') if q.allow_multiple else _('Choose one answer.') }}</p>
+<div class="form gap-[10px]">
 {% for o in q.options %}
-<label class="check" style="font-size:1.1875rem;border:2px solid var(--ink);padding:12px 14px;align-items:center"><input type="{{ 'checkbox' if q.allow_multiple else 'radio' }}" name="q{{ q.id }}" value="{{ o.id }}"><span><span class="d" style="color:var(--accent-text)">{{ 'ABCDEFGHIJ'[loop.index0] if loop.index0 < 10 else loop.index }}</span> {{ o.label }}</span></label>
+<label class="check text-[1.1875rem] border-[2px] border-solid border-ink py-[12px] px-[14px] items-center"><input type="{{ 'checkbox' if q.allow_multiple else 'radio' }}" name="q{{ q.id }}" value="{{ o.id }}"><span><span class="d text-accent">{{ 'ABCDEFGHIJ'[loop.index0] if loop.index0 < 10 else loop.index }}</span> {{ o.label }}</span></label>
 {% endfor %}
 </div>
 {% elif q.type.value == 'short_answer' %}
-<label class="lab" for="a{{ q.id }}">YOUR ANSWER</label>
-<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="4" class="input" style="width:100%;margin-top:4px"></textarea>
+<label class="lab" for="a{{ q.id }}">{{ _('YOUR ANSWER') }}</label>
+<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="4" class="input w-full mt-[4px]"></textarea>
 {% else %}
-<label class="lab" for="a{{ q.id }}">YOUR CODE · {{ q.code_language.value|upper }}</label>
-<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="10" class="input code-answer" spellcheck="false" style="width:100%;margin-top:4px;font:0.9375rem/1.6 ui-monospace,Menlo,Consolas,monospace">{{ q.starter_code or '' }}</textarea>
-{% if q.test_cases %}<details style="margin-top:10px"><summary class="lab" style="cursor:pointer">EXAMPLES ({{ q.test_cases|length }})</summary>
-{% for t in q.test_cases %}<div class="smd-compare" style="margin:10px 0"><figure><figcaption>Input</figcaption><pre><code>{{ t.input }}</code></pre></figure><figure><figcaption>Expected output</figcaption><pre><code>{{ t.expected_output }}</code></pre></figure></div>{% endfor %}
+<label class="lab" for="a{{ q.id }}">{{ _('YOUR CODE · %(value)s', value=q.code_language.value|upper) }}</label>
+<textarea id="a{{ q.id }}" name="q{{ q.id }}" rows="10" class="input code-answer w-full mt-[4px] [font:0.9375rem/1.6_ui-monospace,Menlo,Consolas,monospace]" spellcheck="false">{{ q.starter_code or '' }}</textarea>
+{% if q.test_cases %}<details class="mt-[10px]"><summary class="lab cursor-pointer">{{ _('EXAMPLES (%(test_cases)s)', test_cases=q.test_cases|length) }}</summary>
+{% for t in q.test_cases %}<div class="smd-compare my-[10px] mx-0"><figure><figcaption>{{ _('Input') }}</figcaption><pre><code>{{ t.input }}</code></pre></figure><figure><figcaption>{{ _('Expected output') }}</figcaption><pre><code>{{ t.expected_output }}</code></pre></figure></div>{% endfor %}
 </details>{% endif %}
-<p class="muted" style="font-size:0.9375rem;margin-top:6px">Your program reads the input and prints the output. Hidden tests are also used.</p>
+<p class="muted text-[0.9375rem] mt-[6px]">{{ _('Your program reads the input and prints the output. Hidden tests are also used.') }}</p>
 {% endif %}
 </fieldset>
 </li>
 {% endfor %}
 </ol>
-<div class="row" style="max-width:900px;justify-content:space-between">{% if guarded %}<span></span>{% else %}<a href="{{ back }}" style="text-decoration:underline;color:var(--accent-text)">« Leave (the attempt stays open)</a>{% endif %}<button class="btn" type="submit">SUBMIT {{ 'EXAM' if kind == 'exam' else 'ANSWERS' }} »</button></div>
+<div class="row max-w-[900px] justify-between">{% if guarded %}<span></span>{% else %}<a class="underline text-accent" href="{{ back }}">{{ _('« Leave (the attempt stays open)') }}</a>{% endif %}<button class="btn" type="submit">{{ _('SUBMIT EXAM »') if kind == 'exam' else _('SUBMIT ANSWERS »') }}</button></div>
 </form>
 <script src="{{ url_for('static', filename='js/smd.js') }}"></script>
 <script>
@@ -73,7 +73,7 @@
     var empty = 0;
     {% for q in questions %}if (!form.querySelector('[name="q{{ q.id }}"]:checked') && !(form.querySelector('textarea[name="q{{ q.id }}"]') || {}).value) empty++;
     {% endfor %}
-    if (empty && !window.timeUp && !confirm(empty + " question(s) have no answer. Submit anyway?")) { e.preventDefault(); return; }
+    if (empty && !window.timeUp && !confirm(tr("%(n)s question(s) have no answer. Submit anyway?", {n: empty}))) { e.preventDefault(); return; }
     sent = true;
   });
   document.querySelectorAll(".code-answer").forEach(function (t) {

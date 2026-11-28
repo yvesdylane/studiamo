@@ -1,23 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Join an exam{% endblock %}
+{% block title %}{{ _('Join an exam') }}{% endblock %}
 {% block content %}
-<section class="grid auth center">
-<div class="panel"><p class="d" style="font-size:1.25rem">HAVE AN EXAM CODE?</p><h1>JOIN YOUR EXAM</h1>
-<ul style="margin-top:0"><li>Your lecturer gives you the code, like <strong>K7P-4QX</strong>.</li>
-{% if not g.user %}<li>No account needed: give your name and email, and we send you a 6-digit code to check it is yours.</li><li>Your result is emailed to you.</li>
-<li>Have an account? <a href="{{ url_for('auth.login', next=request.path) }}" style="text-decoration:underline;color:#fff">Log in</a> first: your result then counts for your exp and rank.</li>
-{% else %}<li>You are logged in: the exam counts for your exp and rank.</li>{% endif %}</ul></div>
+<section class="grid-bg auth center">
+<div class="panel"><p class="d text-[1.25rem]">{{ _('HAVE AN EXAM CODE?') }}</p><h1>{{ _('JOIN YOUR EXAM') }}</h1>
+<ul class="mt-0"><li>{{ _('Your lecturer gives you the code, like') }} <strong>{{ _('K7P-4QX') }}</strong>.</li>
+{% if not g.user %}<li>{{ _('No account needed: give your name and email, and we send you a 6-digit code to check it is yours.') }}</li><li>{{ _('Your result is emailed to you.') }}</li>
+<li>{{ _('Have an account?') }} <a class="underline text-white" href="{{ url_for('auth.login', next=request.path) }}">{{ _('Log in') }}</a> {{ _('first: your result then counts for your exp and rank.') }}</li>
+{% else %}<li>{{ _('You are logged in: the exam counts for your exp and rank.') }}</li>{% endif %}</ul></div>
 <div class="card formcard">
-<h2 style="margin-top:0">ENTER THE CODE</h2>
+<h2 class="mt-0">{{ _('ENTER THE CODE') }}</h2>
 <form class="form" method="post" novalidate>{{ csrf_field() }}
 {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
-<div class="field"><label for="f-code" class="lab">EXAM CODE</label><input id="f-code" name="code" value="{{ values.code }}" placeholder="K7P-4QX" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" required style="font:1.6rem ui-monospace,Menlo,monospace;letter-spacing:.15em;text-transform:uppercase"></div>
+<div class="field"><label for="f-code" class="lab">{{ _('EXAM CODE') }}</label><input class="[font:1.6rem_ui-monospace,Menlo,monospace] tracking-[.15em] uppercase" id="f-code" name="code" value="{{ values.code }}" placeholder="{{ _('K7P-4QX') }}" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" required></div>
 {% if not g.user %}
-{% with name="name", label="YOUR FULL NAME", placeholder="Amina Tchoua", autocomplete="name", maxlength=100, errors=None %}{% include "auth/_field.html" %}{% endwith %}
-{% with name="email", label="YOUR EMAIL", type="email", placeholder="you@example.com", autocomplete="email", maxlength=255, errors=None %}{% include "auth/_field.html" %}{% endwith %}
-<p class="muted" style="font-size:0.95rem">Use the email your lecturer has: some exams only accept the class list.</p>
+{% with name="name", label=_("YOUR FULL NAME"), placeholder=_("Amina Tchoua"), autocomplete="name", maxlength=100, errors=None %}{% include "auth/_field.html" %}{% endwith %}
+{% with name="email", label=_("YOUR EMAIL"), type="email", placeholder="you@example.com", autocomplete="email", maxlength=255, errors=None %}{% include "auth/_field.html" %}{% endwith %}
+<p class="muted text-[0.95rem]">{{ _('Use the email your lecturer has: some exams only accept the class list.') }}</p>
 {% endif %}
-<button class="btn block" type="submit">{{ 'JOIN »' if g.user else 'SEND ME THE CODE »' }}</button>
+<button class="btn btn-block" type="submit">{{ 'JOIN »' if g.user else 'SEND ME THE CODE »' }}</button>
 </form>
 </div>
 </section>

@@ -10,6 +10,7 @@ Editors (see deps.can_edit_course) also see unpublished notes, marked DRAFT.
 from __future__ import annotations
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 
 from src.content.StudiamoMarkdown import render
 from src.course.service.TopicErrors import NoteNotFoundError
@@ -229,7 +230,7 @@ def complete_note(note_id: int):
     first = not deps.progress().is_note_completed(g.user.id, note_id)
     done = deps.progress().complete_note(g.user.id, note_id)
     if first:
-        flash(f"Marked as read: +{done.exp_awarded} exp, +{done.xexp_awarded:g} Xexp.")
+        flash(_('Marked as read: +%(exp_awarded)s exp, +%(xexp_awarded)s Xexp.', exp_awarded=done.exp_awarded, xexp_awarded=f'{done.xexp_awarded:g}'))
     nxt = request.form.get("next")
     return redirect(url_for("learn.note", note_id=int(nxt)) if nxt and nxt.isdigit() else url_for("learn.note", note_id=note_id))
 

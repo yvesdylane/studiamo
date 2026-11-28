@@ -1,72 +1,72 @@
 {% extends "base.html" %}
-{% block title %}Learn, practise, level up{% endblock %}
+{% block title %}{{ _('Learn, practise, level up') }}{% endblock %}
 
 
 {% block content %}
-<section class="grid hero" style="display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding:64px 40px 56px">
-<div><p class="d" style="font-size:1.375rem;color:var(--accent-text)">LEARN. PRACTISE. LEVEL UP.</p>
-<h1 style="font-size:5.25rem;line-height:1;color:var(--accent-text);margin:12px 0 22px">KNOWLEDGE AND PRACTICE ALWAYS PAY OFF</h1>
-<p style="font-size:1.5rem;line-height:1.5;max-width:560px;margin-bottom:32px">Notes to read, exercises that stick and exams that show what you really know. Every step earns progress you can see.</p>
-<div style="display:flex;gap:20px;flex-wrap:wrap">
-{% if g.user %}<a class="btn" href="{{ url_for('learn.dashboard') }}">GO TO MY DASHBOARD »</a>
-{% else %}<a class="btn" href="{{ url_for('auth.register') }}">START LEARNING »</a><a class="btn o" href="{{ url_for('auth.login') }}">LOG IN</a>{% endif %}
-<a class="btn o" href="{{ url_for('join.join') }}">JOIN AN EXAM</a>
+<section class="grid-bg hero grid grid-cols-[1.1fr_1fr] max-[1000px]:grid-cols-1 gap-[48px] max-[600px]:gap-[28px] items-center pt-[64px] px-[40px] pb-[56px] max-[1000px]:px-[20px] max-[600px]:pt-[28px] max-[600px]:px-[16px] max-[600px]:pb-[40px]">
+<div><p class="d text-[1.375rem] text-accent">{{ _('LEARN. PRACTISE. LEVEL UP.') }}</p>
+<h1 class="text-[5.25rem] max-[1000px]:text-[3.5rem] max-[600px]:text-[2.625rem] leading-[1] text-accent mt-[12px] mx-0 mb-[22px]">{{ _('KNOWLEDGE AND PRACTICE ALWAYS PAY OFF') }}</h1>
+<p class="text-[1.5rem] max-[600px]:text-[1.1875rem] leading-[1.5] max-w-[560px] mb-[32px]">{{ _('Notes to read, exercises that stick and exams that show what you really know. Every step earns progress you can see.') }}</p>
+<div class="flex gap-[20px] flex-wrap">
+{% if g.user %}<a class="btn" href="{{ url_for('learn.dashboard') }}">{{ _('GO TO MY DASHBOARD »') }}</a>
+{% else %}<a class="btn" href="{{ url_for('auth.register') }}">{{ _('START LEARNING »') }}</a><a class="btn o" href="{{ url_for('auth.login') }}">{{ _('LOG IN') }}</a>{% endif %}
+<a class="btn o" href="{{ url_for('join.join') }}">{{ _('JOIN AN EXAM') }}</a>
 </div></div>
 <picture class="hero-photo">
 <source type="image/webp" srcset="{{ url_for('static', filename='img/hero-students-800.webp') }} 800w, {{ url_for('static', filename='img/hero-students-1400.webp') }} 1400w" sizes="(max-width: 900px) 100vw, 45vw">
 <img src="{{ url_for('static', filename='img/hero-students-1400.jpg') }}" width="1400" height="1045" fetchpriority="high" decoding="async"
-     alt="Three students studying together at a library table: one points at a page in a textbook, one takes notes, one works on a laptop">
+     alt="{{ _('Three students studying together at a library table: one points at a page in a textbook, one takes notes, one works on a laptop') }}">
 </picture>
 </section>
 
-<section class="section" id="how" style="padding-top:24px"><h2>HOW IT WORKS</h2>
+<section class="section pt-[24px]" id="how"><h2>{{ _('HOW IT WORKS') }}</h2>
 <div class="cols-3">
-<article class="card"><span class="tag">1</span><h3 style="font-size:2.5rem;color:var(--accent-text);margin:10px 0">READ</h3><p style="font-size:1.25rem;line-height:1.5">Clear lessons, topic by topic, written for your course.</p></article>
-<article class="card"><span class="tag">2</span><h3 style="font-size:2.5rem;color:var(--accent-text);margin:10px 0">PRACTICE</h3><p style="font-size:1.25rem;line-height:1.5">Exercises after each lesson lock the idea in, and earn you exp.</p></article>
-<article class="card" style="background:var(--purple);color:#fff"><span class="tag" style="background:var(--bg);color:var(--accent-text)">3</span><h3 style="font-size:2.5rem;margin:10px 0">EVALUATE</h3><p style="font-size:1.25rem;line-height:1.5">Timed exams show what you really know, and move your rank up.</p></article>
+<article class="card"><span class="tag">1</span><h3 class="text-[2.5rem] text-accent my-[10px] mx-0">{{ _('READ') }}</h3><p class="text-[1.25rem] leading-[1.5]">{{ _('Clear lessons, topic by topic, written for your course.') }}</p></article>
+<article class="card"><span class="tag">2</span><h3 class="text-[2.5rem] text-accent my-[10px] mx-0">{{ _('PRACTICE') }}</h3><p class="text-[1.25rem] leading-[1.5]">{{ _('Exercises after each lesson lock the idea in, and earn you exp.') }}</p></article>
+<article class="card bg-purple text-white"><span class="tag bg-bg text-accent">3</span><h3 class="text-[2.5rem] my-[10px] mx-0">{{ _('EVALUATE') }}</h3><p class="text-[1.25rem] leading-[1.5]">{{ _('Timed exams show what you really know, and move your rank up.') }}</p></article>
 </div></section>
 
-<section class="section" id="courses" style="padding-bottom:64px"><h2>COURSES</h2>
+<section class="section pb-[64px]" id="courses"><h2>{{ _('COURSES') }}</h2>
 {% if courses %}
 <div class="cols-4">
 {% for c in courses %}
-<article id="course-{{ c.id }}" class="card{% if not c.available %} dim{% endif %}" style="padding:20px;position:relative">
-<span class="d" style="font-size:2.75rem;color:{{ 'var(--purple)' if c.available else 'var(--muted)' }}">{{ '%02d' % loop.index }}</span>
-<h3 style="font-size:1.625rem;margin:8px 0"><a href="{{ url_for('learn.course', course_id=c.id) }}" class="stretch">{{ c.title|upper }}</a></h3>
-<p style="font-size:1.125rem;color:var(--muted);min-height:50px">
+<article id="course-{{ c.id }}" class="card{% if not c.available %} dim{% endif %} p-[20px] relative">
+<span class="d text-[2.75rem]" style="color:{{ 'var(--purple)' if c.available else 'var(--muted)' }}">{{ '%02d' % loop.index }}</span>
+<h3 class="text-[1.625rem] my-[8px] mx-0"><a href="{{ url_for('learn.course', course_id=c.id) }}" class="stretch">{{ c.title|upper }}</a></h3>
+<p class="text-[1.125rem] text-muted min-h-[50px]">
 {%- if c.available -%}
 {% set parts = [] %}
 {% if c.published_notes %}{% set _ = parts.append(c.published_notes ~ (' note' if c.published_notes == 1 else ' notes')) %}{% endif %}
 {% if c.published_exercises %}{% set _ = parts.append(c.published_exercises ~ (' exercise' if c.published_exercises == 1 else ' exercises')) %}{% endif %}
 {% if c.published_exams %}{% set _ = parts.append(c.published_exams ~ (' exam' if c.published_exams == 1 else ' exams')) %}{% endif %}
-{{ parts|join(' · ') }} open.
+{{ _('%(parts)s open.', parts=parts|join(' · ')) }}
 {%- elif c.description -%}{{ c.description }}
-{%- else -%}Notes, exercises and exams will be added here.{%- endif -%}
+{%- else -%}{{ _('Notes, exercises and exams will be added here.') }}{%- endif -%}
 </p>
-<span class="tag{% if not c.available %} g{% endif %}">{{ 'AVAILABLE' if c.available else 'COMING SOON' }}</span>
-<p class="d" style="font-size:0.9375rem;color:var(--muted);margin-top:10px">{{ c.code }}</p>
+<span class="tag{% if not c.available %} g{% endif %}">{{ _('AVAILABLE') if c.available else _('COMING SOON') }}</span>
+<p class="d text-[0.9375rem] text-muted mt-[10px]">{{ c.code }}</p>
 </article>
 {% endfor %}
 </div>
 {% else %}
-<div class="card dim" style="max-width:720px"><h3 style="font-size:1.75rem;color:var(--accent-text)">NO COURSES YET</h3><p style="font-size:1.1875rem;line-height:1.5;margin-top:8px">Courses will show up here as soon as a lecturer creates them.</p></div>
+<div class="card dim max-w-[720px]"><h3 class="text-[1.75rem] text-accent">{{ _('NO COURSES YET') }}</h3><p class="text-[1.1875rem] leading-[1.5] mt-[8px]">{{ _('Courses will show up here as soon as a lecturer creates them.') }}</p></div>
 {% endif %}
 </section>
 
-<section class="section" id="find"><h2>WHAT YOU'LL FIND HERE</h2><div class="cols-4">
-<article style="background:var(--purple);color:#fff;padding:24px;box-shadow:6px 6px 0 var(--shadow)"><h3 style="font-size:1.875rem">NOTES</h3><p style="font-size:1.1875rem;line-height:1.45;margin-top:8px">Lessons to read week by week, topic by topic.</p></article>
-<article style="background:var(--purple);color:#fff;padding:24px;box-shadow:6px 6px 0 var(--shadow)"><h3 style="font-size:1.875rem">EXERCISES</h3><p style="font-size:1.1875rem;line-height:1.45;margin-top:8px">Practice questions to check the notes really stuck.</p></article>
-<article style="background:var(--purple);color:#fff;padding:24px;box-shadow:6px 6px 0 var(--shadow)"><h3 style="font-size:1.875rem">EXAMS</h3><p style="font-size:1.1875rem;line-height:1.45;margin-top:8px">Timed exams that move your rank.</p></article>
-<article style="background:var(--purple);color:#fff;padding:24px;box-shadow:6px 6px 0 var(--shadow)"><h3 style="font-size:1.875rem">RANKS</h3><p style="font-size:1.1875rem;line-height:1.45;margin-top:8px">Earn exp, level up and climb from {{ ranks[0] }} to {{ ranks[-1] }}.</p></article>
+<section class="section" id="find"><h2>{{ _("WHAT YOU'LL FIND HERE") }}</h2><div class="cols-4">
+<article class="bg-purple text-white p-[24px] shadow-[6px_6px_0_var(--shadow)]"><h3 class="text-[1.875rem]">{{ _('NOTES') }}</h3><p class="text-[1.1875rem] leading-[1.45] mt-[8px]">{{ _('Lessons to read week by week, topic by topic.') }}</p></article>
+<article class="bg-purple text-white p-[24px] shadow-[6px_6px_0_var(--shadow)]"><h3 class="text-[1.875rem]">{{ _('EXERCISES') }}</h3><p class="text-[1.1875rem] leading-[1.45] mt-[8px]">{{ _('Practice questions to check the notes really stuck.') }}</p></article>
+<article class="bg-purple text-white p-[24px] shadow-[6px_6px_0_var(--shadow)]"><h3 class="text-[1.875rem]">{{ _('EXAMS') }}</h3><p class="text-[1.1875rem] leading-[1.45] mt-[8px]">{{ _('Timed exams that move your rank.') }}</p></article>
+<article class="bg-purple text-white p-[24px] shadow-[6px_6px_0_var(--shadow)]"><h3 class="text-[1.875rem]">{{ _('RANKS') }}</h3><p class="text-[1.1875rem] leading-[1.45] mt-[8px]">{{ _('Earn exp, level up and climb from %(value)s to %(value2)s.', value=ranks[0], value2=ranks[-1]) }}</p></article>
 </div></section>
 
-<section class="band" style="background:var(--accent-soft);border-top:4px solid var(--purple);border-bottom:4px solid var(--purple);padding:48px 40px 56px;margin-bottom:56px"><div class="split" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center"><div><h2 style="font-size:2.75rem;color:var(--accent-text)">CODE QUESTIONS, TOO</h2><p style="font-size:1.375rem;line-height:1.55;margin:14px 0 24px">Programming courses include code questions: write the program, and it is checked against the expected output.</p>{% if not g.user %}<a class="btn" href="{{ url_for('auth.register') }}">CREATE MY ACCOUNT »</a>{% endif %}</div><section aria-label="Example code question" style="border:2px solid var(--ink);box-shadow:6px 6px 0 var(--purple);margin:18px 0"><div class="d" style="display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:var(--bg);padding:6px 12px"><span>Example · JavaScript</span></div><pre class="mono" style="margin:0;padding:14px 18px;background:var(--code-bg)">const numbers = [1, 2, 3, 4, 5];
-console.log(numbers.map(n =&gt; n * 2));</pre><p class="lab" style="padding:8px 18px 0;font-size:0.8125rem">EXPECTED OUTPUT</p><p class="mono" style="padding:0 18px 12px">[2,4,6,8,10]</p></section></div></section>
+<section class="band bg-accent-soft border-t-[4px] border-solid border-t-purple border-b-[4px] border-b-purple pt-[48px] px-[40px] pb-[56px] mb-[56px] max-[1000px]:pt-[40px] max-[1000px]:px-[20px] max-[1000px]:pb-[48px] max-[600px]:pt-[32px] max-[600px]:px-[16px] max-[600px]:pb-[40px] max-[600px]:mb-[40px] border-r-0 border-l-0"><div class="split grid max-[1000px]:grid-cols-1 grid-cols-[1fr_1fr] gap-[48px] items-center"><div><h2 class="text-[2.75rem] max-[600px]:text-[2.125rem] text-accent">{{ _('CODE QUESTIONS, TOO') }}</h2><p class="text-[1.375rem] leading-[1.55] mt-[14px] mx-0 mb-[24px]">{{ _('Programming courses include code questions: write the program, and it is checked against the expected output.') }}</p>{% if not g.user %}<a class="btn" href="{{ url_for('auth.register') }}">{{ _('CREATE MY ACCOUNT »') }}</a>{% endif %}</div><section class="border-[2px] border-solid border-ink shadow-[6px_6px_0_var(--purple)] my-[18px] mx-0" aria-label="{{ _('Example code question') }}"><div class="d flex justify-between items-center bg-ink text-bg py-[6px] px-[12px]"><span>{{ _('Example · JavaScript') }}</span></div><pre class="mono m-0 py-[14px] px-[18px] bg-code">const numbers = [1, 2, 3, 4, 5];
+console.log(numbers.map(n =&gt; n * 2));</pre><p class="lab pt-[8px] px-[18px] pb-0 text-[0.8125rem]">{{ _('EXPECTED OUTPUT') }}</p><p class="mono pt-0 px-[18px] pb-[12px]">[2,4,6,8,10]</p></section></div></section>
 
-<section class="section" id="faq"><h2>QUESTIONS?</h2><div style="display:flex;flex-direction:column;gap:16px;max-width:900px">
-<details style="border:2px solid var(--ink);background:var(--bg);padding:16px 20px"><summary class="d" style="font-size:1.5rem;cursor:pointer">Who is this platform for?</summary><p style="font-size:1.1875rem;line-height:1.55;margin-top:10px">Students of the courses listed above. It follows the HND syllabus.</p></details>
-<details style="border:2px solid var(--ink);background:var(--bg);padding:16px 20px"><summary class="d" style="font-size:1.5rem;cursor:pointer">Will it be used for CA?</summary><p style="font-size:1.1875rem;line-height:1.55;margin-top:10px">That is the plan, so it is worth getting used to the platform now.</p></details>
-<details style="border:2px solid var(--ink);background:var(--bg);padding:16px 20px"><summary class="d" style="font-size:1.5rem;cursor:pointer">Do I need to install anything?</summary><p style="font-size:1.1875rem;line-height:1.55;margin-top:10px">No. Everything runs in your browser.</p></details>
-<details style="border:2px solid var(--ink);background:var(--bg);padding:16px 20px"><summary class="d" style="font-size:1.5rem;cursor:pointer">I teach a course. How do I get a lecturer account?</summary><p style="font-size:1.1875rem;line-height:1.55;margin-top:10px"><a href="{{ url_for('auth.register', role='lecturer') }}" style="color:var(--accent-text);text-decoration:underline">Request a lecturer account</a>. It is checked before you can create exams.</p></details>
+<section class="section" id="faq"><h2>{{ _('QUESTIONS?') }}</h2><div class="flex flex-col gap-[16px] max-w-[900px]">
+<details class="border-[2px] border-solid border-ink bg-bg py-[16px] px-[20px]"><summary class="d text-[1.5rem] cursor-pointer">{{ _('Who is this platform for?') }}</summary><p class="text-[1.1875rem] leading-[1.55] mt-[10px]">{{ _('Students of the courses listed above. It follows the HND syllabus.') }}</p></details>
+<details class="border-[2px] border-solid border-ink bg-bg py-[16px] px-[20px]"><summary class="d text-[1.5rem] cursor-pointer">{{ _('Will it be used for CA?') }}</summary><p class="text-[1.1875rem] leading-[1.55] mt-[10px]">{{ _('That is the plan, so it is worth getting used to the platform now.') }}</p></details>
+<details class="border-[2px] border-solid border-ink bg-bg py-[16px] px-[20px]"><summary class="d text-[1.5rem] cursor-pointer">{{ _('Do I need to install anything?') }}</summary><p class="text-[1.1875rem] leading-[1.55] mt-[10px]">{{ _('No. Everything runs in your browser.') }}</p></details>
+<details class="border-[2px] border-solid border-ink bg-bg py-[16px] px-[20px]"><summary class="d text-[1.5rem] cursor-pointer">{{ _('I teach a course. How do I get a lecturer account?') }}</summary><p class="text-[1.1875rem] leading-[1.55] mt-[10px]"><a class="text-accent underline" href="{{ url_for('auth.register', role='lecturer') }}">{{ _('Request a lecturer account') }}</a>{{ _('. It is checked before you can create exams.') }}</p></details>
 </div></section>
 {% endblock %}

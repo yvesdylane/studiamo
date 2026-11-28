@@ -189,9 +189,9 @@
       var bar = document.createElement("span");
       bar.className = "ed-bar";
       bar.contentEditable = "false";
-      bar.innerHTML = (TEXT_BLOCKS.test(el.tagName) ? "" : '<button type="button" data-act="edit">Edit</button>') +
-        '<button type="button" data-act="up" aria-label="Move up">↑</button><button type="button" data-act="down" aria-label="Move down">↓</button>' +
-        '<button type="button" data-act="del" aria-label="Delete block">✕</button>';
+      bar.innerHTML = (TEXT_BLOCKS.test(el.tagName) ? "" : '<button type="button" data-act="edit">' + tr("Edit") + '</button>') +
+        '<button type="button" data-act="up" aria-label="' + tr("Move up") + '">↑</button><button type="button" data-act="down" aria-label="' + tr("Move down") + '">↓</button>' +
+        '<button type="button" data-act="del" aria-label="' + tr("Delete block") + '">✕</button>';
       el.insertBefore(bar, el.firstChild);
     });
   }
@@ -248,9 +248,9 @@
     var ta = document.createElement("textarea");
     ta.value = src.value.split("\n").slice(r[0], r[1]).join("\n");
     ta.rows = Math.min(24, Math.max(4, ta.value.split("\n").length + 1));
-    ta.setAttribute("aria-label", "Source of this block");
-    var save = document.createElement("button"); save.type = "button"; save.className = "btn xs"; save.textContent = "APPLY";
-    var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "btn xs ghost"; cancel.textContent = "CANCEL";
+    ta.setAttribute("aria-label", tr("Source of this block"));
+    var save = document.createElement("button"); save.type = "button"; save.className = "btn xs"; save.textContent = tr("APPLY");
+    var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "btn xs ghost"; cancel.textContent = tr("CANCEL");
     box.appendChild(ta); box.appendChild(save); box.appendChild(cancel);
     el.replaceWith(box);
     ta.focus();
@@ -283,7 +283,7 @@
     var inPreview = grid.dataset.mode === "preview" || (document.activeElement && out.contains(document.activeElement));
     if (inPreview && previewBlock() && ["bold", "italic", "code", "link", "strike"].indexOf(kind) >= 0) {
       if (kind === "bold" || kind === "italic" || kind === "strike") document.execCommand(kind === "strike" ? "strikeThrough" : kind);
-      else if (kind === "link") { var url = prompt("Link address (https://…)"); if (url) document.execCommand("createLink", false, url); }
+      else if (kind === "link") { var url = prompt(tr("Link address (https://…)")); if (url) document.execCommand("createLink", false, url); }
       else if (kind === "code") {
         var s = window.getSelection(); if (!s.rangeCount || s.isCollapsed) return;
         var rg = s.getRangeAt(0), c = document.createElement("code"); c.textContent = rg.toString(); rg.deleteContents(); rg.insertNode(c);
@@ -303,7 +303,7 @@
     else if (kind === "italic") wrapSelection("*", "*", "italic text");
     else if (kind === "strike") wrapSelection("~~", "~~", "text");
     else if (kind === "code") wrapSelection("`", "`", "code");
-    else if (kind === "link") { var u = prompt("Link address (https://…)"); if (u) wrapSelection("[", "](" + u + ")", "link text"); }
+    else if (kind === "link") { var u = prompt(tr("Link address (https://…)")); if (u) wrapSelection("[", "](" + u + ")", "link text"); }
     else if (BLOCK_PREFIX.hasOwnProperty(kind)) prefixLines(BLOCK_PREFIX[kind]);
   }
   document.querySelectorAll("[data-format]").forEach(function (b) {
@@ -351,7 +351,7 @@
   function upload(file) {
     var d = new FormData(); d.append("file", file); d.append("csrf_token", token);
     return fetch(UPLOAD_URL, {method: "POST", body: d, credentials: "same-origin", headers: {"X-CSRF-Token": token}})
-      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Upload failed"); return j; }); });
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || tr("Upload failed")); return j; }); });
   }
   function images(list) { return Array.prototype.filter.call(list || [], function (f) { return /^image\//.test(f.type); }); }
   function addImages(files, where) {
@@ -457,7 +457,7 @@
     go.addEventListener("click", function () {
       var file = document.getElementById("import-file").files[0], text = document.getElementById("import-text").value;
       var ai = document.getElementById("import-ai");
-      if (!file && !text.trim()) { status.textContent = "Choose a file or paste some text."; return; }
+      if (!file && !text.trim()) { status.textContent = tr("Choose a file or paste some text."); return; }
       var d = new FormData();
       if (file) d.append("file", file); else d.append("text", text);
       if (ai && ai.checked) {
@@ -468,9 +468,9 @@
       d.append("title", (document.getElementById("f-title") || {}).value || "");
       d.append("csrf_token", token);
       go.disabled = true;
-      status.textContent = ai && ai.checked ? "Converting with Claude… this can take a minute or two." : "Importing…";
+      status.textContent = ai && ai.checked ? tr("Converting with your AI… this can take a minute or two.") : tr("Importing…");
       fetch(box.dataset.url, {method: "POST", body: d, credentials: "same-origin"})
-        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Import failed"); return j; }); })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || tr("Import failed")); return j; }); })
         .then(function (j) {
           var where = (box.querySelector('input[name="import-where"]:checked') || {}).value;
           var v = src.value.replace(/\s*$/, "");
@@ -479,8 +479,8 @@
           dlg.close();
           var msg = document.createElement("p");
           msg.className = "flash"; msg.setAttribute("role", "status");
-          msg.textContent = (j.used_ai ? "Converted by " + j.model + "." : "Imported without AI.") +
-            (j.problems.length ? " Check the " + j.problems.length + " problem(s) shown above the preview." : "") + " Ctrl+Z undoes it. Save when it looks right.";
+          msg.textContent = (j.used_ai ? tr("Converted by %(model)s.", {model: j.model}) : tr("Imported without AI.")) +
+            (j.problems.length ? " " + tr("Check the %(n)s problem(s) shown above the preview.", {n: j.problems.length}) : "") + " " + tr("Ctrl+Z undoes it. Save when it looks right.");
           form.insertBefore(msg, form.firstChild);
         })
         .catch(function (e) { status.textContent = e.message; })

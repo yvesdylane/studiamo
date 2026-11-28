@@ -4,24 +4,24 @@
 {% from "partials/role.html" import role_tag %}
 {% set lecturer = 'lecturer' in user.roles|map(attribute='value')|list %}
 <section class="wrap">
-<p class="crumbs">PROFILE</p>
-<div class="row" style="gap:24px;align-items:center">
-<span class="hex" style="width:110px;height:110px;font-size:2.75rem;background:{{ user.accent_color or 'var(--purple)' }}">{{ (user.name.split()|map('first')|join(''))[:2]|upper }}</span>
-<div><h1 class="pagetitle" style="margin:0">{{ (user.player_name or user.name)|upper }}</h1>
-<p class="lead2" style="margin:4px 0 0">{% if user.player_name %}{{ user.name }} · {% endif %}{{ role_tag(user, is_admin_account) }}{% if user.class_name %} · {{ user.class_name }}{% endif %} · here since {{ user.created_at.strftime('%B %Y') }}</p></div>
-{% if me %}<a class="btn o s" href="{{ url_for('account.settings') }}" style="margin-left:auto">EDIT SETTINGS</a>{% endif %}
+<p class="crumbs">{{ _('PROFILE') }}</p>
+<div class="row gap-[24px] items-center">
+<span class="hex w-[110px] h-[110px] text-[2.75rem]" style="background:{{ user.accent_color or 'var(--purple)' }}">{{ (user.name.split()|map('first')|join(''))[:2]|upper }}</span>
+<div><h1 class="pagetitle m-0">{{ (user.player_name or user.name)|upper }}</h1>
+<p class="lead2 mt-[4px] mx-0 mb-0">{% if user.player_name %}{{ user.name }} · {% endif %}{{ role_tag(user, is_admin_account) }}{% if user.class_name %} · {{ user.class_name }}{% endif %} {{ _('· here since %(value)s', value=(user.created_at|datetimeformat('MMMM y'))) }}</p></div>
+{% if me %}<a class="btn o s ml-auto" href="{{ url_for('account.settings') }}">{{ _('EDIT SETTINGS') }}</a>{% endif %}
 </div>
 </section>
-<section class="section" style="padding-top:24px">
-{% if private %}<p class="empty" style="margin-bottom:28px">This player keeps their progress private.</p>
+<section class="section pt-[24px]">
+{% if private %}<p class="empty mb-[28px]">{{ _('This player keeps their progress private.') }}</p>
 {% elif level %}
-<div class="cols-4" style="margin-bottom:28px">
-<div class="card stat"><span class="small">LEVEL</span><span class="big">{{ level.level }}</span><span class="small">{{ level.total_exp }} exp</span></div>
-<div class="card stat" style="background:var(--purple);color:#fff"><span class="small" style="color:#eee">RANK</span><span class="big" style="color:#fff">{{ level.rank_label }}</span><span class="small" style="color:#eee">{{ '%g' % level.total_xexp }} Xexp</span></div>
-<div class="card stat"><span class="small">LEADERBOARD</span>{% if user.ranking_visibility == 'hidden' %}<span class="big">–</span><span class="small">hidden from the ranking{% if me %} (you would be #{{ position }}){% endif %}</span>{% else %}<span class="big">#{{ position }}</span><span class="small">by exp{% if user.ranking_visibility == 'anonymous' %}, shown anonymously{% endif %}</span>{% endif %}</div>
-<div class="card stat"><span class="small">WORK</span><span class="big">{{ done_notes }}</span><span class="small">notes read · {{ good_marks }} of {{ marks }} tests at 75%+</span></div>
+<div class="cols-4 mb-[28px]">
+<div class="card stat"><span class="small">{{ _('LEVEL') }}</span><span class="big">{{ level.level }}</span><span class="small">{{ _('%(total_exp)s exp', total_exp=level.total_exp) }}</span></div>
+<div class="card stat bg-purple text-white"><span class="small text-[#eee]">{{ _('RANK') }}</span><span class="big text-white">{{ level.rank_label }}</span><span class="small text-[#eee]">{{ _('%(value)s Xexp', value='%g' % level.total_xexp) }}</span></div>
+<div class="card stat"><span class="small">{{ _('LEADERBOARD') }}</span>{% if user.ranking_visibility == 'hidden' %}<span class="big">–</span><span class="small">{{ _('hidden from the ranking') }}{% if me %} {{ _('(you would be #%(position)s)', position=position) }}{% endif %}</span>{% else %}<span class="big">#{{ position }}</span><span class="small">{{ _('by exp') }}{% if user.ranking_visibility == 'anonymous' %}{{ _(', shown anonymously') }}{% endif %}</span>{% endif %}</div>
+<div class="card stat"><span class="small">{{ _('WORK') }}</span><span class="big">{{ done_notes }}</span><span class="small">{{ _('notes read · %(good_marks)s of %(marks)s tests at 75%%+', good_marks=good_marks, marks=marks) }}</span></div>
 </div>
 {% endif %}
-{% if teaching %}<h2>TEACHES</h2><div class="cols-3">{% for c in teaching %}<article class="card" style="position:relative"><h3 style="font-size:1.5rem"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h3><p class="muted d">{{ c.code }}</p></article>{% endfor %}</div>{% endif %}
+{% if teaching %}<h2>{{ _('TEACHES') }}</h2><div class="cols-3">{% for c in teaching %}<article class="card relative"><h3 class="text-[1.5rem]"><a class="stretch" href="{{ url_for('learn.course', course_id=c.id) }}">{{ c.title|upper }}</a></h3><p class="muted d">{{ c.code }}</p></article>{% endfor %}</div>{% endif %}
 </section>
 {% endblock %}

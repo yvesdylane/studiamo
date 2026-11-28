@@ -28,6 +28,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from flask import Blueprint, Flask, abort, current_app, flash, redirect, request, session, url_for
+from flask_babel import gettext as _
 from werkzeug.wrappers import Response
 
 from src.user.service.UserErrors import EmailTakenError
@@ -155,16 +156,16 @@ def callback():
     back = url_for("auth.login") if flow["intent"] == "login" else url_for("auth.register")
 
     if request.args.get("error"):
-        flash("Google sign-in was cancelled.")
+        flash(_("Google sign-in was cancelled."))
         return redirect(back)
     try:
         profile = google.fetch_profile()
     except GoogleAuthError:
         current_app.logger.warning("Google sign-in failed", exc_info=True)
-        flash("Google sign-in did not work. Please try again.")
+        flash(_("Google sign-in did not work. Please try again."))
         return redirect(back)
     if not profile.email_verified:
-        flash("Your Google account's email is not verified, so it cannot be used here.")
+        flash(_("Your Google account's email is not verified, so it cannot be used here."))
         return redirect(back)
 
     try:
@@ -172,24 +173,24 @@ def callback():
             PROVIDER, profile.sub, email=profile.email, email_verified=profile.email_verified
         )
     except EmailTakenError:  # only reachable with an unverified email, refused above
-        flash("An account with this email already exists. Log in with your password.")
+        flash(_("An account with this email already exists. Log in with your password."))
         return redirect(url_for("auth.login"))
 
     if user is not None:
         clear_pending()
         login_user(user)
         if grant_admin_if_listed(profile.email, email_verified=profile.email_verified):
-            flash("You are logged in as an admin.")
+            flash(_("You are logged in as an admin."))
             return redirect(flow["next"])
         if flow["intent"] == "register":
-            flash(f"You already have an account with {profile.email}, so you are now logged in.")
+            flash(_('You already have an account with %(email)s, so you are now logged in.', email=profile.email))
         else:
-            flash(f"Welcome back, {user.name}.")
+            flash(_('Welcome back, %(name)s.', name=user.name))
         return redirect(flow["next"])
 
     _park(profile)
     if flow["role"] is None:
-        flash(f"No account uses {profile.email} yet. Choose student or lecturer to create one.")
+        flash(_('No account uses %(email)s yet. Choose student or lecturer to create one.', email=profile.email))
     return redirect(url_for("auth.register", role=flow["role"]))
 
 

@@ -1,5 +1,5 @@
 {# role_tag(user, is_admin): the main role (lecturer, else student), with a star for admins #}
 {% macro role_tag(user, is_admin=false) %}
-{% set main = 'LECTURER' if 'lecturer' in user.roles|map(attribute='value')|list else 'STUDENT' %}
-<span class="tag"{% if is_admin %} title="{{ main|capitalize }} and admin"{% endif %}>{{ main }}{% if is_admin %} <span aria-hidden="true">★</span><span class="sr-only">, admin</span>{% endif %}</span>
+{% set main = _('LECTURER') if 'lecturer' in user.roles|map(attribute='value')|list else _('STUDENT') %}
+<span class="tag"{% if is_admin %} title="{{ main|capitalize }} and admin"{% endif %}>{{ main }}{% if is_admin %} <span aria-hidden="true">★</span><span class="sr-only">{{ _(', admin') }}</span>{% endif %}</span>
 {% endmacro %}

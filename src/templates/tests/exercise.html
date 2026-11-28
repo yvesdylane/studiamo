@@ -2,25 +2,25 @@
 {% block title %}{{ ex.title }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / {{ topic.title|upper }} / EXERCISE</p>
+<p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> {{ _('/ %(title)s / EXERCISE', title=topic.title|upper) }}</p>
 <h1 class="pagetitle">{{ ex.title|upper }}</h1>
-{% if not ex.published %}<p class="notice" style="margin-bottom:14px">Draft: students cannot see this exercise yet.</p>{% endif %}
+{% if not ex.published %}<p class="notice mb-[14px]">{{ _('Draft: students cannot see this exercise yet.') }}</p>{% endif %}
 </section>
-<section class="section" style="padding-top:10px">
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start" class="split">
+<section class="section pt-[10px]">
+<div class="split grid max-[1000px]:grid-cols-1 grid-cols-[2fr_1fr] gap-[28px] items-start">
 <div class="card">
-<p style="font-size:1.25rem;line-height:1.55">{{ ex.questions|length }} question{{ 's' if ex.questions|length != 1 }} · up to <strong>{{ ex.max_exp }} exp</strong>. Each retry gives {{ (ex.retake_decay * 100)|round|int }}% of the exp of the one before. A best score of 75% or more also earns Xexp, which moves your rank.</p>
-<div class="row" style="margin-top:18px">
-{% if acting_as('student') and ex.published %}<a class="btn" href="{{ url_for('tests.take_exercise', exercise_id=ex.id) }}">{{ 'CONTINUE' if attempts and attempts[0].status.value == 'in_progress' else ('TRY AGAIN' if attempts else 'START') }} »</a>{% endif %}
-{% if not g.user and ex.published %}<a class="btn" href="{{ url_for('auth.login', next=request.path) }}">LOG IN TO START »</a>{% endif %}
-{% if editor %}<a class="btn o" href="{{ url_for('studio_tests.edit_exercise', exercise_id=ex.id) }}">EDIT IN STUDIO</a>{% endif %}
+<p class="text-[1.25rem] leading-[1.55]">{{ _('%(questions)s question%(value)s · up to', questions=ex.questions|length, value='s' if ex.questions|length != 1) }} <strong>{{ _('%(max_exp)s exp', max_exp=ex.max_exp) }}</strong>{{ _('. Each retry gives %(value)s%% of the exp of the one before. A best score of 75%% or more also earns Xexp, which moves your rank.', value=(ex.retake_decay * 100)|round|int) }}</p>
+<div class="row mt-[18px]">
+{% if acting_as('student') and ex.published %}<a class="btn" href="{{ url_for('tests.take_exercise', exercise_id=ex.id) }}">{{ _('CONTINUE') if attempts and attempts[0].status.value == 'in_progress' else (_('TRY AGAIN') if attempts else _('START')) }} »</a>{% endif %}
+{% if not g.user and ex.published %}<a class="btn" href="{{ url_for('auth.login', next=request.path) }}">{{ _('LOG IN TO START »') }}</a>{% endif %}
+{% if editor %}<a class="btn o" href="{{ url_for('studio_tests.edit_exercise', exercise_id=ex.id) }}">{{ _('EDIT IN STUDIO') }}</a>{% endif %}
 </div>
 </div>
 <div class="card">
-<h2 style="font-size:1.5rem;color:var(--accent-text)">YOUR BEST</h2>
-{% if mark %}<p class="d" style="font-size:3rem;color:var(--accent-text)">{{ '%g' % mark.best_score_pct }}%</p><p class="muted">{{ mark.attempts_count }} attempt{{ 's' if mark.attempts_count != 1 }} · {{ mark.exp_earned }} exp · {{ '%g' % mark.xexp_earned }} Xexp</p>
-{% else %}<p class="muted">None yet.</p>{% endif %}
-{% if attempts %}<ul class="list" style="margin-top:10px">{% for a in attempts %}<li><span>Attempt {{ a.attempt_no }}</span>{% if a.status.value == 'in_progress' %}<span class="tag draft">IN PROGRESS</span>{% else %}<a href="{{ url_for('tests.result', kind='exercise', attempt_id=a.id) }}" style="text-decoration:underline">{{ ('%g' % a.score_pct) ~ '%' if a.score_pct is not none else 'waiting for grading' }}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
+<h2 class="text-[1.5rem] text-accent">{{ _('YOUR BEST') }}</h2>
+{% if mark %}<p class="d text-[3rem] text-accent">{{ '%g' % mark.best_score_pct }}%</p><p class="muted">{{ _('%(attempts_count)s attempt%(value)s · %(exp_earned)s exp · %(value2)s Xexp', attempts_count=mark.attempts_count, value='s' if mark.attempts_count != 1, exp_earned=mark.exp_earned, value2='%g' % mark.xexp_earned) }}</p>
+{% else %}<p class="muted">{{ _('None yet.') }}</p>{% endif %}
+{% if attempts %}<ul class="list mt-[10px]">{% for a in attempts %}<li><span>{{ _('Attempt %(attempt_no)s', attempt_no=a.attempt_no) }}</span>{% if a.status.value == 'in_progress' %}<span class="tag draft">{{ _('IN PROGRESS') }}</span>{% else %}<a class="underline" href="{{ url_for('tests.result', kind='exercise', attempt_id=a.id) }}">{{ ('%g' % a.score_pct) ~ '%' if a.score_pct is not none else _('waiting for grading') }}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
 </div>
 </div>
 </section>

@@ -1,0 +1,57 @@
+/* Tailwind entry point. Build into src/static/css/app.css (served by base.html):
+
+       uv run tailwindcss -i src/styles/app.css -o src/static/css/app.css --minify
+       uv run tailwindcss -i src/styles/app.css -o src/static/css/app.css --watch   (while editing)
+
+   app.css is committed, so the server needs no build step: rebuild and commit it
+   whenever a template's classes or a file in src/styles changes.
+
+   Tailwind's preflight (its CSS reset) is left out on purpose: studiamo.css has
+   its own base, and the reset would strip list bullets, heading sizes and
+   margins from the notes (smd.css). Utilities still win over the components,
+   since the utilities layer comes last. */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "./studiamo.css" layer(components);
+@import "./smd.css" layer(components);
+
+@source "../templates";
+@source "../static/js";
+
+/* Site colours as utilities (bg-purple, text-accent, border-ink …). "inline" keeps
+   the var() reference, so they follow each user's accent colour and dark mode. */
+@theme inline {
+  --color-purple: var(--purple);
+  --color-accent: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-bg: var(--bg);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-code: var(--code-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warn: var(--warn);
+  --color-warn-text: var(--warn-text);
+  --color-warn-bg: var(--warn-bg);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-badge: var(--badge);
+  --color-shadow: var(--shadow);
+  --color-grey: var(--grey);
+  --color-strip: var(--strip);
+}
+
+/* the display font: the user's choice (page_style() sets --font-display) */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@layer base {
+  /* what preflight would have given us that the site relies on */
+  [hidden]:where(:not([hidden="until-found"])) { display: none !important; }
+}

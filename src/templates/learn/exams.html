@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Exams{% endblock %}
+{% block title %}{{ _('Exams') }}{% endblock %}
 {% block content %}
 <section class="wrap">
-<div class="row" style="justify-content:space-between;align-items:flex-end"><h1 class="pagetitle">EXAMS</h1><a class="btn" href="{{ url_for('join.join') }}">JOIN AN EXAM WITH A CODE »</a></div>
-<p class="lead2">Exams show what you really know and move your rank. Your best score for each exam is the one that counts.{% if not g.user %} <a href="{{ url_for('auth.login', next=request.path) }}" style="text-decoration:underline;color:var(--accent-text)">Log in</a> to take them.{% endif %}</p>
+<div class="row justify-between items-end"><h1 class="pagetitle">{{ _('EXAMS') }}</h1><a class="btn" href="{{ url_for('join.join') }}">{{ _('JOIN AN EXAM WITH A CODE »') }}</a></div>
+<p class="lead2">{{ _('Exams show what you really know and move your rank. Your best score for each exam is the one that counts.') }}{% if not g.user %} <a class="underline text-accent" href="{{ url_for('auth.login', next=request.path) }}">{{ _('Log in') }}</a> {{ _('to take them.') }}{% endif %}</p>
 </section>
-<section class="section" style="padding-top:8px">
+<section class="section pt-[8px]">
 {% for grp in groups %}
-<h2 style="font-size:2rem">{{ grp.course.title|upper }}</h2>
-<div class="cols-3" style="margin-bottom:28px">
+<h2 class="text-[2rem]">{{ grp.course.title|upper }}</h2>
+<div class="cols-3 mb-[28px]">
 {% for x, open in grp.entries %}
-<article class="card{% if not open %} dim{% endif %}" style="position:relative">
-<p class="row" style="gap:8px;margin-bottom:8px"><span class="tag">{{ 'SCHEDULED' if x.kind.value == 'scheduled' else 'PRACTICE' }}</span>{% if open %}<span class="tag ok">OPEN</span>{% else %}<span class="tag g">CLOSED</span>{% endif %}{% if x.id in best %}<span class="tag ok">BEST {{ '%g' % best[x.id].best_score_pct }}%</span>{% endif %}</p>
-<h3 style="font-size:1.5rem"><a class="stretch" href="{{ url_for('tests.exam', exam_id=x.id) }}">{{ x.title }}</a></h3>
-<p class="muted" style="font-size:1rem;margin-top:6px">{% if x.duration_minutes %}{{ x.duration_minutes }} min · {% endif %}{{ x.max_exp }} exp{% if x.opens_at %} · {{ x.opens_at.strftime('%d %b %H:%M') }} – {{ x.closes_at.strftime('%d %b %H:%M') }} UTC{% endif %}</p>
+<article class="card{% if not open %} dim{% endif %} relative">
+<p class="row gap-[8px] mb-[8px]"><span class="tag">{{ _('SCHEDULED') if x.kind.value == 'scheduled' else _('PRACTICE') }}</span>{% if open %}<span class="tag ok">{{ _('OPEN') }}</span>{% else %}<span class="tag g">{{ _('CLOSED') }}</span>{% endif %}{% if x.id in best %}<span class="tag ok">{{ _('BEST %(value)s%%', value='%g' % best[x.id].best_score_pct) }}</span>{% endif %}</p>
+<h3 class="text-[1.5rem]"><a class="stretch" href="{{ url_for('tests.exam', exam_id=x.id) }}">{{ x.title }}</a></h3>
+<p class="muted text-[1rem] mt-[6px]">{% if x.duration_minutes %}{{ _('%(duration_minutes)s min ·', duration_minutes=x.duration_minutes) }} {% endif %}{{ _('%(max_exp)s exp', max_exp=x.max_exp) }}{% if x.opens_at %} {{ _('· %(value)s – %(value2)s UTC', value=(x.opens_at|datetimeformat('d MMM, HH:mm')), value2=(x.closes_at|datetimeformat('d MMM, HH:mm'))) }}{% endif %}</p>
 </article>
 {% endfor %}
 </div>
-{% else %}<p class="empty">No exams are open yet.</p>{% endfor %}
+{% else %}<p class="empty">{{ _('No exams are open yet.') }}</p>{% endfor %}
 </section>
 {% endblock %}

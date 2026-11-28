@@ -17,6 +17,7 @@ import secrets
 from pathlib import Path
 
 from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
+from flask_babel import gettext as _
 
 from src.web import deps
 from src.web.security import login_required
@@ -41,7 +42,7 @@ def media_dir() -> Path:
 
 def sniff(head: bytes) -> str | None:
     """The image's real type from its first bytes, or None."""
-    for magic, ext, _ in SIGNATURES:
+    for magic, ext, _unused in SIGNATURES:
         if head.startswith(magic):
             return ext
     if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
@@ -56,13 +57,13 @@ def upload():
         abort(404)
     f = request.files.get("file")
     if f is None:
-        return jsonify(error="No file was sent."), 400
+        return jsonify(error=_("No file was sent.")), 400
     data = f.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
-        return jsonify(error=f"Images can be at most {MAX_BYTES // (1024 * 1024)} MB."), 413
+        return jsonify(error=_('Images can be at most %(value)s MB.', value=MAX_BYTES // (1024 * 1024))), 413
     ext = sniff(data[:16])
     if ext is None:
-        return jsonify(error="Only PNG, JPEG, GIF and WebP images can be added."), 415
+        return jsonify(error=_("Only PNG, JPEG, GIF and WebP images can be added.")), 415
     name = f"{secrets.token_urlsafe(12)}.{ext}"
     (media_dir() / name).write_bytes(data)
     alt = Path(f.filename or "image").stem.replace("[", "").replace("]", "")[:80] or "image"

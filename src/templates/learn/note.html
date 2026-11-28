@@ -1,50 +1,50 @@
 {% extends "base.html" %}
 {% block title %}{{ note.title }}{% endblock %}
 {% block page_class %} page-wide{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
+
 {% block content %}
 <div class="reader">
 <nav class="side" aria-label="{{ course.title }} notes">
 <h2>{{ course.title|upper }}</h2>
 {% for p in parts %}{% if p.notes %}
 <p class="topic">{{ p.topic.title }}</p>
-<ul>{% for n in p.notes %}<li><a href="{{ url_for('learn.note', note_id=n.id) }}" class="{{ 'done' if n.id in done }}"{% if n.id == note.id %} aria-current="page"{% endif %}>{{ n.title }}{% if not n.published %} <span class="tag draft" style="font-size:0.75rem">DRAFT</span>{% endif %}</a></li>{% endfor %}</ul>
+<ul>{% for n in p.notes %}<li><a href="{{ url_for('learn.note', note_id=n.id) }}" class="{{ 'done' if n.id in done }}"{% if n.id == note.id %} aria-current="page"{% endif %}>{{ n.title }}{% if not n.published %} <span class="tag draft text-[0.75rem]">{{ _('DRAFT') }}</span>{% endif %}</a></li>{% endfor %}</ul>
 {% endif %}{% endfor %}
-<p><a href="{{ url_for('learn.course', course_id=course.id) }}" style="text-decoration:underline;color:var(--accent-text)">« Course page</a></p>
+<p><a class="underline text-accent" href="{{ url_for('learn.course', course_id=course.id) }}">{{ _('« Course page') }}</a></p>
 </nav>
 
 <article>
 <p class="crumbs"><a href="{{ url_for('learn.course', course_id=course.id) }}">{{ course.title|upper }}</a> / {{ topic.title|upper }}</p>
-{% if not note.published %}<p class="notice" style="margin-bottom:14px">Draft: students cannot see this note yet.</p>{% endif %}
-{% if editor %}<p style="margin-bottom:14px"><a class="btn xs" href="{{ url_for('studio.edit_note', note_id=note.id) }}">EDIT THIS NOTE</a></p>{% endif %}
+{% if not note.published %}<p class="notice mb-[14px]">{{ _('Draft: students cannot see this note yet.') }}</p>{% endif %}
+{% if editor %}<p class="mb-[14px]"><a class="btn xs" href="{{ url_for('studio.edit_note', note_id=note.id) }}">{{ _('EDIT THIS NOTE') }}</a></p>{% endif %}
 <div class="prose">
-{% if page.html.strip() %}{{ page.html|safe }}{% else %}<p class="empty">This note is empty.</p>{% endif %}
+{% if page.html.strip() %}{{ page.html|safe }}{% else %}<p class="empty">{{ _('This note is empty.') }}</p>{% endif %}
 </div>
 {% if exercises %}
-<div class="card" style="margin-top:32px"><h2 style="font-size:1.75rem;color:var(--accent-text)">PRACTISE THIS</h2><ul class="list">{% for e in exercises %}<li><a href="{{ url_for('tests.exercise', exercise_id=e.id) }}" style="font-size:1.1875rem;text-decoration:underline">{{ e.title }}</a><span class="muted">{{ e.max_exp }} exp</span></li>{% endfor %}</ul></div>
+<div class="card mt-[32px]"><h2 class="text-[1.75rem] text-accent">{{ _('PRACTISE THIS') }}</h2><ul class="list">{% for e in exercises %}<li><a class="text-[1.1875rem] underline" href="{{ url_for('tests.exercise', exercise_id=e.id) }}">{{ e.title }}</a><span class="muted">{{ _('%(max_exp)s exp', max_exp=e.max_exp) }}</span></li>{% endfor %}</ul></div>
 {% endif %}
 <div class="notefoot">
 <div>{% if prev %}<a class="btn o s" href="{{ url_for('learn.note', note_id=prev.id) }}">« {{ prev.title }}</a>{% endif %}</div>
 <div class="row">
 {% if acting_as('student') and note.published %}
-{% if note.id in done %}<span class="tag ok" style="font-size:1.125rem;padding:8px 14px">READ ✓</span>{% if next %}<a class="btn s" href="{{ url_for('learn.note', note_id=next.id) }}">{{ next.title }} »</a>{% endif %}
+{% if note.id in done %}<span class="tag ok text-[1.125rem] py-[8px] px-[14px]">{{ _('READ ✓') }}</span>{% if next %}<a class="btn s" href="{{ url_for('learn.note', note_id=next.id) }}">{{ next.title }} »</a>{% endif %}
 {% else %}
-<form method="post" action="{{ url_for('learn.complete_note', note_id=note.id) }}" style="margin:0">{{ csrf_field() }}{% if next %}<input type="hidden" name="next" value="{{ next.id }}">{% endif %}
-<button class="btn s" type="submit">MARK AS READ (+{{ note.max_exp }} EXP){% if next %} · NEXT »{% endif %}</button></form>
+<form class="m-0" method="post" action="{{ url_for('learn.complete_note', note_id=note.id) }}">{{ csrf_field() }}{% if next %}<input type="hidden" name="next" value="{{ next.id }}">{% endif %}
+<button class="btn s" type="submit">{{ _('MARK AS READ (+%(max_exp)s EXP)', max_exp=note.max_exp) }}{% if next %} {{ _('· NEXT »') }}{% endif %}</button></form>
 {% endif %}
-{% else %}{% if not g.user %}<a class="btn s o" href="{{ url_for('auth.login', next=request.path) }}">LOG IN TO EARN {{ note.max_exp }} EXP</a>{% endif %}{% if next %}<a class="btn s" href="{{ url_for('learn.note', note_id=next.id) }}">{{ next.title }} »</a>{% endif %}{% endif %}
+{% else %}{% if not g.user %}<a class="btn s o" href="{{ url_for('auth.login', next=request.path) }}">{{ _('LOG IN TO EARN %(max_exp)s EXP', max_exp=note.max_exp) }}</a>{% endif %}{% if next %}<a class="btn s" href="{{ url_for('learn.note', note_id=next.id) }}">{{ next.title }} »</a>{% endif %}{% endif %}
 </div>
 </div>
 </article>
 
-<nav class="side toc" aria-label="On this page">
-{% if page.toc %}<h2>ON THIS PAGE</h2><ul>{% for id, title in page.toc %}<li><a href="#{{ id }}">{{ title }}</a></li>{% endfor %}</ul>{% endif %}
+<nav class="side toc" aria-label="{{ _('On this page') }}">
+{% if page.toc %}<h2>{{ _('ON THIS PAGE') }}</h2><ul>{% for id, title in page.toc %}<li><a href="#{{ id }}">{{ title }}</a></li>{% endfor %}</ul>{% endif %}
 </nav>
 </div>
 <script src="{{ url_for('static', filename='js/smd.js') }}"></script>
 {% if acting_as('student') and note.published %}
 <span id="reading-time" hidden data-url="{{ url_for('learn.reading_time', note_id=note.id) }}" data-csrf="{{ csrf_token() }}"></span>
 <script src="{{ url_for('static', filename='js/reading-time.js') }}"></script>
-<p class="muted" style="font-size:0.9rem;margin:10px 14px 0">About {{ ((note.reading_seconds or 300) / 60)|round|int }} min to read. Coming back to it counts: your Reading skill is full at 3× that time.</p>
+<p class="muted text-[0.9rem] mt-[10px] mx-[14px] mb-0">{{ _('About %(value)s min to read. Coming back to it counts: your Reading skill is full at 3× that time.', value=((note.reading_seconds or 300) / 60)|round|int) }}</p>
 {% endif %}
 {% endblock %}

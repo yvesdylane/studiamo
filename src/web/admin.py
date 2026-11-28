@@ -8,6 +8,7 @@ reject lecturer requests and give or take the lecturer role.
 from __future__ import annotations
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 
 from src.user.dto.UserDto import UserRolesUpdate
 from src.user.models.LecturerApplication import LecturerApplicationStatus
@@ -53,15 +54,15 @@ def review_item(kind: str, item_id: int):
             exp = int(request.form.get("max_exp") or 0)
             if decision == "approve":
                 rv.approve(kind, item_id, reviewer_id=g.user.id, max_exp=exp)
-                flash("Approved and published.")
+                flash(_("Approved and published."))
             elif decision == "reject":
                 rv.reject(kind, item_id, reviewer_id=g.user.id, comment=request.form.get("comment", ""))
-                flash("Sent back to the lecturer with your comment.")
+                flash(_("Sent back to the lecturer with your comment."))
             else:
                 abort(400)
             return redirect(url_for("admin.index") + "#review")
         except ValueError:
-            error = "Exp must be a whole number."
+            error = _("Exp must be a whole number.")
         except ServiceError as exc:
             error = str(exc)
     try:
@@ -100,10 +101,10 @@ def review(application_id: int):
     try:
         if decision == "approve":
             deps.lecturer_apps().approve(application_id, reviewer_id=g.user.id)
-            flash("Approved: the account is now a lecturer.")
+            flash(_("Approved: the account is now a lecturer."))
         elif decision == "reject":
             deps.lecturer_apps().reject(application_id, reviewer_id=g.user.id)
-            flash("Request rejected.")
+            flash(_("Request rejected."))
         else:
             abort(400)
     except LecturerApplicationNotFoundError:
@@ -122,5 +123,5 @@ def set_roles(user_id: int):
         user = deps.users().set_roles(user_id, UserRolesUpdate(roles=roles))
     except UserNotFoundError:
         abort(404)
-    flash(f"{user.name} is now: {', '.join(r.value for r in user.roles)}.")
+    flash(_('%(name)s is now: %(value)s.', name=user.name, value=', '.join(r.value for r in user.roles)))
     return redirect(url_for("admin.index", q=request.form.get("q", "")))

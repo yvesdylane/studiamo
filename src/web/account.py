@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from pydantic import ValidationError
 
 from src.ai.providers import PROVIDERS as AI_PROVIDERS
@@ -88,12 +89,12 @@ def settings():
                 if cls in CLASSES:
                     fields["class_name"] = cls
                 deps.users().update(me.id, UserUpdate(**fields))
-                flash("Profile saved.")
+                flash(_("Profile saved."))
                 return redirect(url_for("account.settings", tab=tab))
             except ValidationError as exc:
                 errors = field_errors(exc)
             except PlayerNameTakenError:
-                errors["player_name"] = "Someone already uses this player name."
+                errors["player_name"] = _("Someone already uses this player name.")
         elif section == "appearance":
             from src.web.appearance import BRAND, FONTS, TEXT_SIZES, clean_colour, clean_secondary
 
@@ -105,9 +106,9 @@ def settings():
             font = request.form.get("font")
             size = request.form.get("text_size")
             if raw and colour is None:
-                errors["accent"] = "Choose a darker colour: white text must stay readable on it (contrast 4.5:1)."
+                errors["accent"] = _("Choose a darker colour: white text must stay readable on it (contrast 4.5:1).")
             elif sec_raw and sec_raw != "default" and secondary is None:
-                errors["secondary"] = "That is not a colour."
+                errors["secondary"] = _("That is not a colour.")
             else:
                 deps.users().update(me.id, UserUpdate(
                     accent_color=None if colour in (None, BRAND) else colour,
@@ -115,7 +116,7 @@ def settings():
                     theme=theme if theme in ("system", "light", "dark") else None,
                     font=font if font in FONTS else None,
                     text_size=size if size in TEXT_SIZES else None))
-                flash("Appearance saved.")
+                flash(_("Appearance saved."))
                 resp = redirect(url_for("account.settings", tab="appearance"))
                 if theme in ("light", "dark"):
                     resp.set_cookie("theme", theme, max_age=31536000, samesite="Lax")
@@ -126,7 +127,7 @@ def settings():
             from src.user.service.ApiTokenService import ApiTokenService, TooManyKeysError
 
             try:
-                new_key, _ = ApiTokenService(deps.db()).create(me.id, request.form.get("key_name", ""))
+                new_key, _unused = ApiTokenService(deps.db()).create(me.id, request.form.get("key_name", ""))
             except TooManyKeysError as exc:
                 flash(str(exc) + ".")
                 return redirect(url_for("account.settings", tab="ai"))
@@ -143,19 +144,19 @@ def settings():
             try:
                 if section == "ai_key_delete":
                     conv.delete_key(me.id, provider)
-                    flash(f"Your {name} key was removed from Studiamo.")
+                    flash(_('Your %(name)s key was removed from Studiamo.', name=name))
                 elif section == "ai_key_model":
                     conv.set_model(me.id, provider, request.form.get("model", ""))
-                    flash(f"{name} model saved.")
+                    flash(_('%(name)s model saved.', name=name))
                 elif section == "ai_default":
                     conv.set_default(me.id, provider)
-                    flash(f"{name} is now the AI Studiamo uses by default.")
+                    flash(_('%(name)s is now the AI Studiamo uses by default.', name=name))
                 elif section == "ai_refresh":
                     n = len(conv.refresh_models(me.id, provider))
-                    flash(f"{name}: {n} model{'s' if n != 1 else ''} available to your key.")
+                    flash(_('%(name)s: %(n)s model%(value)s available to your key.', name=name, n=n, value='s' if n != 1 else ''))
                 else:
                     conv.save_key(me.id, provider, request.form.get("api_key", ""), request.form.get("model") or None)
-                    flash(f"{name} key checked with {PROVIDERS[provider].company} and saved (encrypted).")
+                    flash(_('%(name)s key checked with %(company)s and saved (encrypted).', name=name, company=PROVIDERS[provider].company))
             except AiKeyError as exc:
                 if section != "ai_key_save":
                     flash(str(exc))
@@ -168,9 +169,9 @@ def settings():
 
             try:
                 ApiTokenService(deps.db()).revoke(me.id, int(request.form.get("token_id", "0")))
-                flash("Key revoked: apps using it are disconnected.")
+                flash(_("Key revoked: apps using it are disconnected."))
             except (ApiTokenNotFoundError, ValueError):
-                flash("That key does not exist.")
+                flash(_("That key does not exist."))
             return redirect(url_for("account.settings", tab="ai"))
         elif section in ("photo", "photo_remove"):
             import secrets
@@ -183,11 +184,11 @@ def settings():
                 data = f.read(2 * 1024 * 1024 + 1) if f else b""
                 ext = sniff(data[:16]) if data else None
                 if not data:
-                    errors["photo"] = "Choose a picture."
+                    errors["photo"] = _("Choose a picture.")
                 elif len(data) > 2 * 1024 * 1024:
-                    errors["photo"] = "The picture can be at most 2 MB."
+                    errors["photo"] = _("The picture can be at most 2 MB.")
                 elif ext is None:
-                    errors["photo"] = "Use a PNG, JPEG, GIF or WebP picture."
+                    errors["photo"] = _("Use a PNG, JPEG, GIF or WebP picture.")
                 if errors:
                     return _settings_page(deps.users().get(me.id), errors, section, "profile")
                 new_name = f"av_{secrets.token_urlsafe(12)}.{ext}"
@@ -195,7 +196,7 @@ def settings():
             previous = deps.users().set_avatar(me.id, new_name)
             if previous and previous.startswith("av_"):
                 (media_dir() / previous).unlink(missing_ok=True)
-            flash("Profile photo updated." if new_name else "Profile photo removed.")
+            flash(_("Profile photo updated.") if new_name else _("Profile photo removed."))
             return redirect(url_for("account.settings", tab="profile"))
         elif section == "notifications":
             try:
@@ -204,57 +205,57 @@ def settings():
                 secs = 10
             deps.users().update(me.id, UserUpdate(toast_enabled=request.form.get("toast_enabled") == "on",
                                                   toast_seconds=max(3, min(60, secs))))
-            flash("Notification settings saved.")
+            flash(_("Notification settings saved."))
             return redirect(url_for("account.settings", tab="notifications"))
         elif section == "ranking":
             choice = request.form.get("ranking_visibility")
             if choice in ("public", "anonymous", "hidden"):
                 deps.users().update(me.id, UserUpdate(ranking_visibility=choice))
-                flash({"public": "Your name is shown on the ranking.",
-                       "anonymous": "You now appear on the ranking as “Anonymous player”.",
-                       "hidden": "You are no longer on the ranking."}[choice])
+                flash({"public": _("Your name is shown on the ranking."),
+                       "anonymous": _("You now appear on the ranking as “Anonymous player”."),
+                       "hidden": _("You are no longer on the ranking.")}[choice])
             return redirect(url_for("account.settings", tab="ranking"))
         elif section == "password":
             new, again = request.form.get("new_password", ""), request.form.get("new_password2", "")
             if new != again:
-                errors["new_password2"] = "The two new passwords are different."
+                errors["new_password2"] = _("The two new passwords are different.")
             elif len(new) < 8:
-                errors["new_password"] = "Use at least 8 characters."
+                errors["new_password"] = _("Use at least 8 characters.")
             else:
                 try:
                     deps.users().change_password(me.id, request.form.get("current_password") or None, new)
-                    flash("Password changed.")
+                    flash(_("Password changed."))
                     return redirect(url_for("account.settings", tab=tab))
                 except InvalidCredentialsError:
-                    errors["current_password"] = "That is not your current password."
+                    errors["current_password"] = _("That is not your current password.")
         elif section == "unlink":
             try:
                 deps.users().unlink_identity(me.id, int(request.form.get("identity_id", "0")))
-                flash("Google is no longer linked.")
+                flash(_("Google is no longer linked."))
             except LastLoginMethodError:
-                flash("Set a password first: otherwise you could not log in any more.")
+                flash(_("Set a password first: otherwise you could not log in any more."))
             return redirect(url_for("account.settings", tab=tab))
         elif section == "lecturer":
             try:
                 deps.lecturer_apps().apply(me.id, LecturerApplicationCreate(
                     institution=request.form.get("institution", ""), courses_taught=request.form.get("courses_taught", "")))
-                flash("Request sent. An admin will check it.")
+                flash(_("Request sent. An admin will check it."))
                 return redirect(url_for("account.settings", tab=tab))
             except ValidationError as exc:
                 errors = field_errors(exc)
             except LecturerApplicationExistsError:
-                flash("You already sent a request.")
+                flash(_("You already sent a request."))
         elif section == "delete":
             if request.form.get("confirm_email", "").strip().lower() != me.email:
-                errors["confirm_email"] = "Type your email exactly to confirm."
+                errors["confirm_email"] = _("Type your email exactly to confirm.")
             else:
                 try:
                     deps.users().delete(me.id)
                 except UserHasContentError:
-                    flash("You wrote courses, questions or exams. Ask an admin to move them before deleting your account.")
+                    flash(_("You wrote courses, questions or exams. Ask an admin to move them before deleting your account."))
                     return redirect(url_for("account.settings", tab=tab))
                 logout_user()
-                flash("Your account was deleted.")
+                flash(_("Your account was deleted."))
                 return redirect(url_for("pages.home"))
     return _settings_page(deps.users().get(me.id), errors, section, tab)
 
