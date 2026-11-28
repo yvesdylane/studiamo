@@ -2,7 +2,7 @@
 {% block title %}Studiamo Markdown guide{% endblock %}
 {% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/smd.css') }}">{% endblock %}
 {% block content %}
-<div class="reader" style="grid-template-columns:minmax(0,1fr) 240px">
+<div class="reader guide" style="grid-template-columns:minmax(0,1fr) 240px">
 <article><p class="crumbs"><a href="{{ url_for('studio.index') }}">STUDIO</a> / GUIDE</p><div class="prose">{{ page.html|safe }}</div></article>
 <nav class="side" aria-label="On this page"><h2>ON THIS PAGE</h2><ul>{% for id, title in page.toc %}<li><a href="#{{ id }}">{{ title }}</a></li>{% endfor %}</ul></nav>
 </div>

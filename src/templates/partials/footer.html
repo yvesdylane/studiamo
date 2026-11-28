@@ -4,5 +4,5 @@
 <nav aria-label="Explore"><p class="d" style="font-size:1.25rem;margin-bottom:8px">EXPLORE</p><a href="{{ url_for('pages.home') }}#courses">Tutorials</a><a href="{{ url_for('pages.home') }}#courses">Exercise</a><a href="{{ url_for('pages.home') }}#courses">Exams</a>{% if not g.user %}<a href="{{ url_for('auth.login') }}">Log in</a><a href="{{ url_for('auth.register') }}">Create an account</a>{% endif %}</nav>
 <nav aria-label="Courses"><p class="d" style="font-size:1.25rem;margin-bottom:8px">COURSES</p>{% for c in nav_courses() %}<a href="{{ url_for('pages.home') }}#course-{{ c.id }}">{{ c.title }}</a>{% else %}<p style="font-size:1.0625rem;color:var(--muted)">Courses will appear here.</p>{% endfor %}</nav>
 </div>
-<div class="base"><span>© 2026 Knowledge and practice always pay off</span><a class="d" href="#top" style="color:var(--accent-text);font-size:1.0625rem">BACK TO TOP ↑</a></div>
+<div class="base"><span>© 2026 Knowledge and practice always pay off · Built by <strong class="credit">Code Alchemists</strong></span><a class="d" href="#top" style="color:var(--accent-text);font-size:1.0625rem">BACK TO TOP ↑</a></div>
 </footer>

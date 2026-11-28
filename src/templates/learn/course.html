@@ -8,7 +8,7 @@
 {% if editor %}<a class="btn s" href="{{ url_for('studio.course', course_id=course.id) }}">EDIT IN STUDIO »</a>{% endif %}
 </div>
 {% if cp %}
-<div class="card" style="margin:8px 0 28px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:24px;align-items:center">
+<div class="card course-stats" style="margin:8px 0 28px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:24px;align-items:center">
 <div class="stat"><span class="small">COURSE PROGRESS</span><div class="meter" role="img" aria-label="{{ cp.completion_pct|round|int }}% done"><i style="width:{{ cp.completion_pct }}%"></i></div><span class="small">{{ cp.completion_pct|round|int }}% of notes and exercises done</span></div>
 <div class="stat"><span class="big">{{ cp.notes_completed }}/{{ cp.notes_total }}</span><span class="small">notes read</span></div>
 <div class="stat"><span class="big">{{ cp.exercises_done }}/{{ cp.exercises_total }}</span><span class="small">exercises done</span></div>
